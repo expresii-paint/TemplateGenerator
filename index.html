@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Template Generator 字格生成器</title>
+<title>Template Generator 版式生成器</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20x='3'%20y='3'%20width='26'%20height='26'%20fill='none'%20stroke='%23e23b3b'%20stroke-width='3'/%3E%3Cline%20x1='16'%20y1='3'%20x2='16'%20y2='29'%20stroke='%23e23b3b'%20stroke-width='1.5'%20stroke-dasharray='2%202'/%3E%3C/svg%3E" />
 <style>
   :root{
@@ -81,7 +81,7 @@
 <body>
   <aside class="sidebar">
     <header>
-      <h1>字格生成器</h1>
+      <h1>版式生成器</h1>
       <span class="sub">Template Generator</span>
     </header>
 
@@ -121,6 +121,7 @@
         <button data-t="vlines">竖线格 Vertical</button>
         <button data-t="hlines">横线格 Horizontal</button>
         <button data-t="zhishi">直式信紙 紅線</button>
+        <button data-t="fan">扇面 Fan</button>
       </div>
     </div>
 
@@ -230,7 +231,7 @@
     A4:[210,297], A3:[297,420], A5:[148,210],
     Letter:[215.9,279.4], Legal:[215.9,355.6], Square:[210,210]
   };
-  const GRID_NAMES = {mi:"米字格 Mi",tian:"田字格 Tian",jiugong:"九宮格 9-grid",hui:"回宮格 Hui",vlines:"竖线格 Vertical",hlines:"横线格 Horizontal",zhishi:"直式信紙 紅線"};
+  const GRID_NAMES = {mi:"米字格 Mi",tian:"田字格 Tian",jiugong:"九宮格 9-grid",hui:"回宮格 Hui",vlines:"竖线格 Vertical",hlines:"横线格 Horizontal",zhishi:"直式信紙 紅線",fan:"扇面 Fan"};
 
   const $ = id => document.getElementById(id);
   const state = {
@@ -380,18 +381,78 @@
     return s.join("");
   }
 
+  // ---- 扇面 Fan: polar grid bounded by two concentric arcs + two radial edges ----
+  function fanSVG(L, pxPerMM){
+    const cellPx = L.cellmm * pxPerMM;
+    const w = L.cols * cellPx;            // leaf width (px)
+    const hEff = w * 0.5;                 // radial thickness (leaf height ≈ half width)
+    const cx = (L.ox + L.cols*L.cellmm/2) * pxPerMM;     // leaf center x
+    const blockCy = (L.oy + L.rows*L.cellmm/2) * pxPerMM; // block center y
+    const oyFan = blockCy - hEff/2;       // leaf top (outer arc's top-center)
+    // half-angle so the outer arc chord = w, with Ro always > radial thickness (Ri > 0)
+    const alpha = Math.asin(Math.min(0.85, 0.9 * (w/2) / Math.max(hEff, w/2)));
+    const Ro = (w/2) / Math.sin(alpha);   // outer radius
+    const Oy = oyFan + Ro;                // center of arcs (below the leaf); outer top at oyFan
+    const Ri = Ro - hEff;                 // inner radius (> 0 because Ro > hEff)
+    const G = state.cGuide, gw = state.wGuide, bw = state.wBorder, B = state.cBorder;
+    const dash = state.dashed ? `stroke-dasharray="${(gwDash()).toFixed(1)} ${(gwDash()*0.8).toFixed(1)}"` : "";
+    const pt = (r,phi) => [ (cx + r*Math.sin(phi)).toFixed(2), (Oy - r*Math.cos(phi)).toFixed(2) ];
+    // sample an arc as a polyline so the bulge direction is fully controlled (no SVG sweep-flag ambiguity)
+    const arc = (r,a0,a1,seg=28) => {
+      let d = "";
+      for(let k=0;k<=seg;k++){ const a=a0+(a1-a0)*k/seg; const [x,y]=pt(r,a); d += (k===0?"M ":"L ")+x+" "+y+" "; }
+      return d.trim();
+    };
+    const radial = (r0,r1,phi) => `M ${pt(r0,phi).join(" ")} L ${pt(r1,phi).join(" ")}`;
+    const rings = L.rows, secs = L.cols;
+    const dr = (Ro - Ri) / rings, dphi = (2*alpha) / secs;
+    let out = "";
+    // concentric ring lines (the "horizontal" grid) — toggle with Draw cell borders
+    for(let i=0;i<=rings;i++){
+      if(state.showBorder || i===0 || i===rings){
+        const r = Ri + i*dr;
+        out += `<path d="${arc(r,-alpha,alpha)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
+      }
+    }
+    // radial sector lines (the "vertical" grid)
+    for(let j=0;j<=secs;j++){
+      const phi = -alpha + j*dphi;
+      out += `<path d="${radial(Ri,Ro,phi)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
+    }
+    // cell guides: radial+angular cross + both diagonals inside every cell
+    for(let i=0;i<rings;i++){
+      for(let j=0;j<secs;j++){
+        const r0=Ri+i*dr, r1=Ri+(i+1)*dr, a0=-alpha+j*dphi, a1=-alpha+(j+1)*dphi, rm=(r0+r1)/2, am=(a0+a1)/2;
+        out += `<path d="${radial(r0,r1,am)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
+        out += `<path d="${arc(rm,a0,a1)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
+        out += `<path d="M ${pt(r0,a0).join(" ")} L ${pt(r1,a1).join(" ")}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
+        out += `<path d="M ${pt(r1,a0).join(" ")} L ${pt(r0,a1).join(" ")}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
+      }
+    }
+    // bold fan outline (border color)
+    out += `<path d="${arc(Ro,-alpha,alpha)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`;
+    out += `<path d="${arc(Ri,-alpha,alpha)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`;
+    out += `<path d="${radial(Ri,Ro,-alpha)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`;
+    out += `<path d="${radial(Ri,Ro, alpha)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`;
+    return out;
+  }
+
   function buildSVG(){
     const L=computeLayout();
     const pxPerMM=state.dpi;
     const W=L.pw*pxPerMM, H=L.ph*pxPerMM;
-    const cellPx=L.cellmm*pxPerMM;
-    const oxPx=L.ox*pxPerMM, oyPx=L.oy*pxPerMM;
-    const dash=state.dashed?`stroke-dasharray="${(gwDash()).toFixed(1)} ${(gwDash()*0.8).toFixed(1)}"`:"";
     let body=`<rect x="0" y="0" width="${W.toFixed(1)}" height="${H.toFixed(1)}" fill="white"/>`;
-    for(let r=0;r<L.rows;r++){
-      for(let c=0;c<L.cols;c++){
-        const px=oxPx+c*cellPx, py=oyPx+r*cellPx;
-        body+=cellSVG(L,c,r,px,py,cellPx,dash);
+    if(state.type==="fan"){
+      body+=fanSVG(L,pxPerMM);
+    } else {
+      const cellPx=L.cellmm*pxPerMM;
+      const oxPx=L.ox*pxPerMM, oyPx=L.oy*pxPerMM;
+      const dash=state.dashed?`stroke-dasharray="${(gwDash()).toFixed(1)} ${(gwDash()*0.8).toFixed(1)}"`:"";
+      for(let r=0;r<L.rows;r++){
+        for(let c=0;c<L.cols;c++){
+          const px=oxPx+c*cellPx, py=oyPx+r*cellPx;
+          body+=cellSVG(L,c,r,px,py,cellPx,dash);
+        }
       }
     }
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W.toFixed(1)}" height="${H.toFixed(1)}" viewBox="0 0 ${W.toFixed(1)} ${H.toFixed(1)}">${body}</svg>`;

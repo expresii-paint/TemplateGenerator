@@ -1,15 +1,15 @@
-# Template Generator 字格生成器
+# Template Generator 版式生成器
 
-A single-file web app for generating Chinese calligraphy practice-grid
-templates (字格 / 信紙). It runs locally and can also send the generated
-sheet straight into [Expresii Paint](https://www.expresii.com/) as a painting
-underlay.
+A single-file web app for generating Chinese calligraphy practice sheets and
+other layout templates (字格 / 信紙 / 扇面). It runs locally and can also send
+the generated sheet straight into [Expresii Paint](https://www.expresii.com/)
+as a painting underlay.
 
 ![Template Generator screenshot](screenshot.png)
 
 ## Features
 
-- **Grid types**
+- **Template types**
   - 米字格 Mi — rice-grid (cross + diagonals)
   - 田字格 Tian — field-grid (cross)
   - 九宮格 9-grid — 3×3 sub-grid
@@ -18,6 +18,8 @@ underlay.
   - 横线格 Horizontal — horizontal lines only
   - 直式信紙 紅線 — vertical Chinese letter paper: red outer frame + red
     column lines (8 full-width columns)
+  - 扇面 Fan — folding-fan leaf: two concentric convex arcs + two radial ribs,
+    filled with a fanned polar grid and 米字格 cell guides
 - **Paper**: presets (A4/A3/A5/Letter/Legal/Square), custom aspect, portrait /
   landscape, adjustable resolution (px/mm, ~300 DPI). The exported PNG stays
   pixel-matched to the Expresii canvas at any DPI.
