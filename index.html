@@ -153,7 +153,7 @@
         <button data-t="hui">回宮格 Hui</button>
         <button data-t="vlines">竖线格 Vertical</button>
         <button data-t="hlines">横线格 Horizontal</button>
-        <button data-t="zhishi">直式信紙 紅線</button>
+        <button data-t="zhishi">直式信紙</button>
         <button data-t="fan">扇面 Fan</button>
       </div>
     </div>
@@ -276,7 +276,7 @@
     A4:[210,297], A3:[297,420], A5:[148,210],
     Letter:[215.9,279.4], Legal:[215.9,355.6], Square:[210,210]
   };
-  const GRID_NAMES = {mi:"米字格 Mi",tian:"田字格 Tian",jiugong:"九宮格 9-grid",hui:"回宮格 Hui",vlines:"竖线格 Vertical",hlines:"横线格 Horizontal",zhishi:"直式信紙 紅線",fan:"扇面 Fan"};
+  const GRID_NAMES = {mi:"米字格 Mi",tian:"田字格 Tian",jiugong:"九宮格 9-grid",hui:"回宮格 Hui",vlines:"竖线格 Vertical",hlines:"横线格 Horizontal",zhishi:"直式信紙",fan:"扇面 Fan"};
 
   // ---- i18n (English / 中文 / 日本語 / 한국어) ----
   const I18N = {
@@ -305,7 +305,7 @@
       expHint:"Sends the current template as a PNG underlay to the Expresii Command Server. Run via serve.py (it proxies /expresii → the server URL above).",
       expPaper:"Paper", expLayers:"Layers", expActive:"Active",
       grid_mi:"Rice/米 character grid", grid_tian:"Field/田 character grid", grid_jiugong:"Nine-grid (九宮格)", grid_hui:"Hui/回 enclosure grid",
-      grid_vlines:"Vertical-line grid (竖线格)", grid_hlines:"Horizontal-line grid (横线格)", grid_zhishi:"Vertical letter red lines (直式信紙)", grid_fan:"Fan (扇面)",
+      grid_vlines:"Vertical-line grid (竖线格)", grid_hlines:"Horizontal-line grid (横线格)", grid_zhishi:"Vertical letter (直式信紙)", grid_fan:"Fan (扇面)",
       fanSpecOpt:"{n} sun · {dim}cm · {fang} ribs", fanCustom:"Custom (block fit)",
       autoPaperOn:"Auto paper size: ON — synced {pw}×{ph} px",
       disconnected:"disconnected", sending:"Sending PNG to Expresii…", sentDone:"Sent ✓ (destination {dest}).",
@@ -656,18 +656,17 @@
       s.push(`<line x1="${x1.toFixed(2)}" y1="${cy.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${cy.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
     }
     if(state.type==="zhishi"){
-      // 直式信紙 紅線: outer red frame + vertical red dividers for full-width columns
-      const RED="#c8302b";
+      // 直式信紙: outer paper frame (Border color/width) + vertical column dividers (Guide color/width/dash)
       if(c===0 && r===0){
-        // outer frame at paper bounds
+        // outer frame at paper bounds — uses the Border color spec
         const fx=px - c*cell, fy=py - r*cell, fw=L.cols*cell, fh=L.rows*cell;
-        s.push(`<rect x="${fx.toFixed(2)}" y="${fy.toFixed(2)}" width="${fw.toFixed(2)}" height="${fh.toFixed(2)}" fill="none" stroke="${RED}" stroke-width="4"/>`);
+        s.push(`<rect x="${fx.toFixed(2)}" y="${fy.toFixed(2)}" width="${fw.toFixed(2)}" height="${fh.toFixed(2)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`);
       }
       // column dividers at right edge of each column (except last, which is outer frame).
       // Span the actual block (py .. py+rows*cell), NOT the paper, so they don't stick out the top.
       if(c < L.cols - 1 && r===0){
         const colDivX = px + cell;
-        s.push(`<line x1="${colDivX.toFixed(2)}" y1="${py.toFixed(2)}" x2="${colDivX.toFixed(2)}" y2="${(py+L.rows*cell).toFixed(2)}" stroke="${RED}" stroke-width="4" ${dash}/>`);
+        s.push(`<line x1="${colDivX.toFixed(2)}" y1="${py.toFixed(2)}" x2="${colDivX.toFixed(2)}" y2="${(py+L.rows*cell).toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
       }
     }
     if(state.type==="jiugong"){
