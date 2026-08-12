@@ -430,10 +430,11 @@
         const fx=px - c*cell, fy=py - r*cell, fw=L.cols*cell, fh=L.rows*cell;
         s.push(`<rect x="${fx.toFixed(2)}" y="${fy.toFixed(2)}" width="${fw.toFixed(2)}" height="${fh.toFixed(2)}" fill="none" stroke="${RED}" stroke-width="4"/>`);
       }
-      // column dividers at right edge of each column (except last, which is outer frame)
-      if(c < L.cols - 1){
+      // column dividers at right edge of each column (except last, which is outer frame).
+      // Span the actual block (py .. py+rows*cell), NOT the paper, so they don't stick out the top.
+      if(c < L.cols - 1 && r===0){
         const colDivX = px + cell;
-        s.push(`<line x1="${colDivX.toFixed(2)}" y1="0" x2="${colDivX.toFixed(2)}" y2="${(L.rows*cell).toFixed(2)}" stroke="${RED}" stroke-width="4" ${dash}/>`);
+        s.push(`<line x1="${colDivX.toFixed(2)}" y1="${py.toFixed(2)}" x2="${colDivX.toFixed(2)}" y2="${(py+L.rows*cell).toFixed(2)}" stroke="${RED}" stroke-width="4" ${dash}/>`);
       }
     }
     if(state.type==="jiugong"){
