@@ -420,11 +420,16 @@
       // real fan spec: use its SECTOR SHAPE (half-angle + radial-depth ratio) and fit the leaf to the paper
       alpha = Math.asin(Math.min(0.999, (sp.chord/2)/sp.rib));   // real half-angle from opened width & rib
       const ratio = sp.thick / sp.rib;                           // radial depth / outer radius (real proportions)
-      Ro = (W/2) / Math.sin(alpha);                              // fit the outer chord to the paper width
+      const margin = Math.min(W, H) * 0.06;                     // a little breathing room around the leaf
+      // outer radius from width (side margins) and from height (top/bottom margins); take the tighter fit
+      const RoW = (W/2 - margin) / Math.sin(alpha);
+      const leafHfactor = 1 - (1 - ratio) * Math.cos(alpha);    // leaf bbox height = Ro * leafHfactor
+      const RoH = (H - 2*margin) / leafHfactor;
+      Ro = Math.min(RoW, RoH);
       Ri = Ro * (1 - ratio);                                     // keep the real leaf depth ratio
-      const thick = Ro - Ri;
+      const bboxH = Ro * leafHfactor;                            // true leaf height (outer top → inner-arc bottom)
       cx = W/2;
-      oyFan = (H - thick)/2;                       // center leaf vertically in the paper
+      oyFan = (H - bboxH)/2;                         // vertically center the leaf bbox in the paper
     } else {
       // 自定 Custom: block-fit annular sector (width = block width, height ≈ half width)
       const cellPx = L.cellmm * pxPerMM;
