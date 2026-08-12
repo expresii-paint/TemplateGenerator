@@ -165,8 +165,8 @@
         <button data-m="cell" data-trans="cellSize">Cell size</button>
       </div>
       <div class="row" id="colsRows" data-show="grid" style="margin-top:8px">
-        <div><label data-trans="columns">Columns</label><input id="cols" type="number" value="9" min="1" max="60"></div>
-        <div><label data-trans="rows">Rows</label><input id="rows" type="number" value="13" min="1" max="80"></div>
+        <div id="colsWrap"><label data-trans="columns">Columns</label><input id="cols" type="number" value="9" min="1" max="60"></div>
+        <div id="rowsWrap"><label data-trans="rows">Rows</label><input id="rows" type="number" value="13" min="1" max="80"></div>
       </div>
       <div class="row custom" id="cellSize" data-show="grid" style="margin-top:8px">
         <div><label data-trans="cellMm">Cell (mm)</label><input id="cellmm" type="number" value="20" min="1" step="0.5"></div>
@@ -555,6 +555,12 @@
       $("colsRows").style.display = state.layout==="cols" ? "flex" : "none";
       $("cellSize").style.display = state.layout==="cell" ? "flex" : "none";
     }
+    // 竖线格 (vertical lines) has no rows; 横线格 (horizontal lines) has no columns.
+    const hideRows = state.type==="vlines";
+    const hideCols = state.type==="hlines";
+    const cw=$("colsWrap"), rw=$("rowsWrap");
+    if(cw) cw.style.display = hideCols ? "none" : "";
+    if(rw) rw.style.display = hideRows ? "none" : "";
     // paper: hide the user-spec controls (preset / orientation / resolution) in Expresii mode
     $("paperUserOpts").style.display = state.paperSource==="user" ? "" : "none";
     $("expPaperNote").style.display   = state.paperSource==="exp" ? "" : "none";
