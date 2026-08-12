@@ -528,9 +528,17 @@
 
   $("gridType").addEventListener("click", e=>{
     const b=e.target.closest("button"); if(!b)return;
+    const prevType = state.type;
     state.type=b.dataset.t;
     [...e.currentTarget.children].forEach(x=>x.classList.toggle("active",x===b));
     if(state.type==="fan"){ $("fanSpec").value = state.fanSpec; applyFanSpec(); }
+    // Vertical Letter (直式信紙) defaults: red frame (3px) + guide width 2.
+    // Applied only when first switching INTO it, so manual tweaks aren't clobbered.
+    if(state.type==="zhishi" && prevType!=="zhishi"){
+      $("cBorder").value="#e23b3b"; state.cBorder="#e23b3b";
+      $("wBorder").value=3; state.wBorder=3;
+      $("wGuide").value=2; state.wGuide=2;
+    }
     applyVisibility();
     render();
   });
