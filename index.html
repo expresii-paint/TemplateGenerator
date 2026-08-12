@@ -33,6 +33,7 @@
     border-radius:7px;padding:8px 4px;font-size:12px;cursor:pointer;transition:.12s}
   .seg button:hover{border-color:var(--accent2)}
   .seg button.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  .seg button:disabled{opacity:.4;cursor:not-allowed;border-color:var(--line)}
   .chk{display:flex;align-items:center;gap:8px;font-size:13px;margin:8px 0}
   .chk input{width:16px;height:16px}
   .btns{display:flex;gap:8px;margin-top:4px}
@@ -87,28 +88,36 @@
 
     <div class="grp">
       <h2>Paper</h2>
-      <label>Preset</label>
-      <select id="paperPreset">
-        <option value="A4">A4 (210 × 297 mm)</option>
-        <option value="A3">A3 (297 × 420 mm)</option>
-        <option value="A5">A5 (148 × 210 mm)</option>
-        <option value="Letter">Letter (8.5 × 11 in)</option>
-        <option value="Legal">Legal (8.5 × 14 in)</option>
-        <option value="Square">Square (1 : 1)</option>
-        <option value="custom">Custom aspect ratio…</option>
-      </select>
-      <div class="row custom" id="customAr" style="margin-top:8px">
-        <div><label>Width</label><input id="arW" type="number" value="1.4" step="0.1" min="0.1"></div>
-        <div><label>Height</label><input id="arH" type="number" value="1.0" step="0.1" min="0.1"></div>
+      <label>Paper size source</label>
+      <div class="seg" id="paperSource">
+        <button data-source="exp" disabled title="Connect to Expresii to enable">Use Expresii paper</button>
+        <button data-source="user" class="active">User specification</button>
       </div>
-      <label>Orientation</label>
-      <div class="seg" id="orient">
-        <button data-o="portrait" class="active">Portrait</button>
-        <button data-o="landscape">Landscape</button>
+      <div id="paperUserOpts">
+        <label style="margin-top:8px">Preset</label>
+        <select id="paperPreset">
+          <option value="A4">A4 (210 × 297 mm)</option>
+          <option value="A3">A3 (297 × 420 mm)</option>
+          <option value="A5">A5 (148 × 210 mm)</option>
+          <option value="Letter">Letter (8.5 × 11 in)</option>
+          <option value="Legal">Legal (8.5 × 14 in)</option>
+          <option value="Square">Square (1 : 1)</option>
+          <option value="custom">Custom aspect ratio…</option>
+        </select>
+        <div class="row custom" id="customAr" style="margin-top:8px">
+          <div><label>Width</label><input id="arW" type="number" value="1.4" step="0.1" min="0.1"></div>
+          <div><label>Height</label><input id="arH" type="number" value="1.0" step="0.1" min="0.1"></div>
+        </div>
+        <label style="margin-top:8px">Orientation</label>
+        <div class="seg" id="orient">
+          <button data-o="portrait" class="active">Portrait</button>
+          <button data-o="landscape">Landscape</button>
+        </div>
+        <label style="margin-top:8px">Resolution (px / mm)</label>
+        <input id="dpi" type="number" value="11.81" step="0.1" min="1">
+        <div class="hint">11.81 px/mm ≈ 300 DPI. Sets the exported PNG pixel size.</div>
       </div>
-      <label>Resolution (px / mm)</label>
-      <input id="dpi" type="number" value="11.81" step="0.1" min="1">
-      <div class="hint">11.81 px/mm ≈ 300 DPI. The exported PNG stays pixel-matched to the Expresii canvas at any DPI.</div>
+      <div class="hint" id="expPaperNote" style="display:none;margin-top:8px">Using Expresii's canvas size — the template pixels match the canvas exactly; export at any DPI.</div>
     </div>
 
     <div class="grp">
@@ -247,6 +256,7 @@
 
   const $ = id => document.getElementById(id);
   const state = {
+    paperSource:"user", expPaper:null,            // 'user' = presets/custom; 'exp' = Expresii canvas px
     paper:"A4", ar:[1,1], orient:"portrait", dpi:11.81,
     type:"mi", layout:"cols", cols:9, rows:13, cellmm:20, marginmm:10, paperMarginmm:0,
     cBorder:"#222222", cGuide:"#e23b3b", wBorder:2, wGuide:1,
@@ -279,6 +289,15 @@
     render();
   });
   $("dpi").addEventListener("input", e=>{ state.dpi=Math.max(0.5,+e.target.value||11.81); render(); });
+  // Paper size source: "exp" (Expresii canvas) or "user" (preset/custom). In "exp" mode the
+  // orientation + resolution controls are hidden (their values come from Expresii at export time).
+  $("paperSource").addEventListener("click", e=>{
+    const b=e.target.closest("button"); if(!b || b.disabled)return;
+    state.paperSource=b.dataset.source;
+    [...e.currentTarget.children].forEach(x=>x.classList.toggle("active",x===b));
+    applyVisibility();
+    render();
+  });
 
   $("gridType").addEventListener("click", e=>{
     const b=e.target.closest("button"); if(!b)return;
@@ -309,6 +328,9 @@
       $("colsRows").style.display = state.layout==="cols" ? "flex" : "none";
       $("cellSize").style.display = state.layout==="cell" ? "flex" : "none";
     }
+    // paper: hide the user-spec controls (preset / orientation / resolution) in Expresii mode
+    $("paperUserOpts").style.display = state.paperSource==="user" ? "" : "none";
+    $("expPaperNote").style.display   = state.paperSource==="exp" ? "" : "none";
   }
   $("fanSpec").addEventListener("change", e=>{ state.fanSpec=e.target.value; applyFanSpec(); render(); });
 
@@ -330,6 +352,9 @@
 
   // ---- geometry helpers (mm) ----
   function paperMM(){
+    // In Expresii mode the "mm" values ARE the canvas pixel dimensions — buildSVG then uses
+    // pxPerMM=1 so the template's pixel size matches the Expresii canvas exactly.
+    if(state.paperSource==="exp" && state.expPaper) return [state.expPaper.w, state.expPaper.h];
     let [w,h]=state.ar;
     if(state.paper!=="custom" && PAPERS[state.paper]) [w,h]=PAPERS[state.paper];
     if(state.orient==="landscape") [w,h]=[h,w];
@@ -516,8 +541,10 @@
 
   function buildSVG(){
     const L=computeLayout();
-    const pxPerMM=state.dpi;
-    const W=L.pw*pxPerMM, H=L.ph*pxPerMM;
+    const expMode = state.paperSource==="exp" && !!state.expPaper;
+    const pxPerMM = expMode ? 1 : state.dpi;            // exp mode: pxPerMM=1 => W/H = canvas px
+    const W = expMode ? state.expPaper.w : L.pw*pxPerMM;
+    const H = expMode ? state.expPaper.h : L.ph*pxPerMM;
     let body=`<rect x="0" y="0" width="${W.toFixed(1)}" height="${H.toFixed(1)}" fill="white"/>`;
     if(state.type==="fan"){
       body+=fanSVG(L,pxPerMM,W,H);
@@ -636,22 +663,15 @@
   function stopPoll(){
     if(expTimer){ clearInterval(expTimer); expTimer=null; }
   }
-  // Sync the GUI paper spec to Expresii's canvas. Expresii reports paper in PIXELS;
-  // convert to mm at the current DPI so the generated template's pixel size equals
-  // the Expresii canvas (mm = px/dpi  =>  mm*dpi = px). We always use a custom paper
-  // (not a preset) so the pixel size stays exactly matched for underlay alignment.
+  // Sync the GUI paper spec to Expresii's canvas. Expresii reports paper in PIXELS; we store those
+  // pixels directly (paperSource='exp') so the generated template's pixel size equals the canvas
+  // exactly — the final resolution is still chosen at export time, so dpi is not applied here.
   function applyExpresiiPaper(pwPx, phPx){
     if(!autoPaperSync) return;
     if(!pwPx || !phPx) return;
-    const dpi = state.dpi || 11.81;
-    const portrait = phPx >= pwPx;
-    const ar = portrait ? [pwPx/dpi, phPx/dpi] : [phPx/dpi, pwPx/dpi];
-    const sig = `custom|${ar[0].toFixed(1)}x${ar[1].toFixed(1)}|${portrait?'portrait':'landscape'}`;
-    if(sig === lastPaperSig) return;     // unchanged -> avoid needless re-render
-    lastPaperSig = sig;
-    state.paper='custom';
-    state.ar=ar;
-    state.orient=portrait?'portrait':'landscape';
+    state.expPaper = { w:pwPx, h:phPx };
+    state.paperSource = "exp";
+    [...$("paperSource").children].forEach(b=>b.classList.toggle("active", b.dataset.source==="exp"));
     // Default grid to 8×8 for the common 2048×2048 canvas (only on a real paper change,
     // so it won't clobber manual cols/rows edits on later /state polls).
     if(Math.round(pwPx)===2048 && Math.round(phPx)===2048){
@@ -661,11 +681,7 @@
       [...$("layoutMode").children].forEach(b=>b.classList.toggle("active", b.dataset.m==='cols'));
       $("cols").value=8; $("rows").value=8;
     }
-    const ps=$("paperPreset"); ps.value='custom';
-    $("customAr").classList.add("show");
-    $("arW").value=ar[0].toFixed(1);
-    $("arH").value=ar[1].toFixed(1);
-    [...$("orient").children].forEach(b=>b.classList.toggle("active", b.dataset.o===state.orient));
+    applyVisibility();
     render();
     $("expSyncNote").textContent=`Auto paper size: ON — synced ${Math.round(pwPx)}×${Math.round(phPx)} px`;
   }
@@ -681,6 +697,13 @@
     $("expSyncNote").textContent="Auto paper size: OFF";
     $("expApply").style.display="";
     $("expDisconnect").style.display="none";
+    // revert paper source to user specification and re-enable the Expresii option
+    state.paperSource="user";
+    [...$("paperSource").children].forEach(b=>b.classList.toggle("active", b.dataset.source==="user"));
+    const srcExp=$("paperSource").querySelector('[data-source="exp"]');
+    if(srcExp){ srcExp.disabled=true; srcExp.title="Connect to Expresii to enable"; }
+    applyVisibility();
+    render();
   }
 
   async function loadExpInfo(){
@@ -698,6 +721,9 @@
       $("expApply").style.display="none";
       $("expDisconnect").style.display="";
       $("expSyncNote").textContent="Auto paper size: ON";
+      // enable the "Use Expresii paper" option and mark it active (used once paper arrives below)
+      const srcExp=$("paperSource").querySelector('[data-source="exp"]');
+      if(srcExp){ srcExp.disabled=false; srcExp.title=""; }
       // GET /state -> server state (paper, layers, wetness, brush, scratchiness) + target list
       try{
         const sr=await fetch(expBase()+"/state");
