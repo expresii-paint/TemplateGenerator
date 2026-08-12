@@ -12,7 +12,7 @@
     --ok:#34d399;
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans","Yu Gothic","Microsoft YaHei","Malgun Gothic","Noto Sans JP","Noto Sans KR",sans-serif;
        background:var(--bg);color:var(--text);display:flex;min-height:100vh}
   .sidebar{width:340px;min-width:340px;background:var(--panel);border-right:1px solid var(--line);
            padding:18px 18px 32px;overflow-y:auto;height:100vh}
@@ -82,19 +82,29 @@
 <body>
   <aside class="sidebar">
     <header>
-      <h1>版式生成器</h1>
-      <span class="sub">Template Generator</span>
+      <h1 data-trans="app_name">Template Generator</h1>
+      <span class="sub" data-trans="app_sub">Calligraphy template generator</span>
     </header>
 
     <div class="grp">
-      <h2>Paper</h2>
-      <label>Paper size source</label>
+      <label data-trans="language">Language</label>
+      <div class="seg" id="langSel">
+        <button data-lang="en">English</button>
+        <button data-lang="zh">中文</button>
+        <button data-lang="ja">日本語</button>
+        <button data-lang="ko">한국어</button>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h2 data-trans="paper">Paper</h2>
+      <label data-trans="paperSizeSource">Paper size source</label>
       <div class="seg" id="paperSource">
-        <button data-source="exp" disabled title="Connect to Expresii to enable">Use Expresii paper</button>
-        <button data-source="user" class="active">User specification</button>
+        <button data-source="exp" disabled data-trans-title="useExpTitle">Use Expresii paper</button>
+        <button data-source="user" class="active" data-trans="userSpec">User specification</button>
       </div>
       <div id="paperUserOpts">
-        <label style="margin-top:8px">Preset</label>
+        <label style="margin-top:8px" data-trans="preset">Preset</label>
         <select id="paperPreset">
           <option value="A4">A4 (210 × 297 mm)</option>
           <option value="A3">A3 (297 × 420 mm)</option>
@@ -102,26 +112,26 @@
           <option value="Letter">Letter (8.5 × 11 in)</option>
           <option value="Legal">Legal (8.5 × 14 in)</option>
           <option value="Square">Square (1 : 1)</option>
-          <option value="custom">Custom aspect ratio…</option>
+          <option value="custom" data-trans="customAspect">Custom aspect ratio…</option>
         </select>
         <div class="row custom" id="customAr" style="margin-top:8px">
-          <div><label>Width</label><input id="arW" type="number" value="1.4" step="0.1" min="0.1"></div>
-          <div><label>Height</label><input id="arH" type="number" value="1.0" step="0.1" min="0.1"></div>
+          <div><label data-trans="width">Width</label><input id="arW" type="number" value="1.4" step="0.1" min="0.1"></div>
+          <div><label data-trans="height">Height</label><input id="arH" type="number" value="1.0" step="0.1" min="0.1"></div>
         </div>
-        <label style="margin-top:8px">Orientation</label>
+        <label style="margin-top:8px" data-trans="orientation">Orientation</label>
         <div class="seg" id="orient">
-          <button data-o="portrait" class="active">Portrait</button>
-          <button data-o="landscape">Landscape</button>
+          <button data-o="portrait" class="active" data-trans="portrait">Portrait</button>
+          <button data-o="landscape" data-trans="landscape">Landscape</button>
         </div>
-        <label style="margin-top:8px">Resolution (px / mm)</label>
+        <label style="margin-top:8px" data-trans="resolution">Resolution (px / mm)</label>
         <input id="dpi" type="number" value="11.81" step="0.1" min="1">
-        <div class="hint">11.81 px/mm ≈ 300 DPI. Sets the exported PNG pixel size.</div>
+        <div class="hint" data-trans="resHint">11.81 px/mm ≈ 300 DPI. Sets the exported PNG pixel size.</div>
       </div>
-      <div class="hint" id="expPaperNote" style="display:none;margin-top:8px">Using Expresii's canvas size — the template pixels match the canvas exactly; export at any DPI.</div>
+      <div class="hint" id="expPaperNote" style="display:none;margin-top:8px" data-trans="expPaperNote">Using Expresii's canvas size — the template pixels match the canvas exactly; export at any DPI.</div>
     </div>
 
     <div class="grp">
-      <h2>Grid type</h2>
+      <h2 data-trans="gridType">Grid type</h2>
       <div class="seg" id="gridType">
         <button data-t="mi" class="active">米字格 Mi</button>
         <button data-t="tian">田字格 Tian</button>
@@ -135,24 +145,24 @@
     </div>
 
     <div class="grp">
-      <h2>Layout</h2>
+      <h2 data-trans="layout">Layout</h2>
       <div class="seg" id="layoutMode" data-show="grid">
-        <button data-m="cols" class="active">Cols &amp; Rows</button>
-        <button data-m="cell">Cell size</button>
+        <button data-m="cols" class="active" data-trans="colsAndRows">Cols &amp; Rows</button>
+        <button data-m="cell" data-trans="cellSize">Cell size</button>
       </div>
       <div class="row" id="colsRows" data-show="grid" style="margin-top:8px">
-        <div><label>Columns</label><input id="cols" type="number" value="9" min="1" max="60"></div>
-        <div><label>Rows</label><input id="rows" type="number" value="13" min="1" max="80"></div>
+        <div><label data-trans="columns">Columns</label><input id="cols" type="number" value="9" min="1" max="60"></div>
+        <div><label data-trans="rows">Rows</label><input id="rows" type="number" value="13" min="1" max="80"></div>
       </div>
       <div class="row custom" id="cellSize" data-show="grid" style="margin-top:8px">
-        <div><label>Cell (mm)</label><input id="cellmm" type="number" value="20" min="1" step="0.5"></div>
-        <div><label>Margin (mm)</label><input id="marginmm" type="number" value="10" min="0" step="1"></div>
+        <div><label data-trans="cellMm">Cell (mm)</label><input id="cellmm" type="number" value="20" min="1" step="0.5"></div>
+        <div><label data-trans="marginMm">Margin (mm)</label><input id="marginmm" type="number" value="10" min="0" step="1"></div>
       </div>
       <div class="row" id="paperMarginRow" data-show="grid" style="margin-top:8px">
-        <div><label>Paper margin (mm)</label><input id="paperMarginmm" type="number" value="0" min="0" step="0.5"></div>
+        <div><label data-trans="paperMarginMm">Paper margin (mm)</label><input id="paperMarginmm" type="number" value="0" min="0" step="0.5"></div>
       </div>
       <div class="row" id="fanSpecRow" data-show="fan" style="margin-top:8px">
-        <div style="flex:1"><label>扇面规格 Fan spec</label>
+        <div style="flex:1"><label data-trans="fanSpec">Fan spec (扇面規格)</label>
           <select id="fanSpec">
             <option value="8">8寸 · 47×15.7cm · 18方</option>
             <option value="9">9寸 · 54×17.5cm · 20方</option>
@@ -161,75 +171,75 @@
           </select>
         </div>
       </div>
-      <div class="hint" id="pmHint" data-show="grid">Paper margin = gap between paper edge and grid block. 0 = auto (½ cell).</div>
+      <div class="hint" id="pmHint" data-show="grid" data-trans="pmHint">Paper margin = gap between paper edge and grid block. 0 = auto (½ cell).</div>
       <div class="hint" id="layoutHint"></div>
     </div>
 
     <div class="grp">
-      <h2>Style</h2>
+      <h2 data-trans="style">Style</h2>
       <div class="row">
-        <div><label>Border</label><input id="cBorder" type="color" value="#222222"></div>
+        <div><label data-trans="border">Border</label><input id="cBorder" type="color" value="#222222"></div>
       </div>
-      <label>Border width (px)</label>
+      <label data-trans="borderWidth">Border width (px)</label>
       <input id="wBorder" type="number" value="2" min="0.5" step="0.5">
       <div class="row" data-show="grid">
-        <div><label>Guides</label><input id="cGuide" type="color" value="#e23b3b"></div>
+        <div><label data-trans="guides">Guides</label><input id="cGuide" type="color" value="#e23b3b"></div>
       </div>
-      <label data-show="grid">Guide width (px)</label>
+      <label data-show="grid" data-trans="guideWidth">Guide width (px)</label>
       <input id="wGuide" data-show="grid" type="number" value="1" min="0.2" step="0.2">
-      <div class="chk"><input type="checkbox" id="dashed" checked><label for="dashed" style="margin:0">Dashed guides</label></div>
-      <div class="chk" data-show="grid"><input type="checkbox" id="showBorder" checked><label for="showBorder" style="margin:0">Draw cell borders</label></div>
+      <div class="chk"><input type="checkbox" id="dashed" checked><label for="dashed" style="margin:0" data-trans="dashedGuides">Dashed guides</label></div>
+      <div class="chk" data-show="grid"><input type="checkbox" id="showBorder" checked><label for="showBorder" style="margin:0" data-trans="drawCellBorders">Draw cell borders</label></div>
     </div>
 
     <div class="grp">
-      <h2>Export</h2>
+      <h2 data-trans="export">Export</h2>
       <div class="btns">
-        <button class="btn green" id="dlSvg">Download SVG</button>
-        <button class="btn ghost" id="dlPng">Download PNG</button>
+        <button class="btn green" id="dlSvg" data-trans="downloadSvg">Download SVG</button>
+        <button class="btn ghost" id="dlPng" data-trans="downloadPng">Download PNG</button>
       </div>
       <div class="btns" style="margin-top:8px">
-        <button class="btn ghost" id="print">Print / PDF</button>
-        <button class="btn ghost" id="reset">Reset</button>
+        <button class="btn ghost" id="print" data-trans="printPdf">Print / PDF</button>
+        <button class="btn ghost" id="reset" data-trans="reset">Reset</button>
       </div>
-      <footer>
+      <footer data-trans="exportFooter">
         Vector (SVG) scales to any printer. PNG is rasterized from the on-screen canvas.
         Print to PDF from your browser for a paper-perfect sheet.
       </footer>
     </div>
 
     <div class="grp">
-      <h2>Expresii</h2>
+      <h2 data-trans="expresii">Expresii</h2>
       <div class="exp-url-wrap">
-        <label for="expUrl">Server URL</label>
+        <label for="expUrl" data-trans="serverUrl">Server URL</label>
         <input id="expUrl" type="text" value="http://localhost:9000" spellcheck="false"
-               placeholder="http://host:9000">
+               placeholder="http://host:9000" data-trans="serverUrl_ph">
         <div class="row2">
-          <button class="apply" id="expApply">Connect</button>
-          <button class="apply dis" id="expDisconnect" style="display:none">Disconnect</button>
+          <button class="apply" id="expApply" data-trans="connect">Connect</button>
+          <button class="apply dis" id="expDisconnect" style="display:none" data-trans="disconnect">Disconnect</button>
           <span class="meta" id="expUrlNote" style="font-size:11px"></span>
         </div>
-        <div class="hint" id="expSyncNote">Auto paper size: OFF</div>
+        <div class="hint" id="expSyncNote" data-trans="autoPaperOff">Auto paper size: OFF</div>
       </div>
       <div class="exp-status">
         <span class="dot" id="expDot"></span>
-        <span class="ver" id="expVer">checking…</span>
+        <span class="ver" id="expVer" data-trans="checking">checking…</span>
         <span class="meta" id="expMeta"></span>
       </div>
       <div class="exp-state" id="expState" style="display:none">
-        <div class="kv"><span>Paper</span><b id="stPaper">—</b></div>
-        <div class="kv"><span>Layers</span><b id="stLayers">—</b></div>
-        <div class="kv"><span>Active</span><b id="stActive">—</b></div>
+        <div class="kv"><span data-trans="expPaper">Paper</span><b id="stPaper">—</b></div>
+        <div class="kv"><span data-trans="expLayers">Layers</span><b id="stLayers">—</b></div>
+        <div class="kv"><span data-trans="expActive">Active</span><b id="stActive">—</b></div>
       </div>
       <div class="exp-row">
-        <label style="font-size:13px;color:var(--muted)">Target</label>
+        <label style="font-size:13px;color:var(--muted)" data-trans="target">Target</label>
         <select id="expTarget">
           <option value="-1">Underlay</option>
         </select>
       </div>
       <div class="btns" style="margin-top:8px">
-        <button class="btn exp" id="sendExp">Send to Expresii</button>
+        <button class="btn exp" id="sendExp" data-trans="sendToExpresii">Send to Expresii</button>
       </div>
-      <div class="hint" id="expHint">Sends the current template as a PNG underlay to the Expresii Command Server. Run via <code>serve.py</code> (it proxies /expresii → the server URL above).</div>
+      <div class="hint" id="expHint" data-trans="expHint">Sends the current template as a PNG underlay to the Expresii Command Server. Run via serve.py (it proxies /expresii → the server URL above).</div>
     </div>
   </aside>
 
@@ -253,6 +263,192 @@
     Letter:[215.9,279.4], Legal:[215.9,355.6], Square:[210,210]
   };
   const GRID_NAMES = {mi:"米字格 Mi",tian:"田字格 Tian",jiugong:"九宮格 9-grid",hui:"回宮格 Hui",vlines:"竖线格 Vertical",hlines:"横线格 Horizontal",zhishi:"直式信紙 紅線",fan:"扇面 Fan"};
+
+  // ---- i18n (English / 中文 / 日本語 / 한국어) ----
+  const I18N = {
+    en:{
+      app_name:"Template Generator", app_sub:"Calligraphy template generator", app_title:"Template Generator",
+      language:"Language",
+      paper:"Paper", paperSizeSource:"Paper size source", useExpresiiPaper:"Use Expresii paper", userSpec:"User specification",
+      useExpTitle:"Connect to Expresii to enable",
+      preset:"Preset", customAspect:"Custom aspect ratio…", width:"Width", height:"Height",
+      orientation:"Orientation", portrait:"Portrait", landscape:"Landscape",
+      resolution:"Resolution (px / mm)", resHint:"11.81 px/mm ≈ 300 DPI. Sets the exported PNG pixel size.",
+      expPaperNote:"Using Expresii's canvas size — the template pixels match the canvas exactly; export at any DPI.",
+      gridType:"Grid type", layout:"Layout", colsAndRows:"Cols & Rows", cellSize:"Cell size",
+      columns:"Columns", rows:"Rows", cellMm:"Cell (mm)", marginMm:"Margin (mm)", paperMarginMm:"Paper margin (mm)",
+      fanSpec:"Fan spec", pmHint:"Paper margin = gap between paper edge and grid block. 0 = auto (½ cell).",
+      style:"Style", border:"Border", borderWidth:"Border width (px)", guides:"Guides", guideWidth:"Guide width (px)",
+      dashedGuides:"Dashed guides", drawCellBorders:"Draw cell borders",
+      export:"Export", downloadSvg:"Download SVG", downloadPng:"Download PNG", printPdf:"Print / PDF", reset:"Reset",
+      exportFooter:"Vector (SVG) scales to any printer. PNG is rasterized from the on-screen canvas. Print to PDF from your browser for a paper-perfect sheet.",
+      expresii:"Expresii", serverUrl:"Server URL", serverUrl_ph:"http://host:9000", connect:"Connect", disconnect:"Disconnect",
+      autoPaperOff:"Auto paper size: OFF", checking:"checking…", connected:"connected", notConnected:"not connected",
+      unreachable:"unreachable", connecting:"connecting…", enterUrl:"enter a URL", invalidUrl:"invalid URL",
+      serverUnreachable:"Server unreachable at {url}",
+      target:"Target", underlay:"Underlay", settledPaint:"Settled Paint",
+      sendToExpresii:"Send to Expresii",
+      expHint:"Sends the current template as a PNG underlay to the Expresii Command Server. Run via serve.py (it proxies /expresii → the server URL above).",
+      expPaper:"Paper", expLayers:"Layers", expActive:"Active",
+      grid_mi:"Rice grid (米字格)", grid_tian:"Field grid (田字格)", grid_jiugong:"9-grid (九宮格)", grid_hui:"Hui grid (回宮格)",
+      grid_vlines:"Vertical lines (竖线格)", grid_hlines:"Horizontal lines (横线格)", grid_zhishi:"Vertical letter red lines (直式信紙 紅線)", grid_fan:"Fan (扇面)",
+      fanSpecOpt:"{n} sun · {dim}cm · {fang} ribs", fanCustom:"Custom (block fit)",
+      autoPaperOn:"Auto paper size: ON — synced {pw}×{ph} px",
+      disconnected:"disconnected", sending:"Sending PNG to Expresii…", sentDone:"Sent ✓ (destination {dest}).",
+      sendFail:"Send failed: {msg}. Is the server running on 9000?",
+      layoutHintCell:"Fits {cols}×{rows} cells of {mm}mm within {marg}mm cell-margins; paper margin {pm}mm.",
+      layoutHintCols:"Each cell ≈ {cell}mm · paper margin {pm}mm (square fit of {cols}×{rows}).",
+      fanHint:"{inch} sun fan · opened {cm}cm × depth {t}cm · {fang} sectors → {folds} folds ({sectors} fan sectors)"
+    },
+    zh:{
+      app_name:"版式生成器", app_sub:"字格模板工具", app_title:"版式生成器",
+      language:"语言",
+      paper:"纸张", paperSizeSource:"纸张尺寸来源", useExpresiiPaper:"使用 Expresii 画布尺寸", userSpec:"用户自定义",
+      useExpTitle:"连接到 Expresii 后启用",
+      preset:"预设", customAspect:"自定义长宽比…", width:"宽", height:"高",
+      orientation:"方向", portrait:"纵向", landscape:"横向",
+      resolution:"分辨率（像素 / 毫米）", resHint:"11.81 像素/毫米 ≈ 300 DPI，决定导出 PNG 的像素大小。",
+      expPaperNote:"使用 Expresii 画布尺寸 —— 模板像素与画布完全一致，导出时可任选 DPI。",
+      gridType:"字格类型", layout:"版面", colsAndRows:"行列数", cellSize:"单元格尺寸",
+      columns:"列数", rows:"行数", cellMm:"单元格（毫米）", marginMm:"边距（毫米）", paperMarginMm:"纸张边距（毫米）",
+      fanSpec:"扇面规格", pmHint:"纸张边距 = 纸张边缘与字格块的间距。0 = 自动（半格）。",
+      style:"样式", border:"边框", borderWidth:"边框宽度（像素）", guides:"辅助线", guideWidth:"辅助线宽度（像素）",
+      dashedGuides:"虚线辅助线", drawCellBorders:"绘制单元格边框",
+      export:"导出", downloadSvg:"下载 SVG", downloadPng:"下载 PNG", printPdf:"打印 / PDF", reset:"重置",
+      exportFooter:"矢量（SVG）可缩放到任意打印机。PNG 由屏幕画布光栅化。用浏览器打印为 PDF 即可得到与纸张完全一致的稿纸。",
+      expresii:"Expresii", serverUrl:"服务器地址", serverUrl_ph:"http://host:9000", connect:"连接", disconnect:"断开",
+      autoPaperOff:"自动纸张尺寸：关", checking:"检测中…", connected:"已连接", notConnected:"未连接",
+      unreachable:"无法连接", connecting:"连接中…", enterUrl:"请输入地址", invalidUrl:"地址无效",
+      serverUnreachable:"服务器不可达：{url}",
+      target:"目标", underlay:"底层", settledPaint:"沉積颜料",
+      sendToExpresii:"发送到 Expresii",
+      expHint:"将当前模板作为 PNG 底层发送到 Expresii 命令服务器。需通过 serve.py 运行（它将 /expresii 代理到上方的服务器地址）。",
+      expPaper:"纸张", expLayers:"图层", expActive:"当前",
+      grid_mi:"米字格 Mi", grid_tian:"田字格 Tian", grid_jiugong:"九宮格 9-grid", grid_hui:"回宮格 Hui",
+      grid_vlines:"竖线格 Vertical", grid_hlines:"横线格 Horizontal", grid_zhishi:"直式信紙 紅線", grid_fan:"扇面 Fan",
+      fanSpecOpt:"{n}寸 · {dim}cm · {fang}方", fanCustom:"自定（按块适配）",
+      autoPaperOn:"自动纸张尺寸：开 —— 已同步 {pw}×{ph} 像素",
+      disconnected:"已断开", sending:"正在发送 PNG 到 Expresii…", sentDone:"已发送 ✓（目标 {dest}）。",
+      sendFail:"发送失败：{msg}。服务器是否在 9000 端口运行？",
+      layoutHintCell:"在 {marg} 毫米单元格边距内适配 {cols}×{rows} 个 {mm} 毫米单元格；纸张边距 {pm} 毫米。",
+      layoutHintCols:"每个单元格约 {cell} 毫米 · 纸张边距 {pm} 毫米（{cols}×{rows} 方形适配）。",
+      fanHint:"{inch}寸 扇面 · 展开{cm}cm × 厚{t}cm · {fang}方 → {folds} 折線（{sectors} 扇 sectors）"
+    },
+    ja:{
+      app_name:"版式生成器", app_sub:"書道用テンプレート生成ツール", app_title:"版式生成器",
+      language:"言語",
+      paper:"用紙", paperSizeSource:"用紙サイズの取得元", useExpresiiPaper:"Expresii のキャンバスサイズを使用", userSpec:"ユーザー指定",
+      useExpTitle:"Expresii に接続して有効化",
+      preset:"プリセット", customAspect:"カスタムアスペクト比…", width:"幅", height:"高さ",
+      orientation:"向き", portrait:"縦", landscape:"横",
+      resolution:"解像度（px / mm）", resHint:"11.81 px/mm ≈ 300 DPI。書き出し PNG のピクセルサイズを決定します。",
+      expPaperNote:"Expresii のキャンバスサイズを使用 — テンプレートのピクセルはキャンバスと完全一致し、書き出し時に任意の DPI を選択できます。",
+      gridType:"罫線の種類", layout:"レイアウト", colsAndRows:"列と行", cellSize:"セルサイズ",
+      columns:"列数", rows:"行数", cellMm:"セル（mm）", marginMm:"余白（mm）", paperMarginMm:"用紙余白（mm）",
+      fanSpec:"扇面（扇子）仕様", pmHint:"用紙余白 = 用紙端と罫線ブロックの間隔。0 = 自動（半セル）。",
+      style:"スタイル", border:"枠線", borderWidth:"枠線の太さ（px）", guides:"補助線", guideWidth:"補助線の太さ（px）",
+      dashedGuides:"補助線を破線に", drawCellBorders:"セルの枠を描く",
+      export:"書き出し", downloadSvg:"SVG をダウンロード", downloadPng:"PNG をダウンロード", printPdf:"印刷 / PDF", reset:"リセット",
+      exportFooter:"ベクター（SVG）はどのプリンターでも拡大縮小可能。PNG は画面キャンバスからラスタライズされます。ブラウザの印刷で PDF を出力すれば、用紙にぴったりの原稿になります。",
+      expresii:"Expresii", serverUrl:"サーバー URL", serverUrl_ph:"http://host:9000", connect:"接続", disconnect:"切断",
+      autoPaperOff:"自動用紙サイズ：オフ", checking:"確認中…", connected:"接続済み", notConnected:"未接続",
+      unreachable:"到達不可", connecting:"接続中…", enterUrl:"URL を入力", invalidUrl:"無効な URL",
+      serverUnreachable:"サーバーに到達できません：{url}",
+      target:"ターゲット", underlay:"下絵", settledPaint:"定着ペイント",
+      sendToExpresii:"Expresii に送信",
+      expHint:"現在のテンプレートを PNG 下絵として Expresii コマンドサーバーに送信します。serve.py 経由で実行してください（/expresii を上記サーバー URL にプロキシします）。",
+      expPaper:"用紙", expLayers:"レイヤー", expActive:"アクティブ",
+      grid_mi:"米字格 Mi", grid_tian:"田字格 Tian", grid_jiugong:"九宮格 9-grid", grid_hui:"回宮格 Hui",
+      grid_vlines:"竖线格 Vertical", grid_hlines:"横线格 Horizontal", grid_zhishi:"直式信紙 紅線", grid_fan:"扇面 Fan",
+      fanSpecOpt:"{n}寸 · {dim}cm · {fang}方", fanCustom:"自定（ブロックフィット）",
+      autoPaperOn:"自動用紙サイズ：オン — {pw}×{ph} px に同期",
+      disconnected:"切断済み", sending:"Expresii に PNG を送信中…", sentDone:"送信完了 ✓（宛先 {dest}）。",
+      sendFail:"送信失敗：{msg}。サーバーは 9000 で動作していますか？",
+      layoutHintCell:"{marg}mm のセル余白内に {cols}×{rows} の {mm}mm セルを配置。用紙余白 {pm}mm。",
+      layoutHintCols:"各セル約 {cell}mm · 用紙余白 {pm}mm（{cols}×{rows} の正方形フィット）。",
+      fanHint:"{inch}寸 扇面 · 展開{cm}cm × 厚{t}cm · {fang}方 → {folds} 折れ線（{sectors} 扇 sectors）"
+    },
+    ko:{
+      app_name:"판식 생성기", app_sub:"서예용 템플릿 생성기", app_title:"판식 생성기",
+      language:"언어",
+      paper:"용지", paperSizeSource:"용지 크기 출처", useExpresiiPaper:"Expresii 캔버스 크기 사용", userSpec:"사용자 지정",
+      useExpTitle:"Expresii에 연결하여 활성화",
+      preset:"프리셋", customAspect:"사용자 지정 비율…", width:"너비", height:"높이",
+      orientation:"방향", portrait:"세로", landscape:"가로",
+      resolution:"해상도（px / mm）", resHint:"11.81 px/mm ≈ 300 DPI. 내보낼 PNG 픽셀 크기를 결정합니다.",
+      expPaperNote:"Expresii 캔버스 크기 사용 — 템플릿 픽셀이 캔버스와 정확히 일치하며, 내보낼 때 DPI를 자유롭게 선택할 수 있습니다.",
+      gridType:"격자 종류", layout:"레이아웃", colsAndRows:"열과 행", cellSize:"셀 크기",
+      columns:"열", rows:"행", cellMm:"셀（mm）", marginMm:"여백（mm）", paperMarginMm:"용지 여백（mm）",
+      fanSpec:"부채（扇面） 사양", pmHint:"용지 여백 = 용지 가장자리와 격자 블록 사이 간격. 0 = 자동（셀의 절반）.",
+      style:"스타일", border:"테두리", borderWidth:"테두리 두께（px）", guides:"보조선", guideWidth:"보조선 두께（px）",
+      dashedGuides:"보조선 점선", drawCellBorders:"셀 테두리 그리기",
+      export:"내보내기", downloadSvg:"SVG 다운로드", downloadPng:"PNG 다운로드", printPdf:"인쇄 / PDF", reset:"초기화",
+      exportFooter:"벡터（SVG）는 모든 프린터로 확대·축소됩니다. PNG는 화면 캔버스에서 래스터화됩니다. 브라우저 인쇄로 PDF를 만들면 용지에 딱 맞는 원고가 됩니다.",
+      expresii:"Expresii", serverUrl:"서버 URL", serverUrl_ph:"http://host:9000", connect:"연결", disconnect:"연결 해제",
+      autoPaperOff:"자동 용지 크기: 끄기", checking:"확인 중…", connected:"연결됨", notConnected:"연결 안 됨",
+      unreachable:"연결 불가", connecting:"연결 중…", enterUrl:"URL을 입력하세요", invalidUrl:"잘못된 URL",
+      serverUnreachable:"서버에 연결할 수 없음：{url}",
+      target:"대상", underlay:"언더레이", settledPaint:"정착 페인트",
+      sendToExpresii:"Expresii로 보내기",
+      expHint:"현재 템플릿을 PNG 언더레이로 Expresii 명령 서버에 보냅니다. serve.py로 실행하세요（/expresii를 위 서버 URL로 프록시함）.",
+      expPaper:"용지", expLayers:"레이어", expActive:"활성",
+      grid_mi:"米字格 Mi", grid_tian:"田字格 Tian", grid_jiugong:"九宮格 9-grid", grid_hui:"回宮格 Hui",
+      grid_vlines:"竖线格 Vertical", grid_hlines:"横线格 Horizontal", grid_zhishi:"直式信紙 紅線", grid_fan:"扇面 Fan",
+      fanSpecOpt:"{n}치 · {dim}cm · {fang}리브", fanCustom:"사용자 지정（블록 맞춤）",
+      autoPaperOn:"자동 용지 크기: 켜기 — {pw}×{ph} px 동기화됨",
+      disconnected:"연결 해제됨", sending:"Expresii로 PNG 전송 중…", sentDone:"전송 완료 ✓（대상 {dest}）.",
+      sendFail:"전송 실패: {msg}. 서버가 9000에서 실행 중인가요?",
+      layoutHintCell:"{marg}mm 셀 여백 안에 {cols}×{rows}개의 {mm}mm 셀 배치. 용지 여백 {pm}mm.",
+      layoutHintCols:"각 셀 약 {cell}mm · 용지 여백 {pm}mm（{cols}×{rows} 정사각 맞춤）.",
+      fanHint:"{inch}치 부채 · 전개 {cm}cm × 두께 {t}cm · {fang}방 → {folds} 접선（{sectors} 선 sectors）"
+    }
+  };
+  let lang = "en";
+  function tr(key, vars){
+    let s = (I18N[lang] && I18N[lang][key]!=null) ? I18N[lang][key]
+          : (I18N.en[key]!=null ? I18N.en[key] : (I18N.zh[key]!=null ? I18N.zh[key] : key));
+    if(vars) for(const k in vars) s = String(s).split("{"+k+"}").join(vars[k]);
+    return s;
+  }
+  function defaultLang(){
+    const l=(navigator.language||"en").toLowerCase();
+    if(l.indexOf("zh")===0) return "zh";
+    if(l.indexOf("ja")===0) return "ja";
+    if(l.indexOf("ko")===0) return "ko";
+    return "en";
+  }
+  function buildFanOptions(){
+    const sel=$("fanSpec"); if(!sel) return;
+    sel.innerHTML="";
+    [["8",8],["9",9],["10",10]].forEach(([v,n])=>{
+      const sp=FAN_SPECS[n];
+      const o=document.createElement("option"); o.value=v;
+      o.textContent=tr("fanSpecOpt",{n, dim:(sp.chord/10).toFixed(1), fang:sp.fang});
+      sel.appendChild(o);
+    });
+    const oc=document.createElement("option"); oc.value="custom"; oc.textContent=tr("fanCustom"); sel.appendChild(oc);
+    sel.value=state.fanSpec;
+  }
+  function applyLang(){
+    document.querySelectorAll("[data-trans]").forEach(el=>{
+      const key=el.getAttribute("data-trans");
+      const txt=tr(key);
+      if(el.tagName==="INPUT"){ if(el.type==="text"||el.type==="number"||el.type==="url") el.placeholder=txt; }
+      else el.textContent=txt;
+      if(el.hasAttribute("data-trans-title")) el.title=tr(el.getAttribute("data-trans-title"));
+    });
+    document.querySelectorAll("#gridType button").forEach(b=>{ b.textContent=tr("grid_"+b.getAttribute("data-t")); });
+    buildFanOptions();
+    document.title=tr("app_title");
+    document.documentElement.lang=lang;
+    render();
+  }
+  function setLang(l){
+    lang=l;
+    try{ localStorage.setItem("tg_lang", l); }catch(_){}
+    document.querySelectorAll("#langSel button").forEach(b=>b.classList.toggle("active", b.getAttribute("data-lang")===l));
+    applyLang();
+  }
 
   const $ = id => document.getElementById(id);
   const state = {
@@ -582,16 +778,23 @@
     // summary
     const [pw,ph]=paperMM();
     $("dimBadge").textContent=`${Math.round(W)} × ${Math.round(H)} px  ·  ${(+pw).toFixed(1)}×${(+ph).toFixed(1)} mm`;
-    $("typeBadge").textContent=GRID_NAMES[state.type];
+    $("typeBadge").textContent=tr("grid_"+state.type);
     const cellNote = state.layout==="cell"
       ? `${L.cols}×${L.rows} cells @ ${L.cellmm.toFixed(1)}mm`
       : `${L.cols}×${L.rows} cols×rows`;
-    $("summary").textContent=`${GRID_NAMES[state.type]} · ${cellNote} · ${state.orient}`;
+    $("summary").textContent=`${tr("grid_"+state.type)} · ${cellNote} · ${state.orient}`;
     $("layoutHint").textContent = state.type==="fan" && state.fanSpec!=="custom" && FAN_SPECS[state.fanSpec]
-      ? `${state.fanSpec}寸 fan · 展开${(FAN_SPECS[state.fanSpec].chord/10).toFixed(1)}cm × 厚${(FAN_SPECS[state.fanSpec].thick/10).toFixed(1)}cm · ${FAN_SPECS[state.fanSpec].fang}方 → ${(FAN_SPECS[state.fanSpec].fang-1)*2} 折線 (${(FAN_SPECS[state.fanSpec].fang-1)*2+1} 扇 sectors)`
+      ? tr("fanHint", {
+          inch: state.fanSpec,
+          cm: (FAN_SPECS[state.fanSpec].chord/10).toFixed(1),
+          t: (FAN_SPECS[state.fanSpec].thick/10).toFixed(1),
+          fang: FAN_SPECS[state.fanSpec].fang,
+          folds: (FAN_SPECS[state.fanSpec].fang-1)*2,
+          sectors: (FAN_SPECS[state.fanSpec].fang-1)*2+1
+        })
       : (state.layout==="cell"
-      ? `Fits ${L.cols}×${L.rows} cells of ${state.cellmm}mm within ${state.marginmm}mm cell-margins; paper margin ${L.marginm.toFixed(1)}mm.`
-      : `Each cell ≈ ${L.cellmm.toFixed(1)}mm · paper margin ${L.marginm.toFixed(1)}mm (square fit of ${L.cols}×${L.rows}).`);
+      ? tr("layoutHintCell", {cols:L.cols, rows:L.rows, mm:state.cellmm, marg:state.marginmm, pm:L.marginm.toFixed(1)})
+      : tr("layoutHintCols", {cell:L.cellmm.toFixed(1), pm:L.marginm.toFixed(1), cols:L.cols, rows:L.rows}));
     currentSVG=svg; currentMeta={W,H};
   }
   let currentSVG="", currentMeta={W:0,H:0};
@@ -684,25 +887,25 @@
     }
     applyVisibility();
     render();
-    $("expSyncNote").textContent=`Auto paper size: ON — synced ${Math.round(pwPx)}×${Math.round(phPx)} px`;
+    $("expSyncNote").textContent=tr("autoPaperOn",{pw:Math.round(pwPx), ph:Math.round(phPx)});
   }
   function disconnectExp(){
     autoPaperSync=false;
     stopPoll();
     const dot=$("expDot"), ver=$("expVer"), meta=$("expMeta"), st=$("expState");
     dot.className="dot";
-    ver.textContent="disconnected";
+    ver.textContent=tr("notConnected");
     meta.textContent="";
     st.style.display="none";
-    $("expUrlNote").textContent="disconnected";
-    $("expSyncNote").textContent="Auto paper size: OFF";
+    $("expUrlNote").textContent=tr("disconnected");
+    $("expSyncNote").textContent=tr("autoPaperOff");
     $("expApply").style.display="";
     $("expDisconnect").style.display="none";
     // revert paper source to user specification and re-enable the Expresii option
     state.paperSource="user";
     [...$("paperSource").children].forEach(b=>b.classList.toggle("active", b.dataset.source==="user"));
     const srcExp=$("paperSource").querySelector('[data-source="exp"]');
-    if(srcExp){ srcExp.disabled=true; srcExp.title="Connect to Expresii to enable"; }
+    if(srcExp){ srcExp.disabled=true; srcExp.title=tr("useExpTitle"); }
     applyVisibility();
     render();
   }
@@ -721,7 +924,7 @@
       startPoll();
       $("expApply").style.display="none";
       $("expDisconnect").style.display="";
-      $("expSyncNote").textContent="Auto paper size: ON";
+      $("expSyncNote").textContent=tr("autoPaperOff");
       // enable the "Use Expresii paper" option and mark it active (used once paper arrives below)
       const srcExp=$("paperSource").querySelector('[data-source="exp"]');
       if(srcExp){ srcExp.disabled=false; srcExp.title=""; }
@@ -739,22 +942,22 @@
           const want=1+lc; // -1 underlay + lc layers
           if(sel.options.length!==want){
             sel.innerHTML="";
-            const o=document.createElement("option"); o.value="-1"; o.textContent="Underlay"; sel.appendChild(o);
-            for(let i=0;i<lc;i++){ const op=document.createElement("option"); op.value=String(i); op.textContent="Settled Paint L"+i; sel.appendChild(op); }
+            const o=document.createElement("option"); o.value="-1"; o.textContent=tr("underlay"); sel.appendChild(o);
+            for(let i=0;i<lc;i++){ const op=document.createElement("option"); op.value=String(i); op.textContent=tr("settledPaint")+" L"+i; sel.appendChild(op); }
           }
           if(autoPaperSync && sd.paperWidth && sd.paperHeight) applyExpresiiPaper(sd.paperWidth, sd.paperHeight);
         }
       }catch(e){ /* state optional */ }
     }catch(e){
       dot.className="dot bad";
-      ver.textContent="not connected";
-      meta.textContent="Server unreachable at "+expBaseRaw();
+      ver.textContent=tr("notConnected");
+      meta.textContent=tr("serverUnreachable",{url:expBaseRaw()});
       st.style.display="none";
-      $("expUrlNote").textContent = "unreachable";
+      $("expUrlNote").textContent = tr("unreachable");
       autoPaperSync=false;
       $("expApply").style.display="";
       $("expDisconnect").style.display="none";
-      $("expSyncNote").textContent="Auto paper size: OFF";
+      $("expSyncNote").textContent=tr("autoPaperOff");
     }
   }
   function pngFromPreview(){
@@ -775,17 +978,17 @@
     try{
       const base64=await pngFromPreview();
       const dest=parseInt($("expTarget").value);
-      hint.textContent="Sending PNG to Expresii…";
+      hint.textContent=tr("sending");
       const res=await fetch(expBase()+"/upload-image",{
         method:"POST", headers:{"Content-Type":"application/json"},
         body:JSON.stringify({image:base64, destination:dest})
       });
       if(!res.ok) throw new Error("HTTP "+res.status);
       const d=await res.json();
-      if(d.status==="done"){ hint.textContent="Sent ✓ (destination "+(dest===-1?"Underlay":"L"+dest)+")."; loadExpInfo(); }
+      if(d.status==="done"){ hint.textContent=tr("sentDone",{dest: dest===-1?tr("underlay"):"L"+dest}); loadExpInfo(); }
       else throw new Error(d.error||"upload failed");
     }catch(e){
-      hint.textContent="Send failed: "+e.message+". Is the server running on 9000?";
+      hint.textContent=tr("sendFail",{msg:e.message});
     }finally{
       btn.disabled=false;
     }
@@ -796,26 +999,31 @@
   if (savedUrl) $("expUrl").value = savedUrl;
   function applyExpUrl(){
     const raw = ($("expUrl").value || "").trim();
-    if (!raw) { $("expUrlNote").textContent = "enter a URL"; return; }
+    if (!raw) { $("expUrlNote").textContent = tr("enterUrl"); return; }
     const norm = normalizeServerUrl(raw);
-    try { new URL(norm); } catch(e){ $("expUrlNote").textContent = "invalid URL"; return; }
+    try { new URL(norm); } catch(e){ $("expUrlNote").textContent = tr("invalidUrl"); return; }
     $("expUrl").value = norm;                 // normalize box to full URL
     localStorage.setItem(EXP_KEY, norm);
-    $("expUrlNote").textContent = "connecting…";   // await real connection result from loadExpInfo()
+    $("expUrlNote").textContent = tr("connecting");   // await real connection result from loadExpInfo()
     loadExpInfo();
   }
   $("expApply").addEventListener("click", applyExpUrl);
   $("expUrl").addEventListener("keydown", e => { if (e.key === "Enter") applyExpUrl(); });
   $("expDisconnect").addEventListener("click", disconnectExp);
+  // language switcher
+  $("langSel").addEventListener("click", e=>{
+    const b=e.target.closest("button"); if(!b)return;
+    setLang(b.getAttribute("data-lang"));
+  });
   // init connection status, refresh periodically (matches WebStrokeClient's 15s poll)
   loadExpInfo();
   startPoll();
 
   // init
-  $("colsRows").style.display="flex";
-  $("cellSize").style.display="none";
+  lang = localStorage.getItem("tg_lang") || defaultLang();
+  document.querySelectorAll("#langSel button").forEach(b=>b.classList.toggle("active", b.getAttribute("data-lang")===lang));
   applyVisibility();
-  render();
+  setLang(lang);   // applies translations + renders (render() is called inside applyLang)
 })();
 </script>
 </body>
