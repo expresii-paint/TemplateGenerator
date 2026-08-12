@@ -450,28 +450,32 @@
     const dr = (Ro - Ri) / rings, dphi = (2*alpha) / secs;
     let out = "";
     // concentric ring lines (the "horizontal" grid) — toggle with Draw cell borders
+    // (real fan specs skip the red rings + red column ribs; they draw black fold lines instead)
+    if(!sp){
     for(let i=0;i<=rings;i++){
       if(state.showBorder || i===0 || i===rings){
         const r = Ri + i*dr;
         out += `<path d="${arc(r,-alpha,alpha)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
       }
     }
-    // current grid: radial sector lines (ribs) at the user's column spacing
-    const dphiG = (2*alpha) / secs;
-    for(let j=1;j<secs;j++){
-      const phi = -alpha + j*dphiG;
-      out += `<path d="${radial(Ri,Ro,phi)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
     }
-    // 折線 (fan bones / fold lines) drawn ALONG WITH the grid above:
-    // 方 = 2大骨 (the bold outline edges) + 小骨 (interior ribs). For a real fan spec we draw
-    // (方−2) interior 小骨 boldly (border colour, thicker) on top of the grid so the bone
-    // fold-lines stay visible. 自定 has no 方, so no 折線 there — only the plain grid.
+    // 折線 (fold lines): for a real fan spec the fan area is divided into (方−2)×2 + 1 sectors,
+    // i.e. (方−2)×2 black fold lines between the two 大骨 outline edges. The multiplier (sects)
+    // sets the fold density so the user can choose finer fold spacing. 自定 keeps red column ribs.
     if(sp){
-      const bones = Math.max(1, sp.fang - 2);
-      const dphiB = (2*alpha) / (bones + 1);
-      for(let j=1;j<=bones;j++){
+      const fang = sp.fang;
+      const folds = (fang - 1) * 2;             // 方−1 根 per side → (方−1)×2 black fold lines (= (方−1)×2+1 sectors)
+      const dphiB = (2*alpha) / (folds + 1);
+      for(let j=1;j<=folds;j++){
         const phi = -alpha + j*dphiB;
         out += `<path d="${radial(Ri,Ro,phi)}" fill="none" stroke="${B}" stroke-width="${bw}" ${dash}/>`;
+      }
+    } else {
+      // 自定 Custom: radial column ribs at the user's column spacing (red grid)
+      const dphiG = (2*alpha) / secs;
+      for(let j=1;j<secs;j++){
+        const phi = -alpha + j*dphiG;
+        out += `<path d="${radial(Ri,Ro,phi)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
       }
     }
     // NOTE: for 扇面 we draw ONLY the fan skeleton (radial bones + concentric arcs above).
@@ -531,7 +535,7 @@
       : `${L.cols}×${L.rows} cols×rows`;
     $("summary").textContent=`${GRID_NAMES[state.type]} · ${cellNote} · ${state.orient}`;
     $("layoutHint").textContent = state.type==="fan" && state.fanSpec!=="custom" && FAN_SPECS[state.fanSpec]
-      ? `${state.fanSpec}寸 fan · 展开${(FAN_SPECS[state.fanSpec].chord/10).toFixed(1)}cm × 厚${(FAN_SPECS[state.fanSpec].thick/10).toFixed(1)}cm · ${FAN_SPECS[state.fanSpec].fang}方 (2大骨 + ${FAN_SPECS[state.fanSpec].fang-2}小骨) · ${L.rows} 環 rings`
+      ? `${state.fanSpec}寸 fan · 展开${(FAN_SPECS[state.fanSpec].chord/10).toFixed(1)}cm × 厚${(FAN_SPECS[state.fanSpec].thick/10).toFixed(1)}cm · ${FAN_SPECS[state.fanSpec].fang}方 → ${(FAN_SPECS[state.fanSpec].fang-1)*2} 折線 (${(FAN_SPECS[state.fanSpec].fang-1)*2+1} 扇 sectors)`
       : (state.layout==="cell"
       ? `Fits ${L.cols}×${L.rows} cells of ${state.cellmm}mm within ${state.marginmm}mm cell-margins; paper margin ${L.marginm.toFixed(1)}mm.`
       : `Each cell ≈ ${L.cellmm.toFixed(1)}mm · paper margin ${L.marginm.toFixed(1)}mm (square fit of ${L.cols}×${L.rows}).`);

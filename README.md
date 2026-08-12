@@ -18,11 +18,13 @@ as a painting underlay.
   - 横线格 Horizontal — horizontal lines only
   - 直式信紙 紅線 — vertical Chinese letter paper: red outer frame + red
     column lines (8 full-width columns)
-  - 扇面 Fan — folding-fan leaf: two concentric convex arcs + two radial ribs,
-    filled with a fanned polar grid and 米字格 cell guides. A **扇面规格 (fan
-    spec)** dropdown (8寸 / 9寸 / 10寸 / 自定) applies the real sector shape from
-    the reference template (opened width, rib length, radial depth); the leaf fits
-    the current paper, so it works with Expresii auto paper-size sync.
+  - 扇面 Fan — folding-fan leaf: bold black outline (the 2 大骨) + black 折線 (fold
+    lines). For a real fan spec the leaf is divided into (方−1)×2+1 sectors — i.e.
+    (方−1)×2 black fold lines between the two 大骨 edges (e.g. 15方 → 29 sectors),
+    with **no red column grid**. A **扇面规格 (fan spec)** dropdown (8寸 / 9寸 /
+    10寸 / 自定) applies the real sector shape from the reference template (opened
+    width, rib length, radial depth); the leaf fits the current paper, so it works
+    with Expresii auto paper-size sync. 自定 keeps the red concentric + column grid.
 - **Paper**: presets (A4/A3/A5/Letter/Legal/Square), custom aspect, portrait /
   landscape, adjustable resolution (px/mm, ~300 DPI). The exported PNG stays
   pixel-matched to the Expresii canvas at any DPI.
