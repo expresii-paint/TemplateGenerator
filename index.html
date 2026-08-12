@@ -456,21 +456,13 @@
         out += `<path d="${arc(r,-alpha,alpha)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
       }
     }
-    // radial sector lines (the "vertical" grid)
+    // radial sector lines (the fan ribs / skeleton)
     for(let j=0;j<=secs;j++){
       const phi = -alpha + j*dphi;
       out += `<path d="${radial(Ri,Ro,phi)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
     }
-    // cell guides: radial+angular cross + both diagonals inside every cell
-    for(let i=0;i<rings;i++){
-      for(let j=0;j<secs;j++){
-        const r0=Ri+i*dr, r1=Ri+(i+1)*dr, a0=-alpha+j*dphi, a1=-alpha+(j+1)*dphi, rm=(r0+r1)/2, am=(a0+a1)/2;
-        out += `<path d="${radial(r0,r1,am)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
-        out += `<path d="${arc(rm,a0,a1)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
-        out += `<path d="M ${pt(r0,a0).join(" ")} L ${pt(r1,a1).join(" ")}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
-        out += `<path d="M ${pt(r1,a0).join(" ")} L ${pt(r0,a1).join(" ")}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
-      }
-    }
+    // NOTE: for 扇面 we draw ONLY the fan skeleton (radial ribs + concentric arcs above).
+    // No per-cell 米字 grid is mapped — calligraphy follows the fan lines, not cell boxes.
     // bold fan outline (border color)
     out += `<path d="${arc(Ro,-alpha,alpha)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`;
     out += `<path d="${arc(Ri,-alpha,alpha)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`;
