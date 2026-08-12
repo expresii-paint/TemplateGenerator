@@ -142,6 +142,16 @@
       <div class="row" style="margin-top:8px">
         <div><label>Paper margin (mm)</label><input id="paperMarginmm" type="number" value="0" min="0" step="0.5"></div>
       </div>
+      <div class="row" id="fanSpecRow" style="margin-top:8px;display:none">
+        <div style="flex:1"><label>扇面规格 Fan spec</label>
+          <select id="fanSpec">
+            <option value="8">8寸 · 47×15.7cm · 18方</option>
+            <option value="9">9寸 · 54×17.5cm · 20方</option>
+            <option value="10">10寸 · 60×20.4cm · 15方</option>
+            <option value="custom">自定 Custom (block fit)</option>
+          </select>
+        </div>
+      </div>
       <div class="hint">Paper margin = gap between paper edge and grid block. 0 = auto (½ cell).</div>
       <div class="hint" id="layoutHint"></div>
     </div>
@@ -238,7 +248,15 @@
     paper:"A4", ar:[1,1], orient:"portrait", dpi:11.81,
     type:"mi", layout:"cols", cols:9, rows:13, cellmm:20, marginmm:10, paperMarginmm:0,
     cBorder:"#222222", cGuide:"#e23b3b", wBorder:2, wGuide:1,
-    dashed:true, showBorder:true
+    dashed:true, showBorder:true, fanSpec:"8"
+  };
+
+  // Real folding-fan specs from the reference template (展开宽度 / 寸 = rib length / 扇面高度).
+  // chord = opened width (outer rim straight span); rib = sector outer radius (寸 × 10mm); thick = radial depth.
+  const FAN_SPECS = {
+    "8":  { chord:470, rib:266, thick:157, cun:8,  fang:18 },
+    "9":  { chord:540, rib:300, thick:175, cun:9,  fang:20 },
+    "10": { chord:600, rib:333, thick:204, cun:10, fang:15 }
   };
 
   // ---- UI wiring ----
@@ -264,8 +282,19 @@
     const b=e.target.closest("button"); if(!b)return;
     state.type=b.dataset.t;
     [...e.currentTarget.children].forEach(x=>x.classList.toggle("active",x===b));
+    const isFan = state.type==="fan";
+    $("fanSpecRow").style.display = isFan ? "flex" : "none";
+    if(isFan){ $("fanSpec").value = state.fanSpec; applyFanSpec(); }
     render();
   });
+  // 扇面规格: pick a real fan spec (sets the sector SHAPE from the reference template) or 自定 block-fit.
+  // The leaf is fit to the current paper size, so it works whether the paper is a preset or auto-synced from Expresii.
+  function applyFanSpec(){
+    const v = state.fanSpec;
+    if(v==="custom" || !FAN_SPECS[v]) return;       // 自定: keep current paper + block-fit fan
+    // no paper resize here — fanSVG fits the chosen spec's shape into whatever paper is set
+  }
+  $("fanSpec").addEventListener("change", e=>{ state.fanSpec=e.target.value; applyFanSpec(); render(); });
 
   $("layoutMode").addEventListener("click", e=>{
     const b=e.target.closest("button"); if(!b)return;
@@ -382,20 +411,34 @@
   }
 
   // ---- 扇面 Fan: polar grid bounded by two concentric arcs + two radial edges ----
-  function fanSVG(L, pxPerMM){
-    const cellPx = L.cellmm * pxPerMM;
-    const w = L.cols * cellPx;            // leaf width (px)
-    const hEff = w * 0.5;                 // radial thickness (leaf height ≈ half width)
-    const cx = (L.ox + L.cols*L.cellmm/2) * pxPerMM;     // leaf center x
-    const blockCy = (L.oy + L.rows*L.cellmm/2) * pxPerMM; // block center y
-    const oyFan = blockCy - hEff/2;       // leaf top (outer arc's top-center)
-    // half-angle so the outer arc chord = w, with Ro always > radial thickness (Ri > 0)
-    const alpha = Math.asin(Math.min(0.85, 0.9 * (w/2) / Math.max(hEff, w/2)));
-    const Ro = (w/2) / Math.sin(alpha);   // outer radius
-    const Oy = oyFan + Ro;                // center of arcs (below the leaf); outer top at oyFan
-    const Ri = Ro - hEff;                 // inner radius (> 0 because Ro > hEff)
+  function fanSVG(L, pxPerMM, W, H){
     const G = state.cGuide, gw = state.wGuide, bw = state.wBorder, B = state.cBorder;
     const dash = state.dashed ? `stroke-dasharray="${(gwDash()).toFixed(1)} ${(gwDash()*0.8).toFixed(1)}"` : "";
+    let cx, oyFan, alpha, Ro, Ri, rings, secs;
+    const sp = (state.fanSpec!=="custom" && FAN_SPECS[state.fanSpec]) ? FAN_SPECS[state.fanSpec] : null;
+    if(sp){
+      // real fan spec: use its SECTOR SHAPE (half-angle + radial-depth ratio) and fit the leaf to the paper
+      alpha = Math.asin(Math.min(0.999, (sp.chord/2)/sp.rib));   // real half-angle from opened width & rib
+      const ratio = sp.thick / sp.rib;                           // radial depth / outer radius (real proportions)
+      Ro = (W/2) / Math.sin(alpha);                              // fit the outer chord to the paper width
+      Ri = Ro * (1 - ratio);                                     // keep the real leaf depth ratio
+      const thick = Ro - Ri;
+      cx = W/2;
+      oyFan = (H - thick)/2;                       // center leaf vertically in the paper
+    } else {
+      // 自定 Custom: block-fit annular sector (width = block width, height ≈ half width)
+      const cellPx = L.cellmm * pxPerMM;
+      const w = L.cols * cellPx;
+      const hEff = w * 0.5;
+      cx = (L.ox + L.cols*L.cellmm/2) * pxPerMM;
+      const blockCy = (L.oy + L.rows*L.cellmm/2) * pxPerMM;
+      oyFan = blockCy - hEff/2;
+      alpha = Math.asin(Math.min(0.85, 0.9 * (w/2) / Math.max(hEff, w/2)));
+      Ro = (w/2) / Math.sin(alpha);
+      Ri = Ro - hEff;
+    }
+    const Oy = oyFan + Ro;                        // center of arcs (below the leaf); outer top at oyFan
+    rings = L.rows; secs = L.cols;
     const pt = (r,phi) => [ (cx + r*Math.sin(phi)).toFixed(2), (Oy - r*Math.cos(phi)).toFixed(2) ];
     // sample an arc as a polyline so the bulge direction is fully controlled (no SVG sweep-flag ambiguity)
     const arc = (r,a0,a1,seg=28) => {
@@ -404,7 +447,6 @@
       return d.trim();
     };
     const radial = (r0,r1,phi) => `M ${pt(r0,phi).join(" ")} L ${pt(r1,phi).join(" ")}`;
-    const rings = L.rows, secs = L.cols;
     const dr = (Ro - Ri) / rings, dphi = (2*alpha) / secs;
     let out = "";
     // concentric ring lines (the "horizontal" grid) — toggle with Draw cell borders
@@ -443,7 +485,7 @@
     const W=L.pw*pxPerMM, H=L.ph*pxPerMM;
     let body=`<rect x="0" y="0" width="${W.toFixed(1)}" height="${H.toFixed(1)}" fill="white"/>`;
     if(state.type==="fan"){
-      body+=fanSVG(L,pxPerMM);
+      body+=fanSVG(L,pxPerMM,W,H);
     } else {
       const cellPx=L.cellmm*pxPerMM;
       const oxPx=L.ox*pxPerMM, oyPx=L.oy*pxPerMM;
@@ -482,9 +524,11 @@
       ? `${L.cols}×${L.rows} cells @ ${L.cellmm.toFixed(1)}mm`
       : `${L.cols}×${L.rows} cols×rows`;
     $("summary").textContent=`${GRID_NAMES[state.type]} · ${cellNote} · ${state.orient}`;
-    $("layoutHint").textContent = state.layout==="cell"
+    $("layoutHint").textContent = state.type==="fan" && state.fanSpec!=="custom" && FAN_SPECS[state.fanSpec]
+      ? `${state.fanSpec}寸 fan · 展开${(FAN_SPECS[state.fanSpec].chord/10).toFixed(1)}cm × 厚${(FAN_SPECS[state.fanSpec].thick/10).toFixed(1)}cm · ${L.cols} sectors × ${L.rows} rings`
+      : (state.layout==="cell"
       ? `Fits ${L.cols}×${L.rows} cells of ${state.cellmm}mm within ${state.marginmm}mm cell-margins; paper margin ${L.marginm.toFixed(1)}mm.`
-      : `Each cell ≈ ${L.cellmm.toFixed(1)}mm · paper margin ${L.marginm.toFixed(1)}mm (square fit of ${L.cols}×${L.rows}).`;
+      : `Each cell ≈ ${L.cellmm.toFixed(1)}mm · paper margin ${L.marginm.toFixed(1)}mm (square fit of ${L.cols}×${L.rows}).`);
     currentSVG=svg; currentMeta={W,H};
   }
   let currentSVG="", currentMeta={W:0,H:0};
