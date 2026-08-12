@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Template Generator 字格生成器</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20x='3'%20y='3'%20width='26'%20height='26'%20fill='none'%20stroke='%23e23b3b'%20stroke-width='3'/%3E%3Cline%20x1='16'%20y1='3'%20x2='16'%20y2='29'%20stroke='%23e23b3b'%20stroke-width='1.5'%20stroke-dasharray='2%202'/%3E%3C/svg%3E" />
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1f232c; --line:#2b313c;
+    --text:#e6e9ef; --muted:#9aa3b2; --accent:#e23b3b; --accent2:#3b82f6;
+    --ok:#34d399;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+       background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+  .sidebar{width:340px;min-width:340px;background:var(--panel);border-right:1px solid var(--line);
+           padding:18px 18px 32px;overflow-y:auto;height:100vh}
+  .stage{flex:1;display:flex;flex-direction:column;min-width:0}
+  header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
+  header h1{font-size:18px;margin:0;font-weight:700}
+  header .sub{color:var(--muted);font-size:12px}
+  .grp{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
+  .grp h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 10px}
+  label{display:block;font-size:13px;color:var(--text);margin:8px 0 4px}
+  .row{display:flex;gap:8px}
+  .row > *{flex:1}
+  input[type=number],select,input[type=text]{width:100%;background:#0e1117;color:var(--text);
+    border:1px solid var(--line);border-radius:7px;padding:7px 8px;font-size:13px}
+  input[type=color]{width:100%;height:34px;background:#0e1117;border:1px solid var(--line);border-radius:7px;padding:2px;cursor:pointer}
+  .seg{display:flex;flex-wrap:wrap;gap:6px}
+  .seg button{flex:1;min-width:64px;background:#0e1117;border:1px solid var(--line);color:var(--text);
+    border-radius:7px;padding:8px 4px;font-size:12px;cursor:pointer;transition:.12s}
+  .seg button:hover{border-color:var(--accent2)}
+  .seg button.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  .chk{display:flex;align-items:center;gap:8px;font-size:13px;margin:8px 0}
+  .chk input{width:16px;height:16px}
+  .btns{display:flex;gap:8px;margin-top:4px}
+  .btn{flex:1;background:var(--accent2);color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;
+    font-weight:600;cursor:pointer;transition:.12s}
+  .btn:hover{filter:brightness(1.1)}
+  .btn.ghost{background:#0e1117;border:1px solid var(--line);color:var(--text);font-weight:500}
+  .btn.green{background:var(--ok);color:#06281c}
+  .hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4}
+  .stagebar{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);
+    background:var(--panel);font-size:13px;color:var(--muted)}
+  .stagebar .info{color:var(--text)}
+  .canvas-wrap{flex:1;min-height:0;min-width:0;overflow:auto;padding:24px;display:flex;align-items:center;justify-content:center;
+    background:repeating-conic-gradient(#15181e 0% 25%,#12151a 0% 50%) 50%/24px 24px}
+  #preview{background:#fff;box-shadow:0 8px 40px rgba(0,0,0,.5);max-width:100%;max-height:100%;width:auto;height:auto}
+  .badge{display:inline-block;background:#0e1117;border:1px solid var(--line);border-radius:20px;padding:3px 10px;color:var(--muted);font-size:11px}
+  .custom{display:none}
+  .custom.show{display:flex}
+  /* Expresii server status + send */
+  .exp-status{display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:8px;flex-wrap:wrap}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none}
+  .dot.ok{background:var(--ok);box-shadow:0 0 0 3px rgba(52,211,153,.18)}
+  .dot.bad{background:var(--accent);box-shadow:0 0 0 3px rgba(226,59,59,.18)}
+  .exp-status .ver{color:var(--text);font-weight:600}
+  .exp-status .meta{color:var(--muted)}
+  .exp-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+  .exp-row select{flex:1}
+  .btn.exp{background:var(--accent);color:#fff}
+  .exp-url-wrap{margin-bottom:8px}
+  .exp-url-wrap label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+  .exp-url-wrap input{width:100%;padding:7px 9px;background:var(--input);color:var(--text);
+    border:1px solid var(--line);border-radius:7px;font-size:13px;font-family:'Consolas','Monaco',monospace}
+  .exp-url-wrap input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-glow)}
+  .exp-url-wrap .row2{display:flex;gap:8px;margin-top:6px;align-items:center}
+  .exp-url-wrap .apply{flex:1;background:var(--accent2);color:#fff;border:none;border-radius:7px;padding:7px;font-size:12px;font-weight:600;cursor:pointer}
+  .exp-url-wrap .apply:hover{filter:brightness(1.1)}
+  .exp-url-wrap .dis{background:#0e1117;border:1px solid var(--line);color:var(--text)}
+  .exp-url-wrap .dis:hover{filter:brightness(1.25)}
+  .exp-state{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin:8px 0 2px;padding:8px 10px;background:var(--input);border:1px solid var(--line);border-radius:7px;font-size:12px}
+  .exp-state .kv{display:flex;justify-content:space-between;gap:8px}
+  .exp-state .kv span{color:var(--muted)}
+  .exp-state .kv b{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
+  footer{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5}
+</style>
+</head>
+<body>
+  <aside class="sidebar">
+    <header>
+      <h1>字格生成器</h1>
+      <span class="sub">Template Generator</span>
+    </header>
+
+    <div class="grp">
+      <h2>Paper</h2>
+      <label>Preset</label>
+      <select id="paperPreset">
+        <option value="A4">A4 (210 × 297 mm)</option>
+        <option value="A3">A3 (297 × 420 mm)</option>
+        <option value="A5">A5 (148 × 210 mm)</option>
+        <option value="Letter">Letter (8.5 × 11 in)</option>
+        <option value="Legal">Legal (8.5 × 14 in)</option>
+        <option value="Square">Square (1 : 1)</option>
+        <option value="custom">Custom aspect ratio…</option>
+      </select>
+      <div class="row custom" id="customAr" style="margin-top:8px">
+        <div><label>Width</label><input id="arW" type="number" value="1.4" step="0.1" min="0.1"></div>
+        <div><label>Height</label><input id="arH" type="number" value="1.0" step="0.1" min="0.1"></div>
+      </div>
+      <label>Orientation</label>
+      <div class="seg" id="orient">
+        <button data-o="portrait" class="active">Portrait</button>
+        <button data-o="landscape">Landscape</button>
+      </div>
+      <label>Resolution (px / mm)</label>
+      <input id="dpi" type="number" value="11.81" step="0.1" min="1">
+      <div class="hint">11.81 px/mm ≈ 300 DPI. The exported PNG stays pixel-matched to the Expresii canvas at any DPI.</div>
+    </div>
+
+    <div class="grp">
+      <h2>Grid type</h2>
+      <div class="seg" id="gridType">
+        <button data-t="mi" class="active">米字格 Mi</button>
+        <button data-t="tian">田字格 Tian</button>
+        <button data-t="jiugong">九宮格 9-grid</button>
+        <button data-t="hui">回宮格 Hui</button>
+        <button data-t="vlines">竖线格 Vertical</button>
+        <button data-t="hlines">横线格 Horizontal</button>
+        <button data-t="zhishi">直式信紙 紅線</button>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h2>Layout</h2>
+      <div class="seg" id="layoutMode">
+        <button data-m="cols" class="active">Cols &amp; Rows</button>
+        <button data-m="cell">Cell size</button>
+      </div>
+      <div class="row" id="colsRows" style="margin-top:8px">
+        <div><label>Columns</label><input id="cols" type="number" value="9" min="1" max="60"></div>
+        <div><label>Rows</label><input id="rows" type="number" value="13" min="1" max="80"></div>
+      </div>
+      <div class="row custom" id="cellSize" style="margin-top:8px">
+        <div><label>Cell (mm)</label><input id="cellmm" type="number" value="20" min="1" step="0.5"></div>
+        <div><label>Margin (mm)</label><input id="marginmm" type="number" value="10" min="0" step="1"></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div><label>Paper margin (mm)</label><input id="paperMarginmm" type="number" value="0" min="0" step="0.5"></div>
+      </div>
+      <div class="hint">Paper margin = gap between paper edge and grid block. 0 = auto (½ cell).</div>
+      <div class="hint" id="layoutHint"></div>
+    </div>
+
+    <div class="grp">
+      <h2>Style</h2>
+      <div class="row">
+        <div><label>Border</label><input id="cBorder" type="color" value="#222222"></div>
+        <div><label>Guides</label><input id="cGuide" type="color" value="#e23b3b"></div>
+      </div>
+      <label>Border width (px)</label>
+      <input id="wBorder" type="number" value="2" min="0.5" step="0.5">
+      <label>Guide width (px)</label>
+      <input id="wGuide" type="number" value="1" min="0.2" step="0.2">
+      <div class="chk"><input type="checkbox" id="dashed" checked><label for="dashed" style="margin:0">Dashed guides</label></div>
+      <div class="chk"><input type="checkbox" id="showBorder" checked><label for="showBorder" style="margin:0">Draw cell borders</label></div>
+    </div>
+
+    <div class="grp">
+      <h2>Export</h2>
+      <div class="btns">
+        <button class="btn green" id="dlSvg">Download SVG</button>
+        <button class="btn ghost" id="dlPng">Download PNG</button>
+      </div>
+      <div class="btns" style="margin-top:8px">
+        <button class="btn ghost" id="print">Print / PDF</button>
+        <button class="btn ghost" id="reset">Reset</button>
+      </div>
+      <footer>
+        Vector (SVG) scales to any printer. PNG is rasterized from the on-screen canvas.
+        Print to PDF from your browser for a paper-perfect sheet.
+      </footer>
+    </div>
+
+    <div class="grp">
+      <h2>Expresii</h2>
+      <div class="exp-url-wrap">
+        <label for="expUrl">Server URL</label>
+        <input id="expUrl" type="text" value="http://localhost:9000" spellcheck="false"
+               placeholder="http://host:9000">
+        <div class="row2">
+          <button class="apply" id="expApply">Connect</button>
+          <button class="apply dis" id="expDisconnect" style="display:none">Disconnect</button>
+          <span class="meta" id="expUrlNote" style="font-size:11px"></span>
+        </div>
+        <div class="hint" id="expSyncNote">Auto paper size: OFF</div>
+      </div>
+      <div class="exp-status">
+        <span class="dot" id="expDot"></span>
+        <span class="ver" id="expVer">checking…</span>
+        <span class="meta" id="expMeta"></span>
+      </div>
+      <div class="exp-state" id="expState" style="display:none">
+        <div class="kv"><span>Paper</span><b id="stPaper">—</b></div>
+        <div class="kv"><span>Layers</span><b id="stLayers">—</b></div>
+        <div class="kv"><span>Active</span><b id="stActive">—</b></div>
+      </div>
+      <div class="exp-row">
+        <label style="font-size:13px;color:var(--muted)">Target</label>
+        <select id="expTarget">
+          <option value="-1">Underlay</option>
+        </select>
+      </div>
+      <div class="btns" style="margin-top:8px">
+        <button class="btn exp" id="sendExp">Send to Expresii</button>
+      </div>
+      <div class="hint" id="expHint">Sends the current template as a PNG underlay to the Expresii Command Server. Run via <code>serve.py</code> (it proxies /expresii → the server URL above).</div>
+    </div>
+  </aside>
+
+  <main class="stage">
+    <div class="stagebar">
+      <span class="badge" id="dimBadge">—</span>
+      <span class="info" id="summary">—</span>
+      <span style="margin-left:auto" class="badge" id="typeBadge">米字格</span>
+    </div>
+    <div class="canvas-wrap">
+      <svg id="preview" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </main>
+
+<script>
+(function(){
+  "use strict";
+  const MM_PER_IN = 25.4;
+  const PAPERS = {
+    A4:[210,297], A3:[297,420], A5:[148,210],
+    Letter:[215.9,279.4], Legal:[215.9,355.6], Square:[210,210]
+  };
+  const GRID_NAMES = {mi:"米字格 Mi",tian:"田字格 Tian",jiugong:"九宮格 9-grid",hui:"回宮格 Hui",vlines:"竖线格 Vertical",hlines:"横线格 Horizontal",zhishi:"直式信紙 紅線"};
+
+  const $ = id => document.getElementById(id);
+  const state = {
+    paper:"A4", ar:[1,1], orient:"portrait", dpi:11.81,
+    type:"mi", layout:"cols", cols:9, rows:13, cellmm:20, marginmm:10, paperMarginmm:0,
+    cBorder:"#222222", cGuide:"#e23b3b", wBorder:2, wGuide:1,
+    dashed:true, showBorder:true
+  };
+
+  // ---- UI wiring ----
+  $("paperPreset").addEventListener("change", e=>{
+    const v=e.target.value;
+    if(v==="custom"){ state.paper="custom"; $("customAr").classList.add("show"); return; }
+    $("customAr").classList.remove("show");
+    state.paper=v;
+    if(PAPERS[v]) state.ar=PAPERS[v].slice();
+    render();
+  });
+  $("arW").addEventListener("input", e=>{ state.ar[0]=+e.target.value||1; render(); });
+  $("arH").addEventListener("input", e=>{ state.ar[1]=+e.target.value||1; render(); });
+  $("orient").addEventListener("click", e=>{
+    const b=e.target.closest("button"); if(!b)return;
+    state.orient=b.dataset.o;
+    [...e.currentTarget.children].forEach(x=>x.classList.toggle("active",x===b));
+    render();
+  });
+  $("dpi").addEventListener("input", e=>{ state.dpi=Math.max(0.5,+e.target.value||11.81); render(); });
+
+  $("gridType").addEventListener("click", e=>{
+    const b=e.target.closest("button"); if(!b)return;
+    state.type=b.dataset.t;
+    [...e.currentTarget.children].forEach(x=>x.classList.toggle("active",x===b));
+    render();
+  });
+
+  $("layoutMode").addEventListener("click", e=>{
+    const b=e.target.closest("button"); if(!b)return;
+    state.layout=b.dataset.m;
+    [...e.currentTarget.children].forEach(x=>x.classList.toggle("active",x===b));
+    $("colsRows").style.display = state.layout==="cols"?"flex":"none";
+    $("cellSize").style.display = state.layout==="cell"?"flex":"none";
+    render();
+  });
+  ["cols","rows"].forEach(id=>$(id).addEventListener("input",e=>{ state[id]=Math.max(1,parseInt(e.target.value)||1); render(); }));
+  ["cellmm","marginmm","paperMarginmm"].forEach(id=>$(id).addEventListener("input",e=>{ state[id]=Math.max(0,+e.target.value||0); render(); }));
+
+  ["cBorder","cGuide"].forEach(id=>$(id).addEventListener("input",e=>{ state[id]=e.target.value; render(); }));
+  ["wBorder","wGuide"].forEach(id=>$(id).addEventListener("input",e=>{ state[id]=Math.max(0.2,+e.target.value||1); render(); }));
+  $("dashed").addEventListener("change",e=>{ state.dashed=e.target.checked; render(); });
+  $("showBorder").addEventListener("change",e=>{ state.showBorder=e.target.checked; render(); });
+
+  // ---- geometry helpers (mm) ----
+  function paperMM(){
+    let [w,h]=state.ar;
+    if(state.paper!=="custom" && PAPERS[state.paper]) [w,h]=PAPERS[state.paper];
+    if(state.orient==="landscape") [w,h]=[h,w];
+    return [w,h];
+  }
+
+  function computeLayout(){
+    const [pw,ph]=paperMM();
+    const M=state.paperMarginmm;          // 0 => auto (½ cell)
+    if(state.layout==="cell"){
+      const cs=state.cellmm;
+      let m, cols, rows;
+      if(M>0){
+        m=M;
+        cols=Math.max(1,Math.floor((pw-2*m)/cs));
+        rows=Math.max(1,Math.floor((ph-2*m)/cs));
+      } else {
+        // auto: paper margin = cs/2  => available width = pw - cs
+        cols=Math.max(1,Math.floor((pw-cs)/cs));
+        rows=Math.max(1,Math.floor((ph-cs)/cs));
+        m=cs/2;
+      }
+      const usedW=cols*cs, usedH=rows*cs;
+      const ox=m+(pw-2*m-usedW)/2, oy=m+(ph-2*m-usedH)/2;
+      return {pw,ph,cols,rows,cellmm:cs,ox,oy,marginm:m};
+    } else {
+      const cols=state.cols, rows=state.rows;
+      let m, cell;
+      if(M>0){
+        m=M;
+        cell=Math.min((pw-2*m)/cols,(ph-2*m)/rows);
+      } else {
+        // auto: paper margin = cell/2  => cell = pw/(cols+1) (margin = 1 cell total, split half/half)
+        cell=Math.min(pw/(cols+1),ph/(rows+1));
+        m=cell/2;
+      }
+      const usedW=cell*cols, usedH=cell*rows;
+      const ox=m+(pw-2*m-usedW)/2, oy=m+(ph-2*m-usedH)/2;
+      return {pw,ph,cols,rows,cellmm:cell,ox,oy,marginm:m};
+    }
+  }
+
+  // ---- SVG builder ----
+  function cellSVG(L, c, r, px, py, cell, dash){
+    const s=[];
+    const x1=px, y1=py, x2=px+cell, y2=py+cell;
+    const cx=px+cell/2, cy=py+cell/2;
+    const G=state.cGuide, gw=state.wGuide, bw=state.wBorder, B=state.cBorder;
+    if(state.showBorder && state.type!=="vlines" && state.type!=="hlines" && state.type!=="zhishi"){
+      s.push(`<rect x="${x1.toFixed(2)}" y="${y1.toFixed(2)}" width="${cell.toFixed(2)}" height="${cell.toFixed(2)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`);
+    }
+    if(state.type==="tian"||state.type==="mi"){
+      s.push(`<line x1="${cx.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${cx.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+      s.push(`<line x1="${x1.toFixed(2)}" y1="${cy.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${cy.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+    }
+    if(state.type==="mi"){
+      s.push(`<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+      s.push(`<line x1="${x2.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x1.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+    }
+    if(state.type==="vlines"){
+      // only the center vertical of each cell -> full-height vertical lines spanning the paper
+      s.push(`<line x1="${cx.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${cx.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+    }
+    if(state.type==="hlines"){
+      // only the center horizontal of each cell -> full-width horizontal lines spanning the paper
+      s.push(`<line x1="${x1.toFixed(2)}" y1="${cy.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${cy.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+    }
+    if(state.type==="zhishi"){
+      // 直式信紙 紅線: outer red frame + vertical red dividers for full-width columns
+      const RED="#c8302b";
+      if(c===0 && r===0){
+        // outer frame at paper bounds
+        const fx=px - c*cell, fy=py - r*cell, fw=L.cols*cell, fh=L.rows*cell;
+        s.push(`<rect x="${fx.toFixed(2)}" y="${fy.toFixed(2)}" width="${fw.toFixed(2)}" height="${fh.toFixed(2)}" fill="none" stroke="${RED}" stroke-width="4"/>`);
+      }
+      // column dividers at right edge of each column (except last, which is outer frame)
+      if(c < L.cols - 1){
+        const colDivX = px + cell;
+        s.push(`<line x1="${colDivX.toFixed(2)}" y1="0" x2="${colDivX.toFixed(2)}" y2="${(L.rows*cell).toFixed(2)}" stroke="${RED}" stroke-width="4" ${dash}/>`);
+      }
+    }
+    if(state.type==="jiugong"){
+      const t=cell/3;
+      for(const i of [1,2]){
+        const gx=px+i*t, gy=py+i*t;
+        s.push(`<line x1="${gx.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${gx.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+        s.push(`<line x1="${x1.toFixed(2)}" y1="${gy.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${gy.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+      }
+    }
+    if(state.type==="hui"){
+      const k=0.66, iw=cell*k, ix=px+(cell-iw)/2, iy=py+(cell-iw)/2;
+      s.push(`<rect x="${ix.toFixed(2)}" y="${iy.toFixed(2)}" width="${iw.toFixed(2)}" height="${iw.toFixed(2)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+    }
+    return s.join("");
+  }
+
+  function buildSVG(){
+    const L=computeLayout();
+    const pxPerMM=state.dpi;
+    const W=L.pw*pxPerMM, H=L.ph*pxPerMM;
+    const cellPx=L.cellmm*pxPerMM;
+    const oxPx=L.ox*pxPerMM, oyPx=L.oy*pxPerMM;
+    const dash=state.dashed?`stroke-dasharray="${(gwDash()).toFixed(1)} ${(gwDash()*0.8).toFixed(1)}"`:"";
+    let body=`<rect x="0" y="0" width="${W.toFixed(1)}" height="${H.toFixed(1)}" fill="white"/>`;
+    for(let r=0;r<L.rows;r++){
+      for(let c=0;c<L.cols;c++){
+        const px=oxPx+c*cellPx, py=oyPx+r*cellPx;
+        body+=cellSVG(L,c,r,px,py,cellPx,dash);
+      }
+    }
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W.toFixed(1)}" height="${H.toFixed(1)}" viewBox="0 0 ${W.toFixed(1)} ${H.toFixed(1)}">${body}</svg>`;
+    return {svg, W, H, L};
+  }
+  function gwDash(){ return Math.max(4, state.wGuide*6); }
+
+  // ---- render to preview ----
+  function render(){
+    const {svg, W, H, L}=buildSVG();
+    const prev=$("preview");
+    prev.setAttribute("width", W);
+    prev.setAttribute("height", H);
+    prev.setAttribute("viewBox", `0 0 ${W} ${H}`);   // scales the 0..W coordinate space to fit the displayed box
+    // contain: cap to the stage on BOTH axes, keep aspect ratio; CSS flex centers it.
+    // (do NOT force width:100% — that breaks centering/aspect in non-square windows)
+    prev.style.width="auto";
+    prev.style.height="auto";
+    prev.style.maxWidth="100%";
+    prev.style.maxHeight="100%";
+    prev.innerHTML=svg.replace(/^<svg[^>]*>/,"").replace(/<\/svg>$/,"");
+    // summary
+    const [pw,ph]=paperMM();
+    $("dimBadge").textContent=`${Math.round(W)} × ${Math.round(H)} px  ·  ${(+pw).toFixed(1)}×${(+ph).toFixed(1)} mm`;
+    $("typeBadge").textContent=GRID_NAMES[state.type];
+    const cellNote = state.layout==="cell"
+      ? `${L.cols}×${L.rows} cells @ ${L.cellmm.toFixed(1)}mm`
+      : `${L.cols}×${L.rows} cols×rows`;
+    $("summary").textContent=`${GRID_NAMES[state.type]} · ${cellNote} · ${state.orient}`;
+    $("layoutHint").textContent = state.layout==="cell"
+      ? `Fits ${L.cols}×${L.rows} cells of ${state.cellmm}mm within ${state.marginmm}mm cell-margins; paper margin ${L.marginm.toFixed(1)}mm.`
+      : `Each cell ≈ ${L.cellmm.toFixed(1)}mm · paper margin ${L.marginm.toFixed(1)}mm (square fit of ${L.cols}×${L.rows}).`;
+    currentSVG=svg; currentMeta={W,H};
+  }
+  let currentSVG="", currentMeta={W:0,H:0};
+
+  // ---- export ----
+  function download(name, blob){
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob); a.download=name; a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+  }
+  $("dlSvg").addEventListener("click", ()=>{
+    download(`calligraphy_${state.type}_${state.paper}_${state.orient}.svg`,
+             new Blob([currentSVG],{type:"image/svg+xml"}));
+  });
+  $("dlPng").addEventListener("click", ()=>{
+    const {W,H}=currentMeta;
+    const img=new Image();
+    const svg64="data:image/svg+xml;base64,"+btoa(unescape(encodeURIComponent(currentSVG)));
+    img.onload=()=>{
+      const cnv=document.createElement("canvas");
+      cnv.width=W; cnv.height=H;
+      const ctx=cnv.getContext("2d");
+      ctx.fillStyle="#fff"; ctx.fillRect(0,0,W,H);
+      ctx.drawImage(img,0,0);
+      cnv.toBlob(b=>download(`calligraphy_${state.type}_${state.paper}_${state.orient}.png`,b),"image/png");
+    };
+    img.src=svg64;
+  });
+  $("print").addEventListener("click", ()=>{
+    const w=window.open("","_blank");
+    w.document.write(`<html><head><title>Calligraphy Grid</title>
+      <style>@page{margin:0}body{margin:0}img{width:100%;height:100%}</style></head>
+      <body><img src="data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(currentSVG)))}"></body></html>`);
+    w.document.close();
+    setTimeout(()=>w.print(),300);
+  });
+
+  $("reset").addEventListener("click", ()=>location.reload());
+
+  // ---- Expresii Command Server integration ----
+  // Protocol learned from WebStrokeClient: GET /info -> {version,cpu,gpu,ram};
+  // GET /state -> {layerCount,...}; POST /upload-image JSON {image: base64png, destination: int}
+  //   destination: -1 = Underlay, 0+ = settled paint layers.
+  // Cross-origin CORS: the Expresii server does not answer preflight OPTIONS, so we route
+  // through a same-origin proxy (serve.py forwards /expresii/<host>/<port>/* to that server).
+  // The user-editable server URL is embedded in the proxy path so any host works without CORS.
+  // Accept either a full URL (http://host:9000) or Amami's shorthand (host:9000 / 192.168.1.5)
+  let autoPaperSync=false;   // when connected, auto-update GUI paper from Expresii /state
+  let expTimer=null;         // periodic poll handle (null = not polling)
+  let lastPaperSig="";       // last applied paper signature (skip redundant re-render)
+
+  function normalizeServerUrl(u){
+    u = (u || "http://localhost:9000").trim().replace(/\/+$/,"");
+    if (u.indexOf("://") === -1) u = "http://" + u;          // add scheme if missing
+    const schemeColon = u.indexOf(":");                      // first ':' is the scheme separator
+    const hasPort = u.indexOf(":", schemeColon+1) !== -1;    // a second ':' means a port is present
+    if (!hasPort) u += ":9000";                              // default Expresii port
+    return u;
+  }
+  function expBase(){
+    const u = normalizeServerUrl($("expUrl").value);
+    try { const p = new URL(u); return `/expresii/${p.host}`; } catch(e){ return "/expresii/localhost:9000"; }
+  }
+  function expBaseRaw(){ return normalizeServerUrl($("expUrl").value); }
+  function shortenCpu(s){ return s ? s.replace(/\s+(w\/|with|@|Graphics|\d+-?Core).*/i,"").trim() : ""; }
+  function startPoll(){
+    if(expTimer) return;
+    expTimer=setInterval(loadExpInfo, 15000);
+  }
+  function stopPoll(){
+    if(expTimer){ clearInterval(expTimer); expTimer=null; }
+  }
+  // Sync the GUI paper spec to Expresii's canvas. Expresii reports paper in PIXELS;
+  // convert to mm at the current DPI so the generated template's pixel size equals
+  // the Expresii canvas (mm = px/dpi  =>  mm*dpi = px). We always use a custom paper
+  // (not a preset) so the pixel size stays exactly matched for underlay alignment.
+  function applyExpresiiPaper(pwPx, phPx){
+    if(!autoPaperSync) return;
+    if(!pwPx || !phPx) return;
+    const dpi = state.dpi || 11.81;
+    const portrait = phPx >= pwPx;
+    const ar = portrait ? [pwPx/dpi, phPx/dpi] : [phPx/dpi, pwPx/dpi];
+    const sig = `custom|${ar[0].toFixed(1)}x${ar[1].toFixed(1)}|${portrait?'portrait':'landscape'}`;
+    if(sig === lastPaperSig) return;     // unchanged -> avoid needless re-render
+    lastPaperSig = sig;
+    state.paper='custom';
+    state.ar=ar;
+    state.orient=portrait?'portrait':'landscape';
+    // Default grid to 8×8 for the common 2048×2048 canvas (only on a real paper change,
+    // so it won't clobber manual cols/rows edits on later /state polls).
+    if(Math.round(pwPx)===2048 && Math.round(phPx)===2048){
+      state.layout='cols';
+      state.cols=8; state.rows=8;
+      const cr=$("colsRows"); if(cr) cr.style.display='flex';
+      [...$("layoutMode").children].forEach(b=>b.classList.toggle("active", b.dataset.m==='cols'));
+      $("cols").value=8; $("rows").value=8;
+    }
+    const ps=$("paperPreset"); ps.value='custom';
+    $("customAr").classList.add("show");
+    $("arW").value=ar[0].toFixed(1);
+    $("arH").value=ar[1].toFixed(1);
+    [...$("orient").children].forEach(b=>b.classList.toggle("active", b.dataset.o===state.orient));
+    render();
+    $("expSyncNote").textContent=`Auto paper size: ON — synced ${Math.round(pwPx)}×${Math.round(phPx)} px`;
+  }
+  function disconnectExp(){
+    autoPaperSync=false;
+    stopPoll();
+    const dot=$("expDot"), ver=$("expVer"), meta=$("expMeta"), st=$("expState");
+    dot.className="dot";
+    ver.textContent="disconnected";
+    meta.textContent="";
+    st.style.display="none";
+    $("expUrlNote").textContent="disconnected";
+    $("expSyncNote").textContent="Auto paper size: OFF";
+    $("expApply").style.display="";
+    $("expDisconnect").style.display="none";
+  }
+
+  async function loadExpInfo(){
+    const dot=$("expDot"), ver=$("expVer"), meta=$("expMeta"), st=$("expState");
+    try{
+      const res=await fetch(expBase()+"/info");
+      if(!res.ok) throw new Error("HTTP "+res.status);
+      const d=await res.json();
+      dot.className="dot ok";
+      ver.textContent="Expresii "+(d.version||"");
+      meta.textContent=[shortenCpu(d.cpu||""), d.gpu||"", d.ram||""].filter(Boolean).join(" · ");
+      $("expUrlNote").textContent = "connected";
+      autoPaperSync=true;
+      startPoll();
+      $("expApply").style.display="none";
+      $("expDisconnect").style.display="";
+      $("expSyncNote").textContent="Auto paper size: ON";
+      // GET /state -> server state (paper, layers, wetness, brush, scratchiness) + target list
+      try{
+        const sr=await fetch(expBase()+"/state");
+        if(sr.ok){
+          const sd=await sr.json();
+          st.style.display="grid";
+          $("stPaper").textContent = (sd.paperWidth&&sd.paperHeight) ? `${sd.paperWidth}×${sd.paperHeight}` : "—";
+          $("stLayers").textContent = (sd.layerCount!==undefined) ? `${sd.layerCount}` : "—";
+          $("stActive").textContent = (sd.layerIndex!==undefined) ? `L${sd.layerIndex}` : "—";
+          const sel=$("expTarget");
+          const lc=parseInt(sd.layerCount)||0;
+          const want=1+lc; // -1 underlay + lc layers
+          if(sel.options.length!==want){
+            sel.innerHTML="";
+            const o=document.createElement("option"); o.value="-1"; o.textContent="Underlay"; sel.appendChild(o);
+            for(let i=0;i<lc;i++){ const op=document.createElement("option"); op.value=String(i); op.textContent="Settled Paint L"+i; sel.appendChild(op); }
+          }
+          if(autoPaperSync && sd.paperWidth && sd.paperHeight) applyExpresiiPaper(sd.paperWidth, sd.paperHeight);
+        }
+      }catch(e){ /* state optional */ }
+    }catch(e){
+      dot.className="dot bad";
+      ver.textContent="not connected";
+      meta.textContent="Server unreachable at "+expBaseRaw();
+      st.style.display="none";
+      $("expUrlNote").textContent = "unreachable";
+      autoPaperSync=false;
+      $("expApply").style.display="";
+      $("expDisconnect").style.display="none";
+      $("expSyncNote").textContent="Auto paper size: OFF";
+    }
+  }
+  function pngFromPreview(){
+    const {W,H}=currentMeta;
+    const cnv=document.createElement("canvas"); cnv.width=W; cnv.height=H;
+    const ctx=cnv.getContext("2d"); ctx.fillStyle="#fff"; ctx.fillRect(0,0,W,H);
+    const svg64="data:image/svg+xml;base64,"+btoa(unescape(encodeURIComponent(currentSVG)));
+    return new Promise((resolve,reject)=>{
+      const img=new Image();
+      img.onload=()=>{ ctx.drawImage(img,0,0); resolve(cnv.toDataURL("image/png").split(",")[1]); };
+      img.onerror=reject;
+      img.src=svg64;
+    });
+  }
+  $("sendExp").addEventListener("click", async ()=>{
+    const btn=$("sendExp"), hint=$("expHint");
+    btn.disabled=true; const old=hint.textContent;
+    try{
+      const base64=await pngFromPreview();
+      const dest=parseInt($("expTarget").value);
+      hint.textContent="Sending PNG to Expresii…";
+      const res=await fetch(expBase()+"/upload-image",{
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({image:base64, destination:dest})
+      });
+      if(!res.ok) throw new Error("HTTP "+res.status);
+      const d=await res.json();
+      if(d.status==="done"){ hint.textContent="Sent ✓ (destination "+(dest===-1?"Underlay":"L"+dest)+")."; loadExpInfo(); }
+      else throw new Error(d.error||"upload failed");
+    }catch(e){
+      hint.textContent="Send failed: "+e.message+". Is the server running on 9000?";
+    }finally{
+      btn.disabled=false;
+    }
+  });
+  // Server URL field: persist across reloads, re-check on Apply
+  const EXP_KEY = "expresii_server_url";
+  const savedUrl = localStorage.getItem(EXP_KEY);
+  if (savedUrl) $("expUrl").value = savedUrl;
+  function applyExpUrl(){
+    const raw = ($("expUrl").value || "").trim();
+    if (!raw) { $("expUrlNote").textContent = "enter a URL"; return; }
+    const norm = normalizeServerUrl(raw);
+    try { new URL(norm); } catch(e){ $("expUrlNote").textContent = "invalid URL"; return; }
+    $("expUrl").value = norm;                 // normalize box to full URL
+    localStorage.setItem(EXP_KEY, norm);
+    $("expUrlNote").textContent = "connecting…";   // await real connection result from loadExpInfo()
+    loadExpInfo();
+  }
+  $("expApply").addEventListener("click", applyExpUrl);
+  $("expUrl").addEventListener("keydown", e => { if (e.key === "Enter") applyExpUrl(); });
+  $("expDisconnect").addEventListener("click", disconnectExp);
+  // init connection status, refresh periodically (matches WebStrokeClient's 15s poll)
+  loadExpInfo();
+  startPoll();
+
+  // init
+  $("colsRows").style.display="flex";
+  $("cellSize").style.display="none";
+  render();
+})();
+</script>
+</body>
+</html>
