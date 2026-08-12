@@ -10,14 +10,13 @@ as a painting underlay.
 ## Features
 
 - **Template types**
-  - 米字格 Mi — rice-grid (cross + diagonals)
-  - 田字格 Tian — field-grid (cross)
-  - 九宮格 9-grid — 3×3 sub-grid
+  - 米字格 Mi — cross + diagonals
+  - 田字格 Tian — cross
+  - 九宮格 9-box — 3×3 sub-grid
   - 回宮格 Hui — inner box
-  - 竖线格 Vertical — vertical lines only
-  - 横线格 Horizontal — horizontal lines only
-  - 直式信紙 紅線 — vertical Chinese letter paper: red outer frame + red
-    column lines (8 full-width columns)
+  - 豎線格 Vertical — vertical lines only
+  - 橫線格 Horizontal — horizontal lines only
+  - 直式信紙 Chinese letter — vertical Chinese letter paper
   - 扇面 Fan — folding-fan leaf: bold black outline (the 2 大骨) + black 折線 (fold
     lines). For a real fan spec the leaf is divided into (方−1)×2+1 sectors — i.e.
     (方−1)×2 black fold lines between the two 大骨 edges (e.g. 15方 → 29 sectors),

@@ -276,7 +276,7 @@
     A4:[210,297], A3:[297,420], A5:[148,210],
     Letter:[215.9,279.4], Legal:[215.9,355.6], Square:[210,210]
   };
-  const GRID_NAMES = {mi:"米字格 Mi",tian:"田字格 Tian",jiugong:"九宮格 9-grid",hui:"回宮格 Hui",vlines:"竖线格 Vertical",hlines:"横线格 Horizontal",zhishi:"直式信紙",fan:"扇面 Fan"};
+  const GRID_NAMES = {mi:"米字格 Mi",tian:"田字格 Tian",jiugong:"九宮格 9-box",hui:"回宮格 Hui",vlines:"豎線格 Vertical",hlines:"橫線格 Horizontal",zhishi:"直式信紙 Chinese letter",fan:"扇面 Fan"};
 
   // ---- i18n (English / 中文 / 日本語 / 한국어) ----
   const I18N = {
@@ -304,8 +304,8 @@
       sendToExpresii:"Send to Expresii",
       expHint:"Sends the current template as a PNG underlay to the Expresii Command Server. Run via serve.py (it proxies /expresii → the server URL above).",
       expPaper:"Paper", expLayers:"Layers", expActive:"Active",
-      grid_mi:"Rice/米 character grid", grid_tian:"Field/田 character grid", grid_jiugong:"Nine-grid (九宮格)", grid_hui:"Hui/回 enclosure grid",
-      grid_vlines:"Vertical-line grid (竖线格)", grid_hlines:"Horizontal-line grid (横线格)", grid_zhishi:"Vertical letter (直式信紙)", grid_fan:"Fan (扇面)",
+      grid_mi:"米字格 Mi — cross + diagonals", grid_tian:"田字格 Tian — cross", grid_jiugong:"九宮格 9-box — 3×3 sub-grid", grid_hui:"回宮格 Hui — inner box",
+      grid_vlines:"豎線格 Vertical — vertical lines only", grid_hlines:"橫線格 Horizontal — horizontal lines only", grid_zhishi:"直式信紙 Chinese letter — vertical Chinese letter paper", grid_fan:"Fan (扇面)",
       fanSpecOpt:"{n} sun · {dim}cm · {fang} ribs", fanCustom:"Custom (block fit)",
       autoPaperOn:"Auto paper size: ON — synced {pw}×{ph} px",
       disconnected:"disconnected", sending:"Sending PNG to Expresii…", sentDone:"Sent ✓ (destination {dest}).",
@@ -338,8 +338,8 @@
       sendToExpresii:"發送到 Expresii",
       expHint:"將當前模板作為 PNG 底層發送到 Expresii 命令伺服器。需透過 serve.py 運行（它將 /expresii 代理到上方的伺服器位址）。",
       expPaper:"紙張", expLayers:"圖層", expActive:"當前",
-      grid_mi:"米字格", grid_tian:"田字格", grid_jiugong:"九宮格", grid_hui:"回宮格",
-      grid_vlines:"豎線格", grid_hlines:"橫線格", grid_zhishi:"直式信紙", grid_fan:"扇面",
+      grid_mi:"米字格 Mi — cross + diagonals", grid_tian:"田字格 Tian — cross", grid_jiugong:"九宮格 9-box — 3×3 sub-grid", grid_hui:"回宮格 Hui — inner box",
+      grid_vlines:"豎線格 Vertical — vertical lines only", grid_hlines:"橫線格 Horizontal — horizontal lines only", grid_zhishi:"直式信紙 Chinese letter — vertical Chinese letter paper", grid_fan:"Fan (扇面)",
       fanSpecOpt:"{n}寸 · {dim}cm · {fang}方", fanCustom:"自定（按塊適配）",
       autoPaperOn:"自動紙張尺寸：開 —— 已同步 {pw}×{ph} 像素",
       disconnected:"已斷開", sending:"正在發送 PNG 到 Expresii…", sentDone:"已發送 ✓（目標 {dest}）。",
@@ -372,8 +372,8 @@
       sendToExpresii:"Expresii に送信",
       expHint:"現在のテンプレートを PNG 下絵として Expresii コマンドサーバーに送信します。serve.py 経由で実行してください（/expresii を上記サーバー URL にプロキシします）。",
       expPaper:"用紙", expLayers:"レイヤー", expActive:"アクティブ",
-      grid_mi:"米字格", grid_tian:"田字格", grid_jiugong:"九宮格", grid_hui:"回宮格",
-      grid_vlines:"竖线格", grid_hlines:"横线格", grid_zhishi:"直式信紙", grid_fan:"扇面",
+ grid_mi:"米字格 Mi — 十字＋対角線", grid_tian:"田字格 Tian — 十字", grid_jiugong:"九宮格 9-box — 3×3 マス", grid_hui:"回宮格 Hui — 内枠",
+ grid_vlines:"豎線格 Vertical — 縦線のみ", grid_hlines:"橫線格 Horizontal — 横線のみ", grid_zhishi:"直式信紙 Chinese letter — 縦書きの中文便箋", grid_fan:"Fan (扇面)",
       fanSpecOpt:"{n}寸 · {dim}cm · {fang}方", fanCustom:"自定（ブロックフィット）",
       autoPaperOn:"自動用紙サイズ：オン — {pw}×{ph} px に同期",
       disconnected:"切断済み", sending:"Expresii に PNG を送信中…", sentDone:"送信完了 ✓（宛先 {dest}）。",
@@ -406,8 +406,8 @@
       sendToExpresii:"Expresii로 보내기",
       expHint:"현재 템플릿을 PNG 언더레이로 Expresii 명령 서버에 보냅니다. serve.py로 실행하세요（/expresii를 위 서버 URL로 프록시함）.",
       expPaper:"용지", expLayers:"레이어", expActive:"활성",
-      grid_mi:"米字格", grid_tian:"田字格", grid_jiugong:"九宮格", grid_hui:"回宮格",
-      grid_vlines:"竖线格", grid_hlines:"横线格", grid_zhishi:"直式信紙", grid_fan:"扇面",
+ grid_mi:"米字格 Mi — 십자 + 대각선", grid_tian:"田字格 Tian — 십자", grid_jiugong:"九宮格 9-box — 3×3 서브그리드", grid_hui:"回宮格 Hui — 안쪽 상자",
+ grid_vlines:"豎線格 Vertical — 세로선만", grid_hlines:"橫線格 Horizontal — 가로선만", grid_zhishi:"直式信紙 Chinese letter — 세로 쓰기 중문 편지지", grid_fan:"Fan (扇面)",
       fanSpecOpt:"{n}치 · {dim}cm · {fang}리브", fanCustom:"사용자 지정（블록 맞춤）",
       autoPaperOn:"자동 용지 크기: 켜기 — {pw}×{ph} px 동기화됨",
       disconnected:"연결 해제됨", sending:"Expresii로 PNG 전송 중…", sentDone:"전송 완료 ✓（대상 {dest}）.",
@@ -419,7 +419,7 @@
   };
   let lang = "en";
   // Canonical Chinese grid-type names (shared across all languages — keep the original glyphs).
-  const GRID_NAME_ZH = {mi:"米字格",tian:"田字格",jiugong:"九宮格",hui:"回宮格",vlines:"竖线格",hlines:"横线格",zhishi:"直式信紙",fan:"扇面"};
+  const GRID_NAME_ZH = {mi:"米字格",tian:"田字格",jiugong:"九宮格",hui:"回宮格",vlines:"豎線格",hlines:"橫線格",zhishi:"直式信紙",fan:"扇面"};
   // Mini glyphs representing each grid type (stroke/fill inherit currentColor).
   const GRID_SVG = {
     mi:'<svg class="gsvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"><rect x="3" y="3" width="18" height="18"/><line x1="3" y1="3" x2="21" y2="21"/><line x1="21" y1="3" x2="3" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="3" x2="12" y2="21"/></svg>',
