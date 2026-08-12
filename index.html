@@ -34,6 +34,11 @@
   .seg button:hover{border-color:var(--accent2)}
   .seg button.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
   .seg button:disabled{opacity:.4;cursor:not-allowed;border-color:var(--line)}
+  .lang-grp{padding:10px 12px}
+  .lang-sel{display:flex;align-items:center;gap:8px;background:#0e1117;border:1px solid var(--line);
+    border-radius:8px;padding:5px 8px}
+  .lang-sel .lang-ico{display:flex;color:var(--muted);flex:none}
+  .lang-sel select{border:none;background:transparent;padding:4px 2px;font-size:13px;flex:none;width:auto;cursor:pointer}
   .chk{display:flex;align-items:center;gap:8px;font-size:13px;margin:8px 0}
   .chk input{width:16px;height:16px}
   .btns{display:flex;gap:8px;margin-top:4px}
@@ -86,13 +91,21 @@
       <span class="sub" data-trans="app_sub">Calligraphy template generator</span>
     </header>
 
-    <div class="grp">
-      <label data-trans="language">Language</label>
-      <div class="seg" id="langSel">
-        <button data-lang="en">English</button>
-        <button data-lang="zh">中文</button>
-        <button data-lang="ja">日本語</button>
-        <button data-lang="ko">한국어</button>
+    <div class="grp lang-grp">
+      <div class="lang-sel">
+        <span class="lang-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M3 12h18"></path>
+            <path d="M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9S9.5 5.5 12 3z"></path>
+          </svg>
+        </span>
+        <select id="langSel" aria-label="Language">
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+        </select>
       </div>
     </div>
 
@@ -446,7 +459,7 @@
   function setLang(l){
     lang=l;
     try{ localStorage.setItem("tg_lang", l); }catch(_){}
-    document.querySelectorAll("#langSel button").forEach(b=>b.classList.toggle("active", b.getAttribute("data-lang")===l));
+    const sel=$("langSel"); if(sel) sel.value=l;
     applyLang();
   }
 
@@ -1011,17 +1024,14 @@
   $("expUrl").addEventListener("keydown", e => { if (e.key === "Enter") applyExpUrl(); });
   $("expDisconnect").addEventListener("click", disconnectExp);
   // language switcher
-  $("langSel").addEventListener("click", e=>{
-    const b=e.target.closest("button"); if(!b)return;
-    setLang(b.getAttribute("data-lang"));
-  });
+  $("langSel").addEventListener("change", e=>{ setLang(e.target.value); });
   // init connection status, refresh periodically (matches WebStrokeClient's 15s poll)
   loadExpInfo();
   startPoll();
 
   // init
   lang = localStorage.getItem("tg_lang") || defaultLang();
-  document.querySelectorAll("#langSel button").forEach(b=>b.classList.toggle("active", b.getAttribute("data-lang")===lang));
+  $("langSel").value = lang;
   applyVisibility();
   setLang(lang);   // applies translations + renders (render() is called inside applyLang)
 })();
