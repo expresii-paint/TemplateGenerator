@@ -459,16 +459,20 @@
       }
     }
     }
-    // 折線 (fold lines): for a real fan spec the fan area is divided into (方−2)×2 + 1 sectors,
-    // i.e. (方−2)×2 black fold lines between the two 大骨 outline edges. The multiplier (sects)
-    // sets the fold density so the user can choose finer fold spacing. 自定 keeps red column ribs.
+    // 折線 (fold lines): for a real fan spec the fan area is divided into (方−1)×2 + 1 sectors,
+    // i.e. (方−1)×2 black fold lines between the two 大骨 outline edges. 自定 keeps red column ribs.
+    // Adjacent fold lines alternate 凹折 (concave/valley) and 凸折 (convex/ridge) like an accordion;
+    // when Dashed guides is ON they get DISTINCT dash styles so the two fold kinds read apart.
     if(sp){
       const fang = sp.fang;
       const folds = (fang - 1) * 2;             // 方−1 根 per side → (方−1)×2 black fold lines (= (方−1)×2+1 sectors)
       const dphiB = (2*alpha) / (folds + 1);
+      const dashConcave = state.dashed ? `stroke-dasharray="7 5"` : "";   // 凹折 valley fold: long-short dashes
+      const dashConvex  = state.dashed ? `stroke-dasharray="2 5"`  : "";   // 凸折 ridge fold: fine dots
       for(let j=1;j<=folds;j++){
         const phi = -alpha + j*dphiB;
-        out += `<path d="${radial(Ri,Ro,phi)}" fill="none" stroke="${B}" stroke-width="${bw}" ${dash}/>`;
+        const foldDash = (j % 2 === 1) ? dashConcave : dashConvex;   // odd = 凹折, even = 凸折
+        out += `<path d="${radial(Ri,Ro,phi)}" fill="none" stroke="${B}" stroke-width="${bw}" ${foldDash}/>`;
       }
     } else {
       // 自定 Custom: radial column ribs at the user's column spacing (red grid)

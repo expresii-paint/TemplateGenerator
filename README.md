@@ -21,7 +21,9 @@ as a painting underlay.
   - 扇面 Fan — folding-fan leaf: bold black outline (the 2 大骨) + black 折線 (fold
     lines). For a real fan spec the leaf is divided into (方−1)×2+1 sectors — i.e.
     (方−1)×2 black fold lines between the two 大骨 edges (e.g. 15方 → 29 sectors),
-    with **no red column grid**. A **扇面规格 (fan spec)** dropdown (8寸 / 9寸 /
+    with **no red column grid**. Adjacent fold lines alternate 凹折 (concave/valley)
+    and 凸折 (convex/ridge); with **Dashed guides ON** they get distinct dash styles
+    (凹折 = `7 5`, 凸折 = `2 5`). A **扇面规格 (fan spec)** dropdown (8寸 / 9寸 /
     10寸 / 自定) applies the real sector shape from the reference template (opened
     width, rib length, radial depth); the leaf fits the current paper, so it works
     with Expresii auto paper-size sync. 自定 keeps the red concentric + column grid.
