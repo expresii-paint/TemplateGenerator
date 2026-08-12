@@ -127,22 +127,22 @@
 
     <div class="grp">
       <h2>Layout</h2>
-      <div class="seg" id="layoutMode">
+      <div class="seg" id="layoutMode" data-show="grid">
         <button data-m="cols" class="active">Cols &amp; Rows</button>
         <button data-m="cell">Cell size</button>
       </div>
-      <div class="row" id="colsRows" style="margin-top:8px">
+      <div class="row" id="colsRows" data-show="grid" style="margin-top:8px">
         <div><label>Columns</label><input id="cols" type="number" value="9" min="1" max="60"></div>
         <div><label>Rows</label><input id="rows" type="number" value="13" min="1" max="80"></div>
       </div>
-      <div class="row custom" id="cellSize" style="margin-top:8px">
+      <div class="row custom" id="cellSize" data-show="grid" style="margin-top:8px">
         <div><label>Cell (mm)</label><input id="cellmm" type="number" value="20" min="1" step="0.5"></div>
         <div><label>Margin (mm)</label><input id="marginmm" type="number" value="10" min="0" step="1"></div>
       </div>
-      <div class="row" style="margin-top:8px">
+      <div class="row" id="paperMarginRow" data-show="grid" style="margin-top:8px">
         <div><label>Paper margin (mm)</label><input id="paperMarginmm" type="number" value="0" min="0" step="0.5"></div>
       </div>
-      <div class="row" id="fanSpecRow" style="margin-top:8px;display:none">
+      <div class="row" id="fanSpecRow" data-show="fan" style="margin-top:8px">
         <div style="flex:1"><label>扇面规格 Fan spec</label>
           <select id="fanSpec">
             <option value="8">8寸 · 47×15.7cm · 18方</option>
@@ -152,7 +152,7 @@
           </select>
         </div>
       </div>
-      <div class="hint">Paper margin = gap between paper edge and grid block. 0 = auto (½ cell).</div>
+      <div class="hint" id="pmHint" data-show="grid">Paper margin = gap between paper edge and grid block. 0 = auto (½ cell).</div>
       <div class="hint" id="layoutHint"></div>
     </div>
 
@@ -160,14 +160,16 @@
       <h2>Style</h2>
       <div class="row">
         <div><label>Border</label><input id="cBorder" type="color" value="#222222"></div>
-        <div><label>Guides</label><input id="cGuide" type="color" value="#e23b3b"></div>
       </div>
       <label>Border width (px)</label>
       <input id="wBorder" type="number" value="2" min="0.5" step="0.5">
-      <label>Guide width (px)</label>
-      <input id="wGuide" type="number" value="1" min="0.2" step="0.2">
+      <div class="row" data-show="grid">
+        <div><label>Guides</label><input id="cGuide" type="color" value="#e23b3b"></div>
+      </div>
+      <label data-show="grid">Guide width (px)</label>
+      <input id="wGuide" data-show="grid" type="number" value="1" min="0.2" step="0.2">
       <div class="chk"><input type="checkbox" id="dashed" checked><label for="dashed" style="margin:0">Dashed guides</label></div>
-      <div class="chk"><input type="checkbox" id="showBorder" checked><label for="showBorder" style="margin:0">Draw cell borders</label></div>
+      <div class="chk" data-show="grid"><input type="checkbox" id="showBorder" checked><label for="showBorder" style="margin:0">Draw cell borders</label></div>
     </div>
 
     <div class="grp">
@@ -282,9 +284,8 @@
     const b=e.target.closest("button"); if(!b)return;
     state.type=b.dataset.t;
     [...e.currentTarget.children].forEach(x=>x.classList.toggle("active",x===b));
-    const isFan = state.type==="fan";
-    $("fanSpecRow").style.display = isFan ? "flex" : "none";
-    if(isFan){ $("fanSpec").value = state.fanSpec; applyFanSpec(); }
+    if(state.type==="fan"){ $("fanSpec").value = state.fanSpec; applyFanSpec(); }
+    applyVisibility();
     render();
   });
   // 扇面规格: pick a real fan spec (sets the sector SHAPE from the reference template) or 自定 block-fit.
@@ -293,6 +294,21 @@
     const v = state.fanSpec;
     if(v==="custom" || !FAN_SPECS[v]) return;       // 自定: keep current paper + block-fit fan
     // no paper resize here — fanSVG fits the chosen spec's shape into whatever paper is set
+  }
+  // Show only the controls applicable to the chosen template type.
+  // Category: every non-fan type (米/田/九宮/回宮/竖/横/直式信紙) shares the "grid" layout controls;
+  // fan shows only the 扇面规格 picker. Controls without data-show are always visible.
+  function applyVisibility(){
+    const cat = state.type==="fan" ? "fan" : "grid";
+    document.querySelectorAll("[data-show]").forEach(el=>{
+      const set = el.getAttribute("data-show").split(",");
+      el.style.display = (set.includes(cat) || set.includes("all")) ? "" : "none";
+    });
+    // layout-mode rows (grid category only) are further narrowed by Cols/Cell choice
+    if(cat==="grid"){
+      $("colsRows").style.display = state.layout==="cols" ? "flex" : "none";
+      $("cellSize").style.display = state.layout==="cell" ? "flex" : "none";
+    }
   }
   $("fanSpec").addEventListener("change", e=>{ state.fanSpec=e.target.value; applyFanSpec(); render(); });
 
@@ -771,6 +787,7 @@
   // init
   $("colsRows").style.display="flex";
   $("cellSize").style.display="none";
+  applyVisibility();
   render();
 })();
 </script>
