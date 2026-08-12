@@ -17,7 +17,7 @@
   .sidebar{width:340px;min-width:340px;background:var(--panel);border-right:1px solid var(--line);
            padding:18px 18px 32px;overflow-y:auto;height:100vh}
   .stage{flex:1;display:flex;flex-direction:column;min-width:0}
-  header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
   header h1{font-size:18px;margin:0;font-weight:700}
   header .sub{color:var(--muted);font-size:12px}
   .grp{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
@@ -34,11 +34,12 @@
   .seg button:hover{border-color:var(--accent2)}
   .seg button.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
   .seg button:disabled{opacity:.4;cursor:not-allowed;border-color:var(--line)}
-  .lang-grp{padding:10px 12px}
-  .lang-sel{display:flex;align-items:center;gap:8px;background:#0e1117;border:1px solid var(--line);
-    border-radius:8px;padding:5px 8px}
+  .lang-sel{display:flex;align-items:center;gap:6px;background:#0e1117;border:1px solid var(--line);
+    border-radius:8px;padding:4px 8px;color-scheme:dark}
   .lang-sel .lang-ico{display:flex;color:var(--muted);flex:none}
-  .lang-sel select{border:none;background:transparent;padding:4px 2px;font-size:13px;flex:none;width:auto;cursor:pointer}
+  .lang-sel select{color-scheme:dark;color:var(--text);background:#0e1117;border:1px solid var(--line);
+    border-radius:6px;padding:4px 6px;font-size:13px;flex:none;width:auto;cursor:pointer}
+  .lang-sel select option{color:var(--text);background:#171a21}
   .chk{display:flex;align-items:center;gap:8px;font-size:13px;margin:8px 0}
   .chk input{width:16px;height:16px}
   .btns{display:flex;gap:8px;margin-top:4px}
@@ -88,10 +89,6 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Template Generator</h1>
-      <span class="sub" data-trans="app_sub">Calligraphy template generator</span>
-    </header>
-
-    <div class="grp lang-grp">
       <div class="lang-sel">
         <span class="lang-ico" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -107,7 +104,7 @@
           <option value="ko">한국어</option>
         </select>
       </div>
-    </div>
+    </header>
 
     <div class="grp">
       <h2 data-trans="paper">Paper</h2>
