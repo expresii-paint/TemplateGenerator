@@ -44,7 +44,8 @@ Expresii's Command Server does not send CORS headers), so it must be served
 over `http://`, not opened as a `file://`.
 
 ```bash
-cd calligraphy_grid_app
+git clone https://github.com/expresii-paint/TemplateGenerator.git
+cd TemplateGenerator          # the cloned folder (use whatever name you gave it)
 python serve.py
 # open http://127.0.0.1:8753/index.html
 ```
