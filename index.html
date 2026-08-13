@@ -903,7 +903,6 @@
     try { const p = new URL(u); return `/expresii/${p.host}`; } catch(e){ return "/expresii/localhost:9000"; }
   }
   function expBaseRaw(){ return normalizeServerUrl($("expUrl").value); }
-  function shortenCpu(s){ return s ? s.replace(/\s+(w\/|with|@|Graphics|\d+-?Core).*/i,"").trim() : ""; }
   function startPoll(){
     if(expTimer) return;
     expTimer=setInterval(loadExpInfo, 15000);
@@ -962,7 +961,7 @@
       const d=await res.json();
       dot.className="dot ok";
       ver.textContent="Expresii "+(d.version||"");
-      meta.textContent=[shortenCpu(d.cpu||""), d.gpu||"", d.ram||""].filter(Boolean).join(" · ");
+      meta.textContent="";   // do not surface CPU/GPU/RAM when connected to Expresii
       $("expUrlNote").textContent = "connected";
       autoPaperSync=true;
       startPoll();
