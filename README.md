@@ -14,8 +14,8 @@ as a painting underlay.
   - 田字格 Tian — cross
   - 九宮格 9-box — 3×3 sub-grid
   - 回宮格 Hui — inner box
-  - 豎線格 Vertical — vertical lines only
-  - 橫線格 Horizontal — horizontal lines only
+  - 豎線 Vertical — vertical lines only
+  - 橫線 Horizontal — horizontal lines only
   - 直式信紙 Chinese letter — vertical Chinese letter paper
   - 扇面 Fan — folding-fan leaf: bold black outline (the 2 大骨) + black 折線 (fold
     lines). For a real fan spec the leaf is divided into (方−1)×2+1 sectors — i.e.
