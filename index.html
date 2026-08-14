@@ -38,9 +38,8 @@
   .seg button.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
   .seg button:disabled{opacity:.4;cursor:not-allowed;border-color:var(--line)}
   .seg#gridType{display:grid;grid-template-columns:repeat(2,1fr)}
-  .seg#gridType button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:9px 4px;font-size:11px;line-height:1.2}
-  .seg#gridType button .gsvg{width:30px;height:30px;display:block;flex:none}
-  .seg#gridType button span{display:block}
+  .seg#gridType button{display:flex;align-items:center;justify-content:center;padding:10px 4px}
+  .seg#gridType button .gsvg{width:52px;height:52px;display:block}
   .lang-sel{display:flex;align-items:center;gap:6px;background:#0e1117;border:1px solid var(--line);
     border-radius:8px;padding:4px 8px;color-scheme:dark}
   .lang-sel .lang-ico{display:flex;color:var(--muted);flex:none}
@@ -532,7 +531,7 @@
     });
     document.querySelectorAll("#gridType button").forEach(b=>{
       const t=b.getAttribute("data-t");
-      b.innerHTML=GRID_SVG[t]+'<span>'+GRID_NAME_ZH[t]+'</span>';
+      b.innerHTML=GRID_SVG[t];
       b.title=tr("grid_"+t);
     });
     buildFanOptions();
