@@ -1004,16 +1004,17 @@
     // bump-map filter (small-scale relief): a fine fractal-noise height field lit by diffuse
     // (valleys darken, peaks catch light -> visible embossed bumps) plus a faint specular
     // sheen. NO silhouette dome, so it never looks like an inflated balloon. surfaceScale is
-    // kept small ("rather small scale bumps"). (SVG filter; Chrome/Firefox + PNG/Print/Expresii.)
+    // kept small ("rather small scale bumps"), and frequency is low so bumps are sparse/large
+    // rather than dense. (SVG filter; Chrome/Firefox + PNG/Print/Expresii.)
     const bump = `<defs><filter id="fleckBump" x="-20%" y="-20%" width="140%" height="140%">`
-      + `<feTurbulence type="fractalNoise" baseFrequency="0.25" numOctaves="2" seed="7" stitchTiles="stitch" result="nz"/>`
+      + `<feTurbulence type="fractalNoise" baseFrequency="0.12" numOctaves="2" seed="7" stitchTiles="stitch" result="nz"/>`
       + `<feColorMatrix in="nz" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.33 0.33 0.33 0 0" result="noiseA"/>`   // noise -> height (alpha)
-      + `<feDiffuseLighting in="noiseA" surfaceScale="3" diffuseConstant="1" lighting-color="#ffffff" result="diff"><feDistantLight azimuth="235" elevation="55"/></feDiffuseLighting>`   // relief shading
+      + `<feDiffuseLighting in="noiseA" surfaceScale="1.6" diffuseConstant="1" lighting-color="#ffffff" result="diff"><feDistantLight azimuth="235" elevation="55"/></feDiffuseLighting>`   // relief shading
       + `<feComposite in="diff" in2="SourceAlpha" operator="in" result="diffClip"/>`
       + `<feComposite in="SourceGraphic" in2="diffClip" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="shaded"/>`     // gold * relief (color kept)
-      + `<feSpecularLighting in="noiseA" surfaceScale="3" specularConstant="0.5" specularExponent="16" lighting-color="#ffffff" result="spec"><feDistantLight azimuth="235" elevation="55"/></feSpecularLighting>`
+      + `<feSpecularLighting in="noiseA" surfaceScale="1.6" specularConstant="0.4" specularExponent="16" lighting-color="#ffffff" result="spec"><feDistantLight azimuth="235" elevation="55"/></feSpecularLighting>`
       + `<feComposite in="spec" in2="SourceAlpha" operator="in" result="specClip"/>`
-      + `<feComposite in="shaded" in2="specClip" operator="arithmetic" k1="0" k2="1" k3="0.5" k4="0"/>`                            // + faint specular sheen
+      + `<feComposite in="shaded" in2="specClip" operator="arithmetic" k1="0" k2="1" k3="0.35" k4="0"/>`                           // + faint specular sheen
       + `</filter></defs>`;
     const n = Math.max(1, Math.round(state.fleckCount));
     // confine flecks to the grid block (or the paper if no block)
