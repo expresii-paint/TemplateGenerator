@@ -1001,6 +1001,16 @@
     const col = FLECK_COLORS[state.fleckKind] || FLECK_COLORS.gold;
     const sizeMM = state.fleckSize;
     const r = sizeMM * pxPerMM / 2;                 // radius in px
+    // bump-map filter: blur the fleck alpha into a height field, light it with a
+    // distant light (top-left), and add the resulting specular highlight over the
+    // flat fill -> embossed metallic foil. (SVG filters; best in Chrome/Firefox.)
+    const blur = Math.max(0.6, r*0.30).toFixed(2);
+    const bump = `<defs><filter id="fleckBump" x="-40%" y="-40%" width="180%" height="180%">`
+      + `<feGaussianBlur in="SourceAlpha" stdDeviation="${blur}" result="b"/>`
+      + `<feSpecularLighting in="b" surfaceScale="3.5" specularConstant="0.9" specularExponent="16" lighting-color="#ffffff" result="s"><feDistantLight azimuth="235" elevation="58"/></feSpecularLighting>`
+      + `<feComposite in="s" in2="SourceAlpha" operator="in" result="sc"/>`
+      + `<feComposite in="SourceGraphic" in2="sc" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>`
+      + `</filter></defs>`;
     const n = Math.max(1, Math.round(state.fleckCount));
     // confine flecks to the grid block (or the paper if no block)
     let x0, y0, ww, hh;
@@ -1009,7 +1019,7 @@
       x0=L.ox*pxPerMM; y0=L.oy*pxPerMM; ww=L.cols*cellPx; hh=L.rows*cellPx;
     } else { x0=0; y0=0; ww=W; hh=H; }
     const rng = fleckRng(Math.round(n*131 + sizeMM*977 + (state.fleckScatter?7:3) + col.length));
-    let g = `<g id="flecks" fill="${col}">`;
+    let g = `<g id="flecks" fill="${col}" filter="url(#fleckBump)">` + bump;
     for(let i=0;i<n;i++){
       const fx = x0 + (state.fleckScatter ? rng()*ww : (i+0.5)/n*ww);
       const fy = y0 + (state.fleckScatter ? rng()*hh : rng()*hh);
