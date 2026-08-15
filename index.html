@@ -1014,8 +1014,8 @@
       const fx = x0 + (state.fleckScatter ? rng()*ww : (i+0.5)/n*ww);
       const fy = y0 + (state.fleckScatter ? rng()*hh : rng()*hh);
       const rr = r * (0.6 + 0.4*rng());             // base radius w/ size variance
-      // irregular polygon "foil shard": random 3-6 vertices, jittered angles + radii
-      const nv = 3 + Math.floor(rng()*4);           // 3..6 sides
+      // irregular polygon "foil shard": random 6-12 vertices, jittered angles + radii
+      const nv = 6 + Math.floor(rng()*7);           // 6..12 sides
       const baseA = rng()*Math.PI*2;
       let d="";
       for(let v=0; v<nv; v++){
