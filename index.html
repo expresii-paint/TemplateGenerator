@@ -320,7 +320,7 @@
       <div class="btns" style="margin-top:8px">
         <button class="btn exp" id="sendExp" data-trans="sendToExpresii">Send to Expresii</button>
       </div>
-      <div class="hint" id="expHint" data-trans="expHint">Sends the current template as a PNG underlay to the Expresii Command Server. Run via serve.py (it proxies /expresii → the server URL above).</div>
+      <div class="hint" id="expHint" data-trans="expHint">Sends the current template as a PNG underlay to the Expresii Command Server. Works directly from this file (Expresii sends CORS headers); serve.py is optional (it also proxies /expresii if you prefer a same-origin path).</div>
     </div>
   </aside>
 
@@ -372,7 +372,7 @@
       serverUnreachable:"Server unreachable at {url}",
       target:"Target", underlay:"Underlay", overlay:"Overlay", settledPaint:"Settled Paint",
       sendToExpresii:"Send to Expresii",
-      expHint:"Sends the current template as a PNG underlay to the Expresii Command Server. Run via serve.py (it proxies /expresii → the server URL above).",
+      expHint:"Sends the current template as a PNG underlay to the Expresii Command Server. Works directly from this file (Expresii sends CORS headers); serve.py is optional (it also proxies /expresii if you prefer a same-origin path).",
       expPaper:"Paper", expLayers:"Layers", expActive:"Active",
       grid_mi:"米字格 Mi — cross + diagonals", grid_tian:"田字格 Tian — cross", grid_jiugong:"九宮格 9-box — 3×3 sub-grid", grid_hui:"回宮格 Hui — inner box",
       grid_vlines:"豎線 Vertical — vertical lines only", grid_hlines:"橫線 Horizontal — horizontal lines only", grid_zhishi:"直式信紙 Chinese letter — vertical Chinese letter paper", grid_fan:"Fan (扇面)",
@@ -415,7 +415,7 @@
       serverUnreachable:"伺服器不可達：{url}",
       target:"目標", underlay:"底層", overlay:"覆蓋", settledPaint:"沉積顏料",
       sendToExpresii:"發送到 Expresii",
-      expHint:"將當前模板作為 PNG 底層發送到 Expresii 命令伺服器。需透過 serve.py 運行（它將 /expresii 代理到上方的伺服器位址）。",
+      expHint:"將當前模板作為 PNG 底層發送到 Expresii 命令伺服器。可直接由此檔案連線（Expresii 會送出 CORS 標頭）；serve.py 為可選（亦可透過它將 /expresii 代理為同源路徑）。",
       expPaper:"紙張", expLayers:"圖層", expActive:"當前",
       grid_mi:"米字格 Mi — cross + diagonals", grid_tian:"田字格 Tian — cross", grid_jiugong:"九宮格 9-box — 3×3 sub-grid", grid_hui:"回宮格 Hui — inner box",
       grid_vlines:"豎線 Vertical — vertical lines only", grid_hlines:"橫線 Horizontal — horizontal lines only", grid_zhishi:"直式信紙 Chinese letter — vertical Chinese letter paper", grid_fan:"Fan (扇面)",
@@ -458,7 +458,7 @@
       serverUnreachable:"サーバーに到達できません：{url}",
       target:"ターゲット", underlay:"下絵", overlay:"オーバーレイ", settledPaint:"定着ペイント",
       sendToExpresii:"Expresii に送信",
-      expHint:"現在のテンプレートを PNG 下絵として Expresii コマンドサーバーに送信します。serve.py 経由で実行してください（/expresii を上記サーバー URL にプロキシします）。",
+      expHint:"現在のテンプレートを PNG 下絵として Expresii コマンドサーバーに送信します。このファイルから直接接続できます（Expresii は CORS ヘッダーを送信）。serve.py は任意（/expresii を同一オリジンでプロキシすることも可）。",
       expPaper:"用紙", expLayers:"レイヤー", expActive:"アクティブ",
  grid_mi:"米字格 Mi — 十字＋対角線", grid_tian:"田字格 Tian — 十字", grid_jiugong:"九宮格 9-box — 3×3 マス", grid_hui:"回宮格 Hui — 内枠",
  grid_vlines:"豎線 Vertical — 縦線のみ", grid_hlines:"橫線 Horizontal — 横線のみ", grid_zhishi:"直式信紙 Chinese letter — 縦書きの中文便箋", grid_fan:"Fan (扇面)",
@@ -501,7 +501,7 @@
       serverUnreachable:"서버에 연결할 수 없음：{url}",
       target:"대상", underlay:"언더레이", overlay:"오버레이", settledPaint:"정착 페인트",
       sendToExpresii:"Expresii로 보내기",
-      expHint:"현재 템플릿을 PNG 언더레이로 Expresii 명령 서버에 보냅니다. serve.py로 실행하세요（/expresii를 위 서버 URL로 프록시함）.",
+      expHint:"현재 템플릿을 PNG 언더레이로 Expresii 명령 서버에 보냅니다. 이 파일에서 직접 연결됩니다(Expresii가 CORS 헤더를 보냄). serve.py는 선택 사항(/expresii를 동일 출처로 프록시).",
       expPaper:"용지", expLayers:"레이어", expActive:"활성",
  grid_mi:"米字格 Mi — 십자 + 대각선", grid_tian:"田字格 Tian — 십자", grid_jiugong:"九宮格 9-box — 3×3 서브그리드", grid_hui:"回宮格 Hui — 안쪽 상자",
  grid_vlines:"豎線 Vertical — 세로선만", grid_hlines:"橫線 Horizontal — 가로선만", grid_zhishi:"直式信紙 Chinese letter — 세로 쓰기 중문 편지지", grid_fan:"Fan (扇面)",
@@ -1178,9 +1178,12 @@
   //   destination: -1 = Underlay, -2 = Overlay, 0+ = settled paint layers.
   //   Sent as multipart/form-data (NOT application/json) per Expresii CORS rule — avoids the
   //   browser OPTIONS preflight that a JSON POST would trigger.
-  // Cross-origin CORS: the Expresii server does not answer preflight OPTIONS, so we route
-  // through a same-origin proxy (serve.py forwards /expresii/<host>/<port>/* to that server).
-  // The user-editable server URL is embedded in the proxy path so any host works without CORS.
+  // CORS: Expresii's Command Server sends Access-Control-Allow-Origin: * on its endpoints,
+  // so the page can fetch it DIRECTLY (cross-origin) — including from a file:// page (null
+  // origin), which is how Amami.html connects and lets users just open this .html directly.
+  // expBase() returns '' when the page is itself served from the Expresii host (then a
+  // same-origin /expresii/<host> relative path still works via serve.py), otherwise the
+  // absolute http://host. Either way no proxy is required for file:// usage.
   // Accept either a full URL (http://host:9000) or Amami's shorthand (host:9000 / 192.168.1.5)
   let autoPaperSync=false;   // when connected, auto-update GUI paper from Expresii /state
   let expTimer=null;         // periodic poll handle (null = not polling)
@@ -1194,9 +1197,20 @@
     if (!hasPort) u += ":9000";                              // default Expresii port
     return u;
   }
+  // Same-origin => relative URLs (proxy path /expresii/<host> if also served by serve.py);
+  // cross-origin (file://, or another host) => absolute http://host so the browser talks
+  // to Expresii directly. Expresii's Command Server sends Access-Control-Allow-Origin:*,
+  // so a direct cross-origin fetch from a file:// page works (no proxy required) — this is
+  // how Amami.html connects and lets the app run as a plain local .html file.
   function expBase(){
     const u = normalizeServerUrl($("expUrl").value);
-    try { const p = new URL(u); return `/expresii/${p.host}`; } catch(e){ return "/expresii/localhost:9000"; }
+    try {
+      const p = new URL(u);
+      // If the page is itself served from the Expresii host (e.g. via serve.py proxy),
+      // use a same-origin relative path; otherwise hit Expresii directly.
+      if (location.host && p.host === location.host) return "";
+      return "http://" + p.host;
+    } catch(e){ return "http://localhost:9000"; }
   }
   function expBaseRaw(){ return normalizeServerUrl($("expUrl").value); }
   function startPoll(){
