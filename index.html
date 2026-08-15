@@ -147,7 +147,7 @@
       <div class="btns" style="margin-top:8px">
         <button class="btn green" id="laProcess" data-trans="process">Generate 線稿</button>
       </div>
-      <div class="hint" id="laHint" data-trans="lineartHint">Upload a painting/photo; the server traces clean outlines + veins. Output is a PNG underlay — send it to Expresii or export it.</div>
+      <div class="hint" id="laHint" data-trans="lineartHint">Upload a painting/photo; the browser traces clean outlines + veins (no server needed). Output is a PNG underlay — send it to Expresii or export it.</div>
     </div>
 
     <div class="grp" id="gridPanel">
@@ -320,7 +320,7 @@
       <div class="btns" style="margin-top:8px">
         <button class="btn exp" id="sendExp" data-trans="sendToExpresii">Send to Expresii</button>
       </div>
-      <div class="hint" id="expHint" data-trans="expHint">Sends the current template as a PNG underlay to the Expresii Command Server. Works directly from this file (Expresii sends CORS headers); serve.py is optional (it also proxies /expresii if you prefer a same-origin path).</div>
+      <div class="hint" id="expHint" data-trans="expHint">Sends the current template as a PNG underlay to the Expresii Command Server. Works directly from this file — no server needed (Expresii sends CORS headers).</div>
     </div>
   </aside>
 
@@ -372,7 +372,7 @@
       serverUnreachable:"Server unreachable at {url}",
       target:"Target", underlay:"Underlay", overlay:"Overlay", settledPaint:"Settled Paint",
       sendToExpresii:"Send to Expresii",
-      expHint:"Sends the current template as a PNG underlay to the Expresii Command Server. Works directly from this file (Expresii sends CORS headers); serve.py is optional (it also proxies /expresii if you prefer a same-origin path).",
+      expHint:"Sends the current template as a PNG underlay to the Expresii Command Server. Works directly from this file — no server needed (Expresii sends CORS headers).",
       expPaper:"Paper", expLayers:"Layers", expActive:"Active",
       grid_mi:"米字格 Mi — cross + diagonals", grid_tian:"田字格 Tian — cross", grid_jiugong:"九宮格 9-box — 3×3 sub-grid", grid_hui:"回宮格 Hui — inner box",
       grid_vlines:"豎線 Vertical — vertical lines only", grid_hlines:"橫線 Horizontal — horizontal lines only", grid_zhishi:"直式信紙 Chinese letter — vertical Chinese letter paper", grid_fan:"Fan (扇面)",
@@ -386,7 +386,7 @@
       mode:"Mode", modeGrid:"Grid template", modeLineart:"Line drawing converter",
       uploadImage:"Upload image", scale:"Upscale (×)", keepText:"Keep title text",
       transparent:"Transparent background", process:"Generate line drawing", processing:"Processing…",
-      lineartHint:"Upload a painting/photo; the server traces clean outlines + veins. Output is a PNG underlay — send it to Expresii or export it.",
+      lineartHint:"Upload a painting/photo; the browser traces clean outlines + veins (no server needed). Output is a PNG underlay — send it to Expresii or export it.",
       lineartErr:"Line drawing failed: {msg}. Is the image a valid PNG/JPG?",
       lineartNone:"no line drawing yet", lineartNoneSend:"no line drawing to send", laTrans:"transparent", laWhite:"white background"
     },
@@ -415,7 +415,7 @@
       serverUnreachable:"伺服器不可達：{url}",
       target:"目標", underlay:"底層", overlay:"覆蓋", settledPaint:"沉積顏料",
       sendToExpresii:"發送到 Expresii",
-      expHint:"將當前模板作為 PNG 底層發送到 Expresii 命令伺服器。可直接由此檔案連線（Expresii 會送出 CORS 標頭）；serve.py 為可選（亦可透過它將 /expresii 代理為同源路徑）。",
+      expHint:"將當前模板作為 PNG 底層發送到 Expresii 命令伺服器。可直接由此檔案連線，無須伺服器（Expresii 會送出 CORS 標頭）。",
       expPaper:"紙張", expLayers:"圖層", expActive:"當前",
       grid_mi:"米字格 Mi — cross + diagonals", grid_tian:"田字格 Tian — cross", grid_jiugong:"九宮格 9-box — 3×3 sub-grid", grid_hui:"回宮格 Hui — inner box",
       grid_vlines:"豎線 Vertical — vertical lines only", grid_hlines:"橫線 Horizontal — horizontal lines only", grid_zhishi:"直式信紙 Chinese letter — vertical Chinese letter paper", grid_fan:"Fan (扇面)",
@@ -429,7 +429,7 @@
       mode:"模式", modeGrid:"字格模板", modeLineart:"線稿轉換",
       uploadImage:"上傳圖片", scale:"放大（×）", keepText:"保留標題文字",
       transparent:"透明背景", process:"生成 線稿", processing:"處理中…",
-      lineartHint:"上傳一幅畫或照片；伺服器會描出乾淨的輪廓與葉脈。輸出是 PNG 底圖 —— 可發送到 Expresii 或導出。",
+      lineartHint:"上傳一幅畫或照片；瀏覽器會描出乾淨的輪廓與葉脈（無須伺服器）。輸出是 PNG 底圖 —— 可發送到 Expresii 或導出。",
       lineartErr:"線稿失敗：{msg}。圖片是否為有效的 PNG/JPG？",
       lineartNone:"尚無 線稿", lineartNoneSend:"尚無 線稿 可發送", laTrans:"透明", laWhite:"白底"
     },
@@ -458,7 +458,7 @@
       serverUnreachable:"サーバーに到達できません：{url}",
       target:"ターゲット", underlay:"下絵", overlay:"オーバーレイ", settledPaint:"定着ペイント",
       sendToExpresii:"Expresii に送信",
-      expHint:"現在のテンプレートを PNG 下絵として Expresii コマンドサーバーに送信します。このファイルから直接接続できます（Expresii は CORS ヘッダーを送信）。serve.py は任意（/expresii を同一オリジンでプロキシすることも可）。",
+      expHint:"現在のテンプレートを PNG 下絵として Expresii コマンドサーバーに送信します。このファイルから直接接続でき、サーバーは不要です（Expresii は CORS ヘッダーを送信）。",
       expPaper:"用紙", expLayers:"レイヤー", expActive:"アクティブ",
  grid_mi:"米字格 Mi — 十字＋対角線", grid_tian:"田字格 Tian — 十字", grid_jiugong:"九宮格 9-box — 3×3 マス", grid_hui:"回宮格 Hui — 内枠",
  grid_vlines:"豎線 Vertical — 縦線のみ", grid_hlines:"橫線 Horizontal — 横線のみ", grid_zhishi:"直式信紙 Chinese letter — 縦書きの中文便箋", grid_fan:"Fan (扇面)",
@@ -472,7 +472,7 @@
       mode:"モード", modeGrid:"罫線テンプレート", modeLineart:"線画変換",
       uploadImage:"画像をアップロード", scale:"拡大（×）", keepText:"タイトル文字を保持",
       transparent:"透明背景", process:"線画を生成", processing:"処理中…",
-      lineartHint:"絵や写真をアップロードすると、サーバーが輪郭と葉脈をきれいに抽出します。出力は PNG 下絵 — Expresii へ送信や書き出しができます。",
+      lineartHint:"絵や写真をアップロードすると、ブラウザが輪郭と葉脈をきれいに抽出します（サーバー不要）。出力は PNG 下絵 — Expresii へ送信や書き出しができます。",
       lineartErr:"線画失敗：{msg}。画像は有効な PNG/JPG ですか？",
       lineartNone:"線画未生成", lineartNoneSend:"送信する線画がありません", laTrans:"透明", laWhite:"白背景"
     },
@@ -501,7 +501,7 @@
       serverUnreachable:"서버에 연결할 수 없음：{url}",
       target:"대상", underlay:"언더레이", overlay:"오버레이", settledPaint:"정착 페인트",
       sendToExpresii:"Expresii로 보내기",
-      expHint:"현재 템플릿을 PNG 언더레이로 Expresii 명령 서버에 보냅니다. 이 파일에서 직접 연결됩니다(Expresii가 CORS 헤더를 보냄). serve.py는 선택 사항(/expresii를 동일 출처로 프록시).",
+      expHint:"현재 템플릿을 PNG 언더레이로 Expresii 명령 서버에 보냅니다. 이 파일에서 직접 연결되며 서버가 필요 없습니다(Expresii가 CORS 헤더를 보냄).",
       expPaper:"용지", expLayers:"레이어", expActive:"활성",
  grid_mi:"米字格 Mi — 십자 + 대각선", grid_tian:"田字格 Tian — 십자", grid_jiugong:"九宮格 9-box — 3×3 서브그리드", grid_hui:"回宮格 Hui — 안쪽 상자",
  grid_vlines:"豎線 Vertical — 세로선만", grid_hlines:"橫線 Horizontal — 가로선만", grid_zhishi:"直式信紙 Chinese letter — 세로 쓰기 중문 편지지", grid_fan:"Fan (扇面)",
@@ -515,7 +515,7 @@
       mode:"모드", modeGrid:"격자 템플릿", modeLineart:"선화 변환",
       uploadImage:"이미지 업로드", scale:"확대（×）", keepText:"제목 텍스트 유지",
       transparent:"투명 배경", process:"선화 생성", processing:"처리 중…",
-      lineartHint:"그림이나 사진을 업로드하면 서버가 윤곽과 잎맥을 깔끔하게 추출합니다. 출력은 PNG 언더레이 — Expresii로 보내거나 내보낼 수 있습니다.",
+      lineartHint:"그림이나 사진을 업로드하면 브라우저가 윤곽과 잎맥을 깔끔하게 추출합니다(서버 불필요). 출력은 PNG 언더레이 — Expresii로 보내거나 내보낼 수 있습니다.",
       lineartErr:"선화 생성 실패: {msg}. 유효한 PNG/JPG인가요?",
       lineartNone:"선화 없음", lineartNoneSend:"보낼 선화 없음", laTrans:"투명", laWhite:"흰 배경"
     }
@@ -661,6 +661,147 @@
     const ss=String(s%60).padStart(2,"0");
     return m>0 ? `${m}:${ss}` : `${s}s`;
   }
+  // ---- Pure-JS line-art (線稿) converter — runs entirely in the browser, no server, no OpenCV. ----
+  // Faithful port of serve.py's image_to_lineart: corner-bg estimate, morphological-gradient
+  // outline, Sobel-based veins, connected-component de-speckle, optional title text.
+  function _clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function _gaussianKernel(sigma){
+    const r=Math.max(1,Math.round(3*sigma)), n=2*r+1, k=new Float32Array(n);
+    let s=0; for(let i=0;i<n;i++){ const x=i-r; const v=Math.exp(-(x*x)/(2*sigma*sigma)); k[i]=v; s+=v; }
+    for(let i=0;i<n;i++) k[i]/=s; return {k,r};
+  }
+  function _gaussianBlur(src,W,H,sigma){ // separable, src Float32Array
+    const {k,r}=_gaussianKernel(sigma), n=k.length, tmp=new Float32Array(W*H), out=new Float32Array(W*H);
+    for(let y=0;y<H;y++){ for(let x=0;x<W;x++){
+      let acc=0; for(let i=0;i<n;i++){ let xx=x-r+i; if(xx<0)xx=0; else if(xx>=W)xx=W-1; acc+=src[y*W+xx]*k[i]; }
+      tmp[y*W+x]=acc; } }
+    for(let y=0;y<H;y++){ for(let x=0;x<W;x++){
+      let acc=0; for(let i=0;i<n;i++){ let yy=y-r+i; if(yy<0)yy=0; else if(yy>=H)yy=H-1; acc+=tmp[yy*W+x]*k[i]; }
+      out[y*W+x]=acc; } }
+    return out;
+  }
+  // separable max/min filter on a 0/255 binary Uint8Array (square kernel k)
+  function _binFilter(src,W,H,k,op){ // op: 'max'|'min'
+    const r=(k-1)>>1, tmp=new Uint8Array(W*H), out=new Uint8Array(W*H);
+    for(let y=0;y<H;y++){ for(let x=0;x<W;x++){
+      let v=op==='max'?0:255; for(let i=-r;i<=r;i++){ let xx=x+i; if(xx<0)xx=0; else if(xx>=W)xx=W-1; const p=src[y*W+xx]; if(op==='max'){ if(p>v)v=p; } else { if(p<v)v=p; } }
+      tmp[y*W+x]=v; } }
+    for(let y=0;y<H;y++){ for(let x=0;x<W;x++){
+      let v=op==='max'?0:255; for(let i=-r;i<=r;i++){ let yy=y+i; if(yy<0)yy=0; else if(yy>=H)yy=H-1; const p=tmp[yy*W+x]; if(op==='max'){ if(p>v)v=p; } else { if(p<v)v=p; } }
+      out[y*W+x]=v; } }
+    return out;
+  }
+  function _dilate(b,W,H,k){ return _binFilter(b,W,H,k,'max'); }
+  function _erode(b,W,H,k){ return _binFilter(b,W,H,k,'min'); }
+  // 4-connected flood-fill labelling; returns {labels:Int32Array, area:Int32Array(n), n}
+  function _ccLabels(mask,W,H){
+    const labels=new Int32Array(W*H), area=[]; let cur=0; const stack=[];
+    for(let i=0;i<W*H;i++){
+      if(mask[i] && !labels[i]){
+        cur++; let cnt=0; stack.length=0; stack.push(i); labels[i]=cur;
+        while(stack.length){ const p=stack.pop(); cnt++; const x=p%W, y=(p/W)|0;
+          if(x>0){ const q=p-1; if(mask[q]&&!labels[q]){labels[q]=cur;stack.push(q);} }
+          if(x<W-1){ const q=p+1; if(mask[q]&&!labels[q]){labels[q]=cur;stack.push(q);} }
+          if(y>0){ const q=p-W; if(mask[q]&&!labels[q]){labels[q]=cur;stack.push(q);} }
+          if(y<H-1){ const q=p+W; if(mask[q]&&!labels[q]){labels[q]=cur;stack.push(q);} }
+        }
+        area[cur]=cnt;
+      }
+    }
+    return {labels,area,n:cur};
+  }
+  function _sobelMag(g,W,H){ // g: Uint8 grayscale -> Float32 magnitude 0..255
+    const out=new Float32Array(W*H);
+    for(let y=1;y<H-1;y++){ for(let x=1;x<W-1;x++){
+      const i=y*W+x;
+      const tl=g[i-W-1],tc=g[i-W],tr=g[i-W+1], ml=g[i-1],mr=g[i+1], bl=g[i+W-1],bc=g[i+W],br=g[i+W+1];
+      const gx=(tr+2*mr+br)-(tl+2*ml+bl), gy=(bl+2*bc+br)-(tl+2*tc+tr);
+      let m=Math.sqrt(gx*gx+gy*gy); if(m>255)m=255; out[i]=m;
+    }}
+    return out;
+  }
+  function _medianBlur3(b,W,H){ // binary majority filter
+    const out=new Uint8Array(W*H);
+    for(let y=0;y<H;y++){ for(let x=0;x<W;x++){
+      let c=0; for(let dy=-1;dy<=1;dy++){ const yy=y+dy; if(yy<0||yy>=H)continue; for(let dx=-1;dx<=1;dx++){ const xx=x+dx; if(xx<0||xx>=W)continue; if(b[yy*W+xx])c++; } }
+      out[y*W+x]=(c>=5)?255:0;
+    }}
+    return out;
+  }
+  function imageToLineart(img, opts){
+    const scale=_clamp(parseInt(opts.scale)||2,1,4);
+    let W=Math.round((img.naturalWidth||img.width)*scale), H=Math.round((img.naturalHeight||img.height)*scale);
+    // soft cap to keep pure-JS snappy
+    const cap=2600; if(W>cap||H>cap){ const f=cap/Math.max(W,H); W=Math.round(W*f); H=Math.round(H*f); }
+    const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+    const cx=cv.getContext('2d'); cx.imageSmoothingEnabled=true; cx.imageSmoothingQuality='high';
+    cx.drawImage(img,0,0,W,H);
+    const sd=cx.getImageData(0,0,W,H).data;
+    const N=W*H;
+    // planes
+    const R=new Float32Array(N), G=new Float32Array(N), B=new Float32Array(N);
+    for(let i=0,p=0;i<N;i++,p+=4){ R[i]=sd[p]; G[i]=sd[p+1]; B[i]=sd[p+2]; }
+    // corner background
+    const cw=Math.min(50,W), ch=Math.min(50,H);
+    let br=0,bg=0,bb=0,cn=0;
+    const corners=[[0,0],[0,H-ch],[W-cw,0],[W-cw,H-ch]];
+    for(const [ox,oy] of corners){ for(let y=oy;y<oy+ch;y++){ for(let x=ox;x<ox+cw;x++){ const i=y*W+x; br+=R[i]; bg+=G[i]; bb+=B[i]; cn++; } } }
+    br/=cn; bg/=cn; bb/=cn;
+    // colour-distance + grayscale
+    const cd=new Float32Array(N), g8=new Uint8Array(N);
+    let cmin=1e9,cmax=-1e9;
+    for(let i=0;i<N;i++){ const dr=R[i]-br,dg=G[i]-bg,db=B[i]-bb; const d=Math.sqrt(dr*dr+dg*dg+db*db); cd[i]=d; if(d<cmin)cmin=d; if(d>cmax)cmax=d; g8[i]=(R[i]*0.299+G[i]*0.587+B[i]*0.114)|0; }
+    if(cmax-cmin<1e-6){ cmax=cmin+1; }
+    for(let i=0;i<N;i++){ cd[i]=((cd[i]-cmin)/(cmax-cmin))*255; }
+    // blurred distance -> leaf mask
+    const cdb=_gaussianBlur(cd,W,H,1.4);
+    const leaf0=new Uint8Array(N); let thr=28; for(let i=0;i<N;i++) leaf0[i]=cdb[i]>thr?255:0;
+    let leaf=_erode(_dilate(leaf0,W,H,7),W,H,7); // open
+    leaf=_dilate(_erode(leaf,W,H,7),W,H,7);       // close
+    // keep large components
+    let cc=_ccLabels(leaf,W,H); const minLeaf=1200*Math.max(1,(scale>>1)*(scale>>1));
+    const leafKeep=new Uint8Array(N);
+    for(let i=0;i<N;i++){ const l=cc.labels[i]; if(l && cc.area[l]>minLeaf) leafKeep[i]=255; }
+    leaf=leafKeep;
+    // outline = morphological gradient (dilate-erode), closed, minus thinned leaf
+    const d3=_dilate(leaf,W,H,3), e3=_erode(leaf,W,H,3);
+    let outline=new Uint8Array(N); for(let i=0;i<N;i++) outline[i]=d3[i]>e3[i]?255:0;
+    outline=_dilate(_erode(outline,W,H,3),W,H,3); // close
+    const e2=_erode(leaf,W,H,2); for(let i=0;i<N;i++) if(e2[i]) outline[i]=0; // subtract inner
+    // veins via Sobel
+    const gb=_gaussianBlur(g8,W,H,1.0);
+    const sm=_sobelMag(gb,W,H); const veins0=new Uint8Array(N);
+    let vthr=70; for(let i=0;i<N;i++) veins0[i]=sm[i]>vthr?255:0;
+    const subj=new Uint8Array(N); for(let i=0;i<N;i++) subj[i]=(leaf[i]||(gb[i]<150))?255:0;
+    const veins=new Uint8Array(N); for(let i=0;i<N;i++) veins[i]=veins0[i]&&subj[i]?255:0;
+    // combine + de-speckle
+    let lines=new Uint8Array(N); for(let i=0;i<N;i++) lines[i]=outline[i]||veins[i]?255:0;
+    cc=_ccLabels(lines,W,H); const minArea=14*scale*scale;
+    const keep=new Uint8Array(N); for(let i=0;i<N;i++){ const l=cc.labels[i]; if(l && cc.area[l]>=minArea) keep[i]=255; }
+    lines=keep;
+    lines=_dilate(lines,W,H,2); lines=_medianBlur3(lines,W,H);
+    // optional title text
+    if(opts.keepText){
+      const tk=new Uint8Array(N); for(let i=0;i<N;i++) tk[i]=g8[i]<140?255:0;
+      cc=_ccLabels(tk,W,H); const maxTa=6000*Math.max(1,(scale>>1)*(scale>>1));
+      const centY=new Int32Array(cc.n+1); const cnt=new Int32Array(cc.n+1);
+      for(let i=0;i<N;i++){ const l=cc.labels[i]; if(l){ centY[l]+=(i/W)|0; cnt[l]++; } }
+      let text=new Uint8Array(N);
+      for(let l=1;l<=cc.n;l++){ if(!cnt[l])continue; const cy=centY[l]/cnt[l]; const a=cc.area[l];
+        if(a>=20 && a<=maxTa && cy < H*0.45){ for(let i=0;i<N;i++) if(cc.labels[i]===l) text[i]=255; } }
+      text=_dilate(text,W,H,2); for(let i=0;i<N;i++) if(text[i]) lines[i]=255;
+    }
+    // assemble
+    const out=cx.createImageData(W,H), o=out.data;
+    if(opts.transparent){
+      for(let i=0,p=0;i<N;i++,p+=4){ if(lines[i]){ o[p]=0;o[p+1]=0;o[p+2]=0;o[p+3]=255; } else { o[p+3]=0; } }
+    } else {
+      for(let i=0,p=0;i<N;i++,p+=4){ const v=255-lines[i]; o[p]=v;o[p+1]=v;o[p+2]=v;o[p+3]=255; }
+    }
+    cx.putImageData(out,0,0);
+    return cv.toDataURL('image/png');
+  }
+
   async function processLineart(){
     const file=$("laFile").files[0];
     if(!file){ $("laHint").textContent="⚠ "+(lang==="zh"?"請先上傳圖片。":lang==="ja"?"画像を選択してください。":lang==="ko"?"이미지를 선택하세요。":"Select an image first."); return; }
@@ -676,15 +817,13 @@
     const t0=Date.now();
     const timer=setInterval(()=>{ btn.textContent=`${baseLabel} · ${fmtElapsed(Date.now()-t0)}`; }, 250);
     try{
-      const dataUrl=await new Promise((res,rej)=>{
-        const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file);
+      // Pure-JS path: decode the file to an Image and run the in-browser converter (no server).
+      const img=await new Promise((res,rej)=>{
+        const u=URL.createObjectURL(file); const im=new Image();
+        im.onload=()=>{ res(im); }; im.onerror=rej; im.src=u;
       });
-      const res=await fetch("/api/lineart",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({image:dataURLtoBase64(dataUrl), scale, keep_text:keep, transparent:trans})});
-      if(!res.ok) throw new Error("HTTP "+res.status);
-      const d=await res.json();
-      if(d.error) throw new Error(d.error);
-      currentLineart="data:image/png;base64,"+d.image;
+      currentLineart=imageToLineart(img,{scale, keepText:keep, transparent:trans});
+      if(img.src) URL.revokeObjectURL(img.src);
       showLineart(currentLineart);
       $("laHint").textContent=tr("lineartHint");
     }catch(e){
@@ -1182,8 +1321,8 @@
   // so the page can fetch it DIRECTLY (cross-origin) — including from a file:// page (null
   // origin), which is how Amami.html connects and lets users just open this .html directly.
   // expBase() returns '' when the page is itself served from the Expresii host (then a
-  // same-origin /expresii/<host> relative path still works via serve.py), otherwise the
-  // absolute http://host. Either way no proxy is required for file:// usage.
+  // same-origin relative path keeps the request on-page), otherwise the absolute http://host.
+  // Either way no proxy/server is required — the app runs as a plain local .html file.
   // Accept either a full URL (http://host:9000) or Amami's shorthand (host:9000 / 192.168.1.5)
   let autoPaperSync=false;   // when connected, auto-update GUI paper from Expresii /state
   let expTimer=null;         // periodic poll handle (null = not polling)

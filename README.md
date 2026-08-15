@@ -39,26 +39,30 @@ as a painting underlay.
 
 ## Running locally
 
-The app fetches Expresii through a thin same-origin proxy (required because
-Expresii's Command Server does not send CORS headers), so it must be served
-over `http://`, not opened as a `file://`.
+The app is a single self-contained `index.html`. **Just open it in a browser** — no
+server, no build step:
 
-```bash
+```
+# Option A — simplest: double-click index.html, or open it from your file manager
+file:///.../TemplateGenerator/index.html
+
+# Option B — serve it (optional; only if you prefer an http:// origin)
 git clone https://github.com/expresii-paint/TemplateGenerator.git
-cd TemplateGenerator          # the cloned folder (use whatever name you gave it)
-python serve.py
+cd TemplateGenerator
+python -m http.server 8753
 # open http://127.0.0.1:8753/index.html
 ```
 
-`serve.py` serves the static files and proxies `/expresii/<host>/...` to the
-Expresii Command Server (default `localhost:9000`).
+Everything runs in the browser: grid generation, the 線稿 (line-art) converter, and
+connecting to Expresii. Expresii's Command Server sends `Access-Control-Allow-Origin: *`,
+so the page talks to it directly (including from a `file://` page), just like Amami.html.
 
 ## Sending to Expresii
 
 1. Make sure Expresii is running with its Command Server enabled.
 2. In the **EXPRESII** panel, confirm the Server URL (default
    `http://localhost:9000`) and that it shows *connected*.
-3. Pick a **Target** (Underlay / Settled Paint layer) and click **Send to
+3. Pick a **Target** (Underlay / Overlay / Settled Paint layer) and click **Send to
    Expresii**.
 
 ## Files
@@ -66,5 +70,4 @@ Expresii Command Server (default `localhost:9000`).
 | File | Purpose |
 |------|---------|
 | `index.html` | The entire app (HTML + CSS + JS), self-contained. |
-| `serve.py` | Local static server + Expresii CORS proxy. |
 | `screenshot.png` | Screenshot shown above. |
