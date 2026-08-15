@@ -241,8 +241,33 @@
       </div>
       <label data-show="grid" data-trans="guideWidth">Guide width (px)</label>
       <input id="wGuide" data-show="grid" type="number" value="1" min="0.2" step="0.2">
-      <div class="chk"><input type="checkbox" id="dashed" checked><label for="dashed" style="margin:0" data-trans="dashedGuides">Dashed guides</label></div>
+      <div class="chk" data-show="grid"><input type="checkbox" id="dashed" checked><label for="dashed" style="margin:0" data-trans="dashedGuides">Dashed guides</label></div>
       <div class="chk" data-show="grid"><input type="checkbox" id="showBorder" checked><label for="showBorder" style="margin:0" data-trans="drawCellBorders">Draw cell borders</label></div>
+    </div>
+
+    <div class="grp">
+      <h2 data-trans="flecks">Flecks</h2>
+      <div class="chk" data-show="grid"><input type="checkbox" id="flecksOn"><label for="flecksOn" style="margin:0" data-trans="flecksOn">Add gold/silver flecks</label></div>
+      <div class="row" id="fleckKindRow" data-show="grid" style="margin-top:8px">
+        <div style="flex:1"><label data-trans="fleckColor">Color</label>
+          <select id="fleckKind">
+            <option value="gold">Gold</option>
+            <option value="silver">Silver</option>
+            <option value="copper">Copper</option>
+            <option value="white">Pearl white</option>
+          </select>
+        </div>
+      </div>
+      <div id="fleckCountRow" data-show="grid" style="margin-top:8px">
+        <label data-trans="fleckDensity">Density (count)</label>
+        <input id="fleckCount" type="range" min="10" max="500" step="10" value="120">
+      </div>
+      <div id="fleckSizeRow" data-show="grid" style="margin-top:8px">
+        <label data-trans="fleckSize">Size (mm)</label>
+        <input id="fleckSize" type="range" min="0.3" max="3" step="0.1" value="0.9">
+      </div>
+      <div class="chk" id="fleckScatterRow" data-show="grid"><input type="checkbox" id="fleckScatter" checked><label for="fleckScatter" style="margin:0" data-trans="fleckScatter">Scatter randomly</label></div>
+      <div class="hint" data-show="grid" data-trans="fleckHint">Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.</div>
     </div>
     </div><!-- /gridOnly -->
 
@@ -335,6 +360,9 @@
       fanSpec:"Fan spec", pmHint:"Paper margin = gap between paper edge and grid block. 0 = auto (½ cell).",
       style:"Style", border:"Border", borderWidth:"Border width (px)", guides:"Guides", guideWidth:"Guide width (px)",
       dashedGuides:"Dashed guides", drawCellBorders:"Draw cell borders",
+      flecks:"Flecks", flecksOn:"Add gold/silver flecks", fleckColor:"Color",
+      fleckDensity:"Density (count)", fleckSize:"Size (mm)", fleckScatter:"Scatter randomly",
+      fleckHint:"Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.",
       export:"Export", downloadSvg:"Download SVG", downloadPng:"Download PNG", printPdf:"Print / PDF", reset:"Reset",
       exportFooter:"Vector (SVG) scales to any printer. PNG is rasterized from the on-screen canvas. Print to PDF from your browser for a paper-perfect sheet.",
       expresii:"Expresii", serverUrl:"Server URL", serverUrl_ph:"http://host:9000", connect:"Connect", disconnect:"Disconnect",
@@ -375,6 +403,9 @@
       fanSpec:"扇面規格", pmHint:"紙張邊距 = 紙張邊緣與字格塊的間距。0 = 自動（半格）。",
       style:"樣式", border:"邊框", borderWidth:"邊框寬度（像素）", guides:"輔助線", guideWidth:"輔助線寬度（像素）",
       dashedGuides:"虛線輔助線", drawCellBorders:"繪製單元格邊框",
+      flecks:"箔點", flecksOn:"添加金/銀 箔點", fleckColor:"顏色",
+      fleckDensity:"密度（數量）", fleckSize:"大小（毫米）", fleckScatter:"隨機散佈",
+      fleckHint:"裝飾性金屬箔點（金/銀 箔）。SVG 中為矢量；線稿模式下隱藏。",
       export:"導出", downloadSvg:"下載 SVG", downloadPng:"下載 PNG", printPdf:"列印 / PDF", reset:"重置",
       exportFooter:"矢量（SVG）可縮放到任意列印機。PNG 由螢幕畫布光柵化。用瀏覽器列印為 PDF 即可得到與紙張完全一致的稿紙。",
       expresii:"Expresii", serverUrl:"伺服器位址", serverUrl_ph:"http://host:9000", connect:"連接", disconnect:"斷開",
@@ -415,6 +446,9 @@
       fanSpec:"扇面（扇子）仕様", pmHint:"用紙余白 = 用紙端と罫線ブロックの間隔。0 = 自動（半セル）。",
       style:"スタイル", border:"枠線", borderWidth:"枠線の太さ（px）", guides:"補助線", guideWidth:"補助線の太さ（px）",
       dashedGuides:"補助線を破線に", drawCellBorders:"セルの枠を描く",
+      flecks:"箔（ふくさ）", flecksOn:"金/銀箔を追加", fleckColor:"色",
+      fleckDensity:"密度（数）", fleckSize:"大きさ（mm）", fleckScatter:"ランダムに散らす",
+      fleckHint:"装飾用の金属箔（金/銀箔）。SVGではベクター。線画モードでは非表示。",
       export:"書き出し", downloadSvg:"SVG をダウンロード", downloadPng:"PNG をダウンロード", printPdf:"印刷 / PDF", reset:"リセット",
       exportFooter:"ベクター（SVG）はどのプリンターでも拡大縮小可能。PNG は画面キャンバスからラスタライズされます。ブラウザの印刷で PDF を出力すれば、用紙にぴったりの原稿になります。",
       expresii:"Expresii", serverUrl:"サーバー URL", serverUrl_ph:"http://host:9000", connect:"接続", disconnect:"切断",
@@ -455,6 +489,9 @@
       fanSpec:"부채（扇面） 사양", pmHint:"용지 여백 = 용지 가장자리와 격자 블록 사이 간격. 0 = 자동（셀의 절반）.",
       style:"스타일", border:"테두리", borderWidth:"테두리 두께（px）", guides:"보조선", guideWidth:"보조선 두께（px）",
       dashedGuides:"보조선 점선", drawCellBorders:"셀 테두리 그리기",
+      flecks:"금속 점", flecksOn:"금/은색 점 추가", fleckColor:"색상",
+      fleckDensity:"밀도（개수）", fleckSize:"크기（mm）", fleckScatter:"무작위 흩뿌리기",
+      fleckHint:"장식용 금속 점（금/은箔）. SVG에서는 벡터이며, 선화 모드에서는 숨겨집니다.",
       export:"내보내기", downloadSvg:"SVG 다운로드", downloadPng:"PNG 다운로드", printPdf:"인쇄 / PDF", reset:"초기화",
       exportFooter:"벡터（SVG）는 모든 프린터로 확대·축소됩니다. PNG는 화면 캔버스에서 래스터화됩니다. 브라우저 인쇄로 PDF를 만들면 용지에 딱 맞는 원고가 됩니다.",
       expresii:"Expresii", serverUrl:"서버 URL", serverUrl_ph:"http://host:9000", connect:"연결", disconnect:"연결 해제",
@@ -553,6 +590,7 @@
     type:"mi", layout:"cols", cols:9, rows:13, cellmm:20, marginmm:10, paperMarginmm:0,
     cBorder:"#222222", cGuide:"#e23b3b", wBorder:2, wGuide:1,
     dashed:true, showBorder:true, fanSpec:"8",
+    flecksOn:false, fleckKind:"gold", fleckCount:120, fleckSize:0.9, fleckScatter:true,
     mode:"grid",                                // 'grid' = grid template, 'lineart' = 線稿 converter
     scale:2, keepText:true, transparent:false
   };
@@ -735,6 +773,11 @@
     // paper: hide the user-spec controls (preset / orientation / resolution) in Expresii mode
     $("paperUserOpts").style.display = state.paperSource==="user" ? "" : "none";
     $("expPaperNote").style.display   = state.paperSource==="exp" ? "" : "none";
+    // flecks: only show the detail rows when flecks are enabled
+    const fr = state.flecksOn;
+    ["fleckKindRow","fleckCountRow","fleckSizeRow","fleckScatterRow"].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.style.display = fr ? "" : "none";
+    });
   }
   $("fanSpec").addEventListener("change", e=>{ state.fanSpec=e.target.value; applyFanSpec(); render(); });
 
@@ -753,6 +796,12 @@
   ["wBorder","wGuide"].forEach(id=>$(id).addEventListener("input",e=>{ state[id]=Math.max(0.2,+e.target.value||1); render(); }));
   $("dashed").addEventListener("change",e=>{ state.dashed=e.target.checked; render(); });
   $("showBorder").addEventListener("change",e=>{ state.showBorder=e.target.checked; render(); });
+  // flecks (金/銀 箔)
+  $("flecksOn").addEventListener("change",e=>{ state.flecksOn=e.target.checked; applyVisibility(); render(); });
+  $("fleckKind").addEventListener("change",e=>{ state.fleckKind=e.target.value; render(); });
+  $("fleckCount").addEventListener("input",e=>{ state.fleckCount=Math.max(1,+e.target.value||1); render(); });
+  $("fleckSize").addEventListener("input",e=>{ state.fleckSize=Math.max(0.1,+e.target.value||0.9); render(); });
+  $("fleckScatter").addEventListener("change",e=>{ state.fleckScatter=e.target.checked; render(); });
 
   // ---- geometry helpers (mm) ----
   function paperMM(){
@@ -943,6 +992,35 @@
     return out;
   }
 
+  // ---- decorative paper flecks (金/銀 箔) ----
+  // Seeded RNG so the same settings always produce the same flecks (reproducible export).
+  function fleckRng(seed){ let s=seed>>>0||1; return ()=>{ s^=s<<13; s^=s>>>17; s^=s<<5; return ((s>>>0)/4294967296); }; }
+  const FLECK_COLORS = { gold:"#d9a441", silver:"#c9ccd1", copper:"#b06b3a", white:"#f2f2f2" };
+  function buildFlecks(L, pxPerMM, W, H){
+    if(!state.flecksOn) return "";
+    const col = FLECK_COLORS[state.fleckKind] || FLECK_COLORS.gold;
+    const sizeMM = state.fleckSize;
+    const r = sizeMM * pxPerMM / 2;                 // radius in px
+    const n = Math.max(1, Math.round(state.fleckCount));
+    // confine flecks to the grid block (or the paper if no block)
+    let x0, y0, ww, hh;
+    if(L && L.cols>0 && L.rows>0){
+      const cellPx=L.cellmm*pxPerMM;
+      x0=L.ox*pxPerMM; y0=L.oy*pxPerMM; ww=L.cols*cellPx; hh=L.rows*cellPx;
+    } else { x0=0; y0=0; ww=W; hh=H; }
+    const rng = fleckRng(Math.round(n*131 + sizeMM*977 + (state.fleckScatter?7:3) + col.length));
+    let g = `<g id="flecks" fill="${col}">`;
+    for(let i=0;i<n;i++){
+      const fx = x0 + (state.fleckScatter ? rng()*ww : (i+0.5)/n*ww);
+      const fy = y0 + (state.fleckScatter ? rng()*hh : rng()*hh);
+      const rr = r * (0.6 + 0.4*rng());             // slight size variance
+      // a little 4-point sparkle
+      const k = rr*1.7;
+      g += `<path d="M ${fx.toFixed(2)} ${(fy-rr).toFixed(2)} L ${(fx+rr*0.32).toFixed(2)} ${(fy-rr*0.32).toFixed(2)} L ${(fx+k).toFixed(2)} ${fy.toFixed(2)} L ${(fx+rr*0.32).toFixed(2)} ${(fy+rr*0.32).toFixed(2)} L ${fx.toFixed(2)} ${(fy+rr).toFixed(2)} L ${(fx-rr*0.32).toFixed(2)} ${(fy+rr*0.32).toFixed(2)} L ${(fx-k).toFixed(2)} ${fy.toFixed(2)} L ${(fx-rr*0.32).toFixed(2)} ${(fy-rr*0.32).toFixed(2)} Z"/>`;
+    }
+    return g + "</g>";
+  }
+
   function buildSVG(){
     const L=computeLayout();
     const expMode = state.paperSource==="exp" && !!state.expPaper;
@@ -963,6 +1041,7 @@
         }
       }
     }
+    body += buildFlecks(L, pxPerMM, W, H);
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W.toFixed(1)}" height="${H.toFixed(1)}" viewBox="0 0 ${W.toFixed(1)} ${H.toFixed(1)}">${body}</svg>`;
     return {svg, W, H, L};
   }
