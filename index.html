@@ -999,8 +999,12 @@
   function buildFlecks(L, pxPerMM, W, H){
     if(!state.flecksOn) return "";
     const col = FLECK_COLORS[state.fleckKind] || FLECK_COLORS.gold;
-    const sizeMM = state.fleckSize;
-    const r = sizeMM * pxPerMM / 2;                 // radius in px
+    // Fleck radius scales with the CELL pixel size (not just mm*pxPerMM), so it stays a
+    // visible fraction of a cell in BOTH normal mode (pxPerMM=dpi) and Expresii mode
+    // (pxPerMM=1, where mm*pxPerMM would be sub-pixel and the flecks would vanish).
+    // sizeMM is treated as "mm-equivalent fraction of a cell": ~4% of a cell per 0.9mm.
+    const cellPx = (L && L.cellmm>0) ? L.cellmm*pxPerMM : (pxPerMM>1 ? 21*pxPerMM : W);
+    const r = Math.max(1.2, cellPx * 0.045 * (state.fleckSize/0.9));   // radius in px (min 1.2 so never sub-pixel)
     // bump-map filter (small-scale relief): a fine fractal-noise height field lit by diffuse
     // (valleys darken, peaks catch light -> visible embossed bumps) plus a faint specular
     // sheen. NO silhouette dome, so it never looks like an inflated balloon. surfaceScale is
@@ -1023,7 +1027,7 @@
       const cellPx=L.cellmm*pxPerMM;
       x0=L.ox*pxPerMM; y0=L.oy*pxPerMM; ww=L.cols*cellPx; hh=L.rows*cellPx;
     } else { x0=0; y0=0; ww=W; hh=H; }
-    const rng = fleckRng(Math.round(n*131 + sizeMM*977 + (state.fleckScatter?7:3) + col.length));
+    const rng = fleckRng(Math.round(n*131 + state.fleckSize*977 + (state.fleckScatter?7:3) + col.length));
     let g = `<g id="flecks" fill="${col}" filter="url(#fleckBump)">` + bump;
     for(let i=0;i<n;i++){
       const fx = x0 + (state.fleckScatter ? rng()*ww : (i+0.5)/n*ww);
