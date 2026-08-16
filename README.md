@@ -1,11 +1,13 @@
-# Template Generator 版式生成器
+# Studio Helper 文房助手
 
 A single-file web app for generating Chinese calligraphy practice sheets and
-other layout templates (字格 / 信紙 / 扇面). It runs locally and can also send
-the generated sheet straight into [Expresii Paint](https://www.expresii.com/)
-as a painting underlay.
+other layout templates (字格 / 信紙 / 扇面), converting photos to 線稿
+line-art, sprinkling decorative flecks (金箔/銀箔), and stamping a seal
+(印章) — all in the browser. It runs locally and can also send the
+generated sheet straight into [Expresii Paint](https://www.expresii.com/)
+as a painting underlay, overlay, or settled paint.
 
-![Template Generator screenshot](screenshot.png)
+![Studio Helper screenshot](screenshot.png)
 
 ## Features
 
