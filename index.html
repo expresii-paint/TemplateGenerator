@@ -64,6 +64,9 @@
   .hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4}
   .src-preview{max-width:100%;max-height:180px;border:1px solid var(--border);border-radius:8px;margin-top:8px;display:block;background:#fff}
   .src-preview-name{font-size:11px;color:var(--muted);margin-top:4px}
+  #previewCanvas{max-width:100%;max-height:100%;background:#fff;border:1px solid var(--line);border-radius:4px;cursor:grab;touch-action:none}
+  #previewCanvas.dragging{cursor:grabbing}
+  .seal-wrap{max-width:100%;overflow:auto;display:flex;justify-content:center}
   .stagebar{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);
     background:var(--panel);font-size:13px;color:var(--muted)}
   .stagebar .info{color:var(--text)}
@@ -126,6 +129,7 @@
       <div class="seg" id="modeSwitch">
         <button data-mode="grid" class="active" data-trans="modeGrid">Grid template</button>
         <button data-mode="lineart" data-trans="modeLineart">線稿 converter</button>
+        <button data-mode="seal" data-trans="modeSeal">印章 Stamp seal</button>
       </div>
     </div>
 
@@ -152,6 +156,31 @@
         <button class="btn green" id="laProcess" data-trans="process">Generate 線稿</button>
       </div>
       <div class="hint" id="laHint" data-trans="lineartHint">Upload a painting/photo; the browser traces clean outlines + veins (no server needed). Output is a PNG underlay — send it to Expresii or export it.</div>
+    </div>
+
+    <!-- 印章 (seal stamping) panel — hidden unless mode === 'seal' -->
+    <div class="grp" id="sealPanel" style="display:none">
+      <h2 data-trans="modeSeal">印章 Stamp seal</h2>
+      <div class="btns">
+        <button class="btn green" id="sealCapture" data-trans="captureFromExpresii">Capture from Expresii</button>
+      </div>
+      <div class="hint" id="sealCaptureHint"></div>
+      <div class="row" style="margin-top:8px">
+        <div style="flex:1">
+          <label data-trans="sealImage">Seal image</label>
+          <input id="sealFile" type="file" accept="image/*" />
+        </div>
+      </div>
+      <div class="chk"><input type="checkbox" id="sealBuiltin" checked><label for="sealBuiltin" style="margin:0" data-trans="useBuiltinSeal">Use built-in red seal</label></div>
+      <div class="row" style="margin-top:8px">
+        <div><label data-trans="sealScale">Seal size</label><input id="sealScale" type="range" min="2" max="40" step="1" value="12"></div>
+        <div><label data-trans="sealRotation">Rotation</label><input id="sealRot" type="range" min="-180" max="180" step="1" value="0"></div>
+      </div>
+      <div class="hint">Tip: drag the seal on the canvas to move it; scroll over the canvas to resize; use the sliders for fine size/rotation.</div>
+      <div class="btns" style="margin-top:8px">
+        <button class="btn exp" id="sealSend" data-trans="sendSeal">Send seal to Expresii</button>
+      </div>
+      <div class="hint" id="sealHint" data-trans="sealHint"></div>
     </div>
 
     <div class="grp" id="gridPanel">
@@ -336,6 +365,7 @@
     </div>
     <div class="canvas-wrap">
       <svg id="preview" xmlns="http://www.w3.org/2000/svg"></svg>
+      <canvas id="previewCanvas" style="display:none"></canvas>
     </div>
   </main>
 
@@ -392,7 +422,8 @@
       transparent:"Transparent background", process:"Generate line drawing", processing:"Processing…",
       lineartHint:"Upload a painting/photo; the browser traces clean outlines + veins (no server needed). Output is a PNG underlay — send it to Expresii or export it.",
       lineartErr:"Line drawing failed: {msg}. Is the image a valid PNG/JPG?",
-      lineartNone:"no line drawing yet", lineartNoneSend:"no line drawing to send", laTrans:"transparent", laWhite:"white background"
+      lineartNone:"no line drawing yet", lineartNoneSend:"no line drawing to send", laTrans:"transparent", laWhite:"white background",
+      modeSeal:"Stamp a seal", captureFromExpresii:"Capture from Expresii", sealImage:"Seal image", useBuiltinSeal:"Use built-in red seal", sealScale:"Seal size", sealRotation:"Rotation", sendSeal:"Send seal to Expresii", sealHint:"Capture the current Expresii artwork, drop a seal (印章) on it, then move/resize and send it to Overlay or a settled layer. Works directly from this file — no server needed.", sealNoCapture:"capture the artwork first", sealNoImage:"load or pick a seal first", captureFail:"Capture failed: {msg}"
     },
     zh:{
       app_name:"文房助手", app_sub:"書法與箋紙助手", app_title:"文房助手",
@@ -435,7 +466,8 @@
       transparent:"透明背景", process:"生成 線稿", processing:"處理中…",
       lineartHint:"上傳一幅畫或照片；瀏覽器會描出乾淨的輪廓與葉脈（無須伺服器）。輸出是 PNG 底圖 —— 可發送到 Expresii 或導出。",
       lineartErr:"線稿失敗：{msg}。圖片是否為有效的 PNG/JPG？",
-      lineartNone:"尚無 線稿", lineartNoneSend:"尚無 線稿 可發送", laTrans:"透明", laWhite:"白底"
+      lineartNone:"尚無 線稿", lineartNoneSend:"尚無 線稿 可發送", laTrans:"透明", laWhite:"白底",
+      modeSeal:"蓋印章", captureFromExpresii:"從 Expresii 擷取", sealImage:"印章圖片", useBuiltinSeal:"使用內建紅印", sealScale:"印章大小", sealRotation:"旋轉", sendSeal:"發送印章至 Expresii", sealHint:"擷取目前 Expresii 畫作，放上印章（印章），移動 / 縮放後發送到「覆蓋」層或沉積顏料層。可直接由此檔案執行，無須伺服器。", sealNoCapture:"請先擷取畫作", sealNoImage:"請先選擇印章", captureFail:"擷取失敗：{msg}"
     },
     ja:{
       app_name:"文房助手", app_sub:"書道・箋紙の助手", app_title:"文房助手",
@@ -478,7 +510,8 @@
       transparent:"透明背景", process:"線画を生成", processing:"処理中…",
       lineartHint:"絵や写真をアップロードすると、ブラウザが輪郭と葉脈をきれいに抽出します（サーバー不要）。出力は PNG 下絵 — Expresii へ送信や書き出しができます。",
       lineartErr:"線画失敗：{msg}。画像は有効な PNG/JPG ですか？",
-      lineartNone:"線画未生成", lineartNoneSend:"送信する線画がありません", laTrans:"透明", laWhite:"白背景"
+      lineartNone:"まだ線画がありません", lineartNoneSend:"送信できる線画がありません", laTrans:"透明", laWhite:"白背景",
+      modeSeal:"印章を押す", captureFromExpresii:"Expresii から取り込む", sealImage:"印章画像", useBuiltinSeal:"内蔵の赤印を使う", sealScale:"印章サイズ", sealRotation:"回転", sendSeal:"印章を Expresii へ送信", sealHint:"現在の Expresii 作品を取り込み、印章（印章）を配置して移動・拡縮し、オーバーレイまたは定着レイヤーへ送信します。このファイルから直接動作し、サーバーは不要です。", sealNoCapture:"先に作品を取り込んでください", sealNoImage:"先に印章を選んでください", captureFail:"取り込み失敗：{msg}"
     },
     ko:{
       app_name:"문방 조수", app_sub:"서예·편지지 보조 도구", app_title:"문방 조수",
@@ -521,7 +554,8 @@
       transparent:"투명 배경", process:"선화 생성", processing:"처리 중…",
       lineartHint:"그림이나 사진을 업로드하면 브라우저가 윤곽과 잎맥을 깔끔하게 추출합니다(서버 불필요). 출력은 PNG 언더레이 — Expresii로 보내거나 내보낼 수 있습니다.",
       lineartErr:"선화 생성 실패: {msg}. 유효한 PNG/JPG인가요?",
-      lineartNone:"선화 없음", lineartNoneSend:"보낼 선화 없음", laTrans:"투명", laWhite:"흰 배경"
+      lineartNone:"아직 線稿가 없습니다", lineartNoneSend:"보낼 線稿가 없습니다", laTrans:"투명", laWhite:"흰 배경",
+      modeSeal:"난 인장 찍기", captureFromExpresii:"Expresii에서 가져오기", sealImage:"인장 이미지", useBuiltinSeal:"내장 빨간 인장 사용", sealScale:"인장 크기", sealRotation:"회전", sendSeal:"인장을 Expresii로 보내기", sealHint:"현재 Expresii 작품을 가져와 인장(印章)을 올리고 이동·크기 조절한 뒤 오버레이나 정착 레이어로 보냅니다. 이 파일에서 바로 동작하며 서버가 필요 없습니다.", sealNoCapture:"먼저 작품을 가져오세요", sealNoImage:"먼저 인장을 선택하세요", captureFail:"가져오기 실패: {msg}"
     }
   };
   let lang = "en";
@@ -596,8 +630,9 @@
     cBorder:"#222222", cGuide:"#e23b3b", wBorder:2, wGuide:1,
     dashed:true, showBorder:true, fanSpec:"8",
     flecksOn:false, fleckKind:"gold", fleckCount:120, fleckSize:0.9, fleckScatter:true,
-    mode:"grid",                                // 'grid' = grid template, 'lineart' = 線稿 converter
-    scale:2, keepText:true, transparent:false
+    mode:"grid",                                // 'grid' = grid template, 'lineart' = 線稿 converter, 'seal' = 印章 stamp
+    scale:2, keepText:true, transparent:false,
+    seal:{ art:null, sealImg:null, x:0.7, y:0.8, size:0.12, rot:0 }   // seal compose state (x,y,size as fractions of artwork W; rot in rad)
   };
 
   // Real folding-fan specs from the reference template (展开宽度 / 寸 = rib length / 扇面高度).
@@ -849,6 +884,20 @@
     r.onload=e=>{ prev.src=e.target.result; prev.style.display="block"; name.textContent=f.name; name.style.display="block"; };
     r.readAsDataURL(f);
   });
+  // ---- seal (印章) wiring ----
+  $("sealCapture").addEventListener("click", captureSealArt);
+  $("sealSend").addEventListener("click", sendSeal);
+  $("sealFile").addEventListener("change", e=>{
+    const f=e.target.files[0];
+    if(!f){ state.seal.sealImg=null; $("sealBuiltin").checked=true; drawSeal(); return; }
+    const r=new FileReader();
+    r.onload=ev=>{ const im=new Image(); im.onload=()=>{ state.seal.sealImg=im; $("sealBuiltin").checked=false; drawSeal(); }; im.src=ev.target.result; };
+    r.readAsDataURL(f);
+  });
+  $("sealBuiltin").addEventListener("change", e=>{ if(e.target.checked){ state.seal.sealImg=null; } drawSeal(); });
+  $("sealScale").addEventListener("input", e=>{ state.seal.size=parseInt(e.target.value)/100; drawSeal(); });
+  $("sealRot").addEventListener("input", e=>{ state.seal.rot=parseInt(e.target.value)*Math.PI/180; drawSeal(); });
+  sealPointerSetup();
   ["laKeepText","laTransparent","laScale"].forEach(id=>$(id).addEventListener("change",()=>{
     if(currentLineart && state.mode==="lineart"){ /* re-process available via button */ }
   }));
@@ -862,12 +911,18 @@
   // Show only the controls applicable to the chosen template type.
   function applyModeVisibility(){
     const gridMode = state.mode==="grid";
-    const gp=$("gridPanel"), go=$("gridOnly"), lp=$("lineartPanel");
+    const sealMode = state.mode==="seal";
+    const gp=$("gridPanel"), go=$("gridOnly"), lp=$("lineartPanel"), sp=$("sealPanel");
     if(gp) gp.style.display = gridMode ? "" : "none";
     if(go) go.style.display = gridMode ? "" : "none";
-    if(lp) lp.style.display = gridMode ? "none" : "";
+    if(lp) lp.style.display = (state.mode==="lineart") ? "" : "none";
+    if(sp) sp.style.display = sealMode ? "" : "none";
+    // stage shows the SVG preview for grid/lineart, the canvas for seal
+    const svg=$("preview"), cv=$("previewCanvas");
+    if(svg) svg.style.display = sealMode ? "none" : "";
+    if(cv) cv.style.display = sealMode ? "block" : "none";
     // stagebar badge reflects mode
-    $("typeBadge").textContent = gridMode ? tr("grid_"+state.type) : tr("modeLineart");
+    $("typeBadge").textContent = gridMode ? tr("grid_"+state.type) : (sealMode ? tr("modeSeal") : tr("modeLineart"));
   }
   function setMode(m){
     state.mode = m;
@@ -875,7 +930,121 @@
     applyModeVisibility();
     // restore the appropriate canvas content
     if(m==="grid"){ render(); }
+    else if(m==="seal"){ drawSeal(); }
     else { if(currentLineart){ showLineart(currentLineart); } else { clearPreview(); } }
+  }
+  // ---- 印章 (seal stamping) ----
+  // Capture the current Expresii canvas (GET /capture -> {status, imageBase64}); the web client
+  // WebStrokeClient-3.html shows this is a single synchronous fetch (no command queue).
+  async function captureSealArt(){
+    const hint=$("sealCaptureHint");
+    if(!isExpConnected()){ hint.textContent=tr("serverUnreachable",{url:expBaseRaw()}); return; }
+    hint.textContent=tr("connecting");
+    try{
+      const res=await fetch(expBase()+"/capture");
+      if(!res.ok) throw new Error("HTTP "+res.status);
+      const d=await res.json();
+      if(d.status!=="done" || !d.imageBase64) throw new Error(d.error||"no image");
+      const img=new Image();
+      await new Promise((res2,rej)=>{ img.onload=res2; img.onerror=rej; img.src="data:image/png;base64,"+d.imageBase64; });
+      state.seal.art=img;
+      hint.textContent="";
+      drawSeal();
+    }catch(e){ hint.textContent=tr("captureFail",{msg:e.message}); }
+  }
+  // Built-in red seal: a rounded red square with a stylised glyph (so the feature works with no file).
+  function builtinSealCanvas(){
+    const s=256, c=document.createElement("canvas"); c.width=s; c.height=s;
+    const x=c.getContext("2d");
+    x.clearRect(0,0,s,s);
+    x.fillStyle="#c0392b";
+    roundRect(x, 18,18, s-36, s-36, 28); x.fill();
+    x.fillStyle="#fff"; x.textAlign="center"; x.textBaseline="middle";
+    x.font="bold 120px 'KaiTi','STKaiti','SimSun',serif";
+    x.fillText("印", s/2, s/2+8);
+    return c;
+  }
+  function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  // Resolve the seal image (file choice wins; else built-in red seal).
+  function resolveSealImg(){
+    if(state.seal.sealImg) return state.seal.sealImg;
+    if(!builtinSealCached) builtinSealCached=builtinSealCanvas();
+    return builtinSealCached;
+  }
+  let builtinSealCached=null;
+  // Compose: artwork background + movable/resizable/rotatable seal overlay.
+  function drawSeal(){
+    const cv=$("previewCanvas"), art=state.seal.art;
+    if(!cv) return;
+    if(!art){ cv.width=400; cv.height=300; const x=cv.getContext("2d"); x.clearRect(0,0,cv.width,cv.height); x.fillStyle="#eee"; x.fillRect(0,0,cv.width,cv.height); x.fillStyle="#999"; x.font="14px sans-serif"; x.textAlign="center"; x.fillText("Capture from Expresii first", cv.width/2, cv.height/2); return; }
+    cv.width=art.naturalWidth; cv.height=art.naturalHeight;
+    const x=cv.getContext("2d");
+    x.drawImage(art,0,0);
+    const s=state.seal; const sealW=cv.width*s.size;
+    const seal=resolveSealImg();
+    const cx=s.x*cv.width, cy=s.y*cv.height;
+    x.save(); x.translate(cx,cy); x.rotate(s.rot);
+    x.drawImage(seal, -sealW/2, -sealW/2, sealW, sealW);
+    x.restore();
+    // subtle bounding box so the user sees the active stamp
+    x.save(); x.translate(cx,cy); x.rotate(s.rot); x.strokeStyle="rgba(0,120,255,0.7)"; x.lineWidth=1; x.strokeRect(-sealW/2,-sealW/2,sealW,sealW); x.restore();
+  }
+  // Pointer drag to move; wheel to resize.
+  function sealPointerSetup(){
+    const cv=$("previewCanvas"); if(!cv) return;
+    let dragging=false, ox=0, oy=0;
+    cv.addEventListener("pointerdown", e=>{
+      const r=cv.getBoundingClientRect();
+      const px=(e.clientX-r.left)*(cv.width/r.width), py=(e.clientY-r.top)*(cv.height/r.height);
+      const s=state.seal, sealW=cv.width*s.size;
+      const dx=px-s.x*cv.width, dy=py-s.y*cv.height;
+      // hit test within (rotated) seal box (approx with unrotated box; fine for UX)
+      if(Math.abs(dx)<sealW/2 && Math.abs(dy)<sealW/2){ dragging=true; ox=dx; oy=dy; cv.classList.add("dragging"); cv.setPointerCapture(e.pointerId); }
+    });
+    cv.addEventListener("pointermove", e=>{
+      if(!dragging) return;
+      const r=cv.getBoundingClientRect();
+      const px=(e.clientX-r.left)*(cv.width/r.width), py=(e.clientY-r.top)*(cv.height/r.height);
+      state.seal.x=(px-ox)/cv.width; state.seal.y=(py-oy)/cv.height;
+      state.seal.x=Math.max(0,Math.min(1,state.seal.x)); state.seal.y=Math.max(0,Math.min(1,state.seal.y));
+      drawSeal();
+    });
+    const end=()=>{ dragging=false; cv.classList.remove("dragging"); };
+    cv.addEventListener("pointerup", end); cv.addEventListener("pointercancel", end);
+    cv.addEventListener("wheel", e=>{
+      e.preventDefault();
+      const f=e.deltaY<0?1.06:0.94;
+      state.seal.size=Math.max(0.01,Math.min(1,state.seal.size*f));
+      $("sealScale").value=Math.round(state.seal.size*100);
+      drawSeal();
+    }, {passive:false});
+  }
+  // Send only the seal (transparent) at full artwork resolution to Expresii Overlay/settled layer.
+  async function sendSeal(){
+    const btn=$("sealSend"), hint=$("sealHint");
+    if(!state.seal.art){ hint.textContent=tr("sealNoCapture"); return; }
+    const seal=resolveSealImg();
+    const W=state.seal.art.naturalWidth, H=state.seal.art.naturalHeight;
+    const c=document.createElement("canvas"); c.width=W; c.height=H;
+    const x=c.getContext("2d");
+    const s=state.seal, sealW=W*s.size;
+    x.save(); x.translate(s.x*W, s.y*H); x.rotate(s.rot);
+    x.drawImage(seal, -sealW/2, -sealW/2, sealW, sealW); x.restore();
+    const base64=c.toDataURL("image/png").split(",")[1];
+    const dest=parseInt($("expTarget").value);
+    btn.disabled=true;
+    try{
+      hint.textContent=tr("sending");
+      const fd=new FormData(); fd.append("image", base64); fd.append("destination", dest);
+      const res=await fetch(expBase()+"/upload-image",{ method:"POST", body:fd });
+      if(!res.ok) throw new Error("HTTP "+res.status);
+      const d=await res.json();
+      if(d.status==="done"){
+        const label = dest===-1 ? tr("underlay") : dest===-2 ? tr("overlay") : "L"+dest;
+        hint.textContent=tr("sentDone",{dest:label}); loadExpInfo();
+      } else throw new Error(d.error||"upload failed");
+    }catch(e){ hint.textContent=tr("sendFail",{msg:e.message}); }
+    finally{ btn.disabled=false; }
   }
   // Show a line-art data URL in the preview pane.
   function showLineart(dataUrl){
@@ -1365,6 +1534,7 @@
     } catch(e){ return "http://localhost:9000"; }
   }
   function expBaseRaw(){ return normalizeServerUrl($("expUrl").value); }
+  function isExpConnected(){ return !!autoPaperSync; }
   function startPoll(){
     if(expTimer) return;
     expTimer=setInterval(loadExpInfo, 15000);
