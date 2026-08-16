@@ -62,6 +62,8 @@
     animation:la-spin .7s linear infinite}
   .btn.busy{display:inline-flex;align-items:center;justify-content:center;width:100%;box-sizing:border-box}
   .hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4}
+  .src-preview{max-width:100%;max-height:180px;border:1px solid var(--border);border-radius:8px;margin-top:8px;display:block;background:#fff}
+  .src-preview-name{font-size:11px;color:var(--muted);margin-top:4px}
   .stagebar{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);
     background:var(--panel);font-size:13px;color:var(--muted)}
   .stagebar .info{color:var(--text)}
@@ -132,6 +134,8 @@
       <h2 data-trans="modeLineart">線稿 converter</h2>
       <label data-trans="uploadImage">Upload image</label>
       <input id="laFile" type="file" accept="image/*" />
+      <img id="srcPreview" class="src-preview" alt="" style="display:none" />
+      <div id="srcPreviewName" class="src-preview-name" style="display:none"></div>
       <div class="row" style="margin-top:8px">
         <div><label data-trans="scale">Upscale (×)</label>
           <select id="laScale">
@@ -836,6 +840,15 @@
     }
   }
   $("laProcess").addEventListener("click", processLineart);
+  // Show the selected source image immediately after file selection (UX: see what you're converting).
+  $("laFile").addEventListener("change", ()=>{
+    const f=$("laFile").files[0];
+    const prev=$("srcPreview"), name=$("srcPreviewName");
+    if(!f){ prev.style.display="none"; prev.removeAttribute("src"); name.style.display="none"; return; }
+    const r=new FileReader();
+    r.onload=e=>{ prev.src=e.target.result; prev.style.display="block"; name.textContent=f.name; name.style.display="block"; };
+    r.readAsDataURL(f);
+  });
   ["laKeepText","laTransparent","laScale"].forEach(id=>$(id).addEventListener("change",()=>{
     if(currentLineart && state.mode==="lineart"){ /* re-process available via button */ }
   }));
