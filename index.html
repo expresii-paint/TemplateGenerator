@@ -103,10 +103,10 @@
   footer{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5}
 
   /* ===== Home dashboard (4 tools) ===== */
-  .home{display:none}
-  body.home .home{display:flex;flex-direction:column;min-width:0;flex:1;padding:26px 30px;overflow-y:auto}
-  .home h2.home-h{font-size:15px;letter-spacing:.04em;color:var(--muted);margin:0 0 4px;text-transform:uppercase}
-  .home .home-sub{color:var(--muted);font-size:13px;margin:0 0 22px}
+  #home{display:none}
+  body.home #home{display:flex;flex-direction:column;min-width:0;flex:1;padding:26px 30px;overflow-y:auto}
+  #home h2.home-h{font-size:15px;letter-spacing:.04em;color:var(--muted);margin:0 0 4px;text-transform:uppercase}
+  #home .home-sub{color:var(--muted);font-size:13px;margin:0 0 22px}
   .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
   .card{position:relative;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:18px;cursor:pointer;transition:.14s;display:flex;flex-direction:column;gap:10px;min-height:150px}
   .card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.35)}
@@ -129,7 +129,6 @@
   body.home .sidebar, body.home .stage{display:none}
 </style>
 </head>
-<body>
 <body class="home">
   <div class="home" id="home">
     <h2 class="home-h" data-trans="toolsTitle">Tools</h2>
@@ -137,25 +136,25 @@
     <div class="cards">
       <div class="card" id="cardGrid" tabindex="0" role="button" data-tool="grid">
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></span>
-        <span class="zh" data-trans="modeGrid">字格 Template</span>
+        <span class="zh" data-trans="modeGrid">字格模板</span>
         <span class="nm" data-trans="gridToolNm">Grid / paper template</span>
         <span class="ds" data-trans="gridToolDs">Cell grids (米/田/九宮/回), 扇面, letter paper — export PNG or send to Expresii.</span>
       </div>
       <div class="card" id="cardLineart" tabindex="0" role="button" data-tool="lineart">
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16c3-8 5-12 8-12s3 6 6 12"/><path d="M3 20h18"/></svg></span>
-        <span class="zh" data-trans="modeLineart">線稿 converter</span>
+        <span class="zh" data-trans="modeLineart">線稿</span>
         <span class="nm" data-trans="lineartToolNm">Line drawing</span>
         <span class="ds" data-trans="lineartToolDs">Trace clean outlines + veins from a photo/painting, offline. No server.</span>
       </div>
       <div class="card" id="cardSeal" tabindex="0" role="button" data-tool="seal">
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 9h6v6H9z"/></svg></span>
-        <span class="zh" data-trans="modeSeal">印章 Stamp seal</span>
+        <span class="zh" data-trans="modeSeal">印章</span>
         <span class="nm" data-trans="sealToolNm">Seal stamping</span>
         <span class="ds" data-trans="sealToolDs">Capture from Expresii, place a seal, send as Overlay.</span>
       </div>
       <div class="card" id="cardFleck" tabindex="0" role="button" data-tool="fleck">
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></svg></span>
-        <span class="zh" data-trans="fleckToolZh">箔 Flecks</span>
+        <span class="zh" data-trans="fleckToolZh">金銀箔</span>
         <span class="nm" data-trans="fleckToolNm">Gold / silver flecks</span>
         <span class="ds" data-trans="fleckToolDs">Scatter decorative metallic flecks as a transparent field, send to Expresii.</span>
       </div>
@@ -495,6 +494,7 @@
       modeSeal:"Stamp a seal", captureFromExpresii:"Capture from Expresii", sealImage:"Seal image", useBuiltinSeal:"Use built-in red seal", sealScale:"Seal size", sealRotation:"Rotation", sendSeal:"Send seal to Expresii", sealHint:"Capture the current Expresii artwork, drop a seal (印章) on it, then move/resize and send it to Overlay or a settled layer. Works directly from this file — no server needed.", sealNoCapture:"capture the artwork first", sealNoImage:"load or pick a seal first", captureFail:"Capture failed: {msg}"
     ,
       toolsTitle:"Tools"      ,
+      toolsSub:"Pick a tool. Each opens its own workspace."      ,
       backHome:"← Home"      ,
       gridToolNm:"Template Generation"      ,
       lineartToolNm:"Line drawing"      ,
@@ -559,6 +559,7 @@
       modeSeal:"蓋印章", captureFromExpresii:"從 Expresii 擷取", sealImage:"印章圖片", useBuiltinSeal:"使用內建紅印", sealScale:"印章大小", sealRotation:"旋轉", sendSeal:"發送印章至 Expresii", sealHint:"擷取目前 Expresii 畫作，放上印章（印章），移動 / 縮放後發送到「覆蓋」層或沉積顏料層。可直接由此檔案執行，無須伺服器。", sealNoCapture:"請先擷取畫作", sealNoImage:"請先選擇印章", captureFail:"擷取失敗：{msg}"
     ,
       toolsTitle:"工具"      ,
+      toolsSub:"選擇一個工具，各自開啟專屬工作區。"      ,
       backHome:"← 主页"      ,
       gridToolNm:"字格模板"      ,
       lineartToolNm:"線稿"      ,
@@ -623,6 +624,7 @@
       modeSeal:"印章を押す", captureFromExpresii:"Expresii から取り込む", sealImage:"印章画像", useBuiltinSeal:"内蔵の赤印を使う", sealScale:"印章サイズ", sealRotation:"回転", sendSeal:"印章を Expresii へ送信", sealHint:"現在の Expresii 作品を取り込み、印章（印章）を配置して移動・拡縮し、オーバーレイまたは定着レイヤーへ送信します。このファイルから直接動作し、サーバーは不要です。", sealNoCapture:"先に作品を取り込んでください", sealNoImage:"先に印章を選んでください", captureFail:"取り込み失敗：{msg}"
     ,
       toolsTitle:"ツール"      ,
+      toolsSub:"ツールを選ぶと、それぞれ専用のワークスペースが開きます。"      ,
       backHome:"← ホーム"      ,
       gridToolNm:"文字グリッド"      ,
       lineartToolNm:"線画"      ,
@@ -687,6 +689,7 @@
       modeSeal:"난 인장 찍기", captureFromExpresii:"Expresii에서 가져오기", sealImage:"인장 이미지", useBuiltinSeal:"내장 빨간 인장 사용", sealScale:"인장 크기", sealRotation:"회전", sendSeal:"인장을 Expresii로 보내기", sealHint:"현재 Expresii 작품을 가져와 인장(印章)을 올리고 이동·크기 조절한 뒤 오버레이나 정착 레이어로 보냅니다. 이 파일에서 바로 동작하며 서버가 필요 없습니다.", sealNoCapture:"먼저 작품을 가져오세요", sealNoImage:"먼저 인장을 선택하세요", captureFail:"가져오기 실패: {msg}"
     ,
       toolsTitle:"도구"      ,
+      toolsSub:"도구를 고르면 각자의 작업 화면이 열립니다."      ,
       backHome:"← 홈"      ,
       gridToolNm:"글자 격자"      ,
       lineartToolNm:"선화"      ,
