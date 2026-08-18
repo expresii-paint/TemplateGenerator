@@ -119,6 +119,13 @@
   .card .ds{font-size:12px;color:var(--muted);margin-top:auto;line-height:1.5}
   /* ===== Workspace (tool view) ===== */
   body.tool .sidebar .home-only{display:none}
+  .card-target{display:none}                 /* only shown on the home dashboard */
+  body.home .card-target{display:block;width:100%;margin-top:10px;background:#0e1117;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:6px 8px;font-size:12px;cursor:pointer}
+  .mode-target{display:none}                 /* only the active mode's target select is shown */
+  body.active-grid .mode-target[data-mode="grid"]{display:inline-block}
+  body.active-lineart .mode-target[data-mode="lineart"]{display:inline-block}
+  body.active-seal .mode-target[data-mode="seal"]{display:inline-block}
+  body.active-fleck .mode-target[data-mode="fleck"]{display:inline-block}
   body.tool .sidebar{width:340px;min-width:340px}
   .back-btn{display:none}
   body.tool .back-btn{display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;background:#0e1117;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer}
@@ -140,24 +147,28 @@
         <span class="zh" data-trans="modeGrid">字格模板</span>
         <span class="nm" data-trans="gridToolNm">Grid / paper template</span>
         <span class="ds" data-trans="gridToolDs">Cell grids (米/田/九宮/回), 扇面, letter paper — export PNG or send to Expresii.</span>
+        <select class="card-target" data-mode="grid" aria-label="Grid target"></select>
       </div>
       <div class="card" id="cardLineart" tabindex="0" role="button" data-tool="lineart">
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16c3-8 5-12 8-12s3 6 6 12"/><path d="M3 20h18"/></svg></span>
         <span class="zh" data-trans="modeLineart">線稿</span>
         <span class="nm" data-trans="lineartToolNm">Line drawing</span>
         <span class="ds" data-trans="lineartToolDs">Trace clean outlines + veins from a photo/painting, offline. No server.</span>
+        <select class="card-target" data-mode="lineart" aria-label="Lineart target"></select>
       </div>
       <div class="card" id="cardSeal" tabindex="0" role="button" data-tool="seal">
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 9h6v6H9z"/></svg></span>
         <span class="zh" data-trans="modeSeal">印章</span>
         <span class="nm" data-trans="sealToolNm">Seal stamping</span>
         <span class="ds" data-trans="sealToolDs">Capture from Expresii, place a seal, send as Overlay.</span>
+        <select class="card-target" data-mode="seal" aria-label="Seal target"></select>
       </div>
       <div class="card" id="cardFleck" tabindex="0" role="button" data-tool="fleck">
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></svg></span>
         <span class="zh" data-trans="fleckToolZh">金銀箔</span>
         <span class="nm" data-trans="fleckToolNm">Gold / silver flecks</span>
         <span class="ds" data-trans="fleckToolDs">Scatter decorative metallic flecks as a transparent field, send to Expresii.</span>
+        <select class="card-target" data-mode="fleck" aria-label="Fleck target"></select>
       </div>
     </div>
   </div>
@@ -165,7 +176,7 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.4</span>
+      <span class="ver" id="ver">v1.5</span>
       <div class="lang-sel">
         <span class="lang-ico" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -389,10 +400,11 @@
       </div>
       <div class="exp-row">
         <label style="font-size:13px;color:var(--muted)" data-trans="target">Target</label>
-        <select id="expTarget">
-          <option value="-2" selected>Overlay</option>
-          <option value="-1">Underlay</option>
-        </select>
+        <select class="mode-target" data-mode="grid"></select>
+        <select class="mode-target" data-mode="lineart"></select>
+        <select class="mode-target" data-mode="seal"></select>
+        <select class="mode-target" data-mode="fleck"></select>
+        <div class="hint" data-trans="targetHint" style="margin-top:6px"></div>
       </div>
       <div class="btns" style="margin-top:8px">
         <button class="btn exp" id="sendExp" data-trans="sendToExpresii">Send to Expresii</button>
@@ -452,7 +464,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.4";
+  const VERSION = "1.5";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -799,6 +811,9 @@
     dashed:true, showBorder:true, fanSpec:"8",
     flecksOn:false, fleckKind:"gold", fleckCount:120, fleckSize:0.9, fleckScatter:true, fleckAlpha:0.6,
     mode:"grid",                                // 'grid' = grid template, 'lineart' = 線稿 converter, 'seal' = 印章 stamp
+    // Per-mode Expresii destination: grid -> underlay(-1), fleck/lineart/seal -> overlay(-2).
+    // Restored from localStorage so you can keep sending grid->underlay, fleck->overlay, seal->L2, etc.
+    targets:{ grid:-1, lineart:-2, fleck:-2, seal:-2 },
     scale:2, keepText:true, transparent:false,
     seal:{ art:null, sealImg:null, x:0.7, y:0.8, size:0.12, rot:0 }   // seal compose state (x,y,size as fractions of artwork W; rot in rad)
   };
@@ -1088,6 +1103,7 @@
   }
   // Show only the controls applicable to the chosen template type.
   function applyModeVisibility(){
+    const activeMode = state.tool==="fleck" ? "fleck" : state.mode;   // logical mode key
     const gridMode = state.mode==="grid";
     const sealMode = state.mode==="seal";
     const gp=$("gridPanel"), go=$("gridOnly"), lp=$("lineartPanel"), sp=$("sealPanel"), fp=$("fleckPanel");
@@ -1095,16 +1111,72 @@
     if(go) go.style.display = gridMode ? "" : "none";
     if(lp) lp.style.display = (state.mode==="lineart") ? "" : "none";
     if(sp) sp.style.display = sealMode ? "" : "none";     if(fp) fp.style.display = (state.tool==="fleck") ? "" : "none";
-    // stage shows the SVG preview for grid/lineart, the canvas for seal
+    // stage shows the SVG preview for grid/lineart, the canvas for seal/fleck
     const svg=$("preview"), cv=$("previewCanvas");
     const useCanvas = sealMode || state.tool==="fleck";     if(svg) svg.style.display = useCanvas ? "none" : "";     if(cv) cv.style.display = useCanvas ? "block" : "none";
+    // show only the active mode's target select (both the home card & the in-panel select)
+    document.body.classList.remove("active-grid","active-lineart","active-seal","active-fleck");
+    document.body.classList.add("active-"+activeMode);
     // stagebar badge reflects mode
     $("typeBadge").textContent = gridMode ? tr("grid_"+state.type) : (sealMode ? tr("modeSeal") : (state.tool==="fleck" ? tr("fleckToolZh") : tr("modeLineart")));
   }
+  // ---- per-mode Expresii target selectors ----
+  // Each mode (grid/lineart/seal/fleck) keeps its OWN destination so you can send, e.g.,
+  // grid -> Underlay, fleck -> Overlay, seal -> L2 independently. Restored across reloads.
+  let expLayerCount = 0;
+  function targetLabel(v){
+    if(v===-1) return tr("underlay");
+    if(v===-2) return tr("overlay");
+    if(typeof v==="number" && v>=0) return tr("settledPaint")+" L"+v;
+    return String(v);
+  }
+  function buildTargetOptions(sel){
+    sel.innerHTML="";
+    const ov=document.createElement("option"); ov.value="-2"; ov.textContent=tr("overlay"); sel.appendChild(ov);
+    const u =document.createElement("option"); u.value="-1"; u.textContent=tr("underlay"); sel.appendChild(u);
+    for(let i=0;i<expLayerCount;i++){ const op=document.createElement("option"); op.value=String(i); op.textContent=tr("settledPaint")+" L"+i; sel.appendChild(op); }
+    // ensure the stored target is valid for the current layer count
+    let v = state.targets[sel.dataset.mode];
+    if(!(typeof v==="number")) v = -2;
+    if(v>=0 && v>=expLayerCount) v = -2;
+    sel.value = String(v);
+  }
+  function rebuildTargets(){
+    document.querySelectorAll(".mode-target").forEach(buildTargetOptions);
+    document.querySelectorAll(".card-target").forEach(buildTargetOptions);
+  }
+  function saveTargets(){ try{ localStorage.setItem("tg_targets", JSON.stringify(state.targets)); }catch(_){} }
+  function restoreTargets(){
+    try{
+      const j = JSON.parse(localStorage.getItem("tg_targets"));
+      if(j && typeof j==="object"){ for(const k of ["grid","lineart","seal","fleck"]) if(typeof j[k]==="number") state.targets[k]=j[k]; }
+    }catch(_){}
+  }
+  // mirror the active mode's in-panel choice onto its home-card select (and vice-versa)
+  function syncCardTargets(){
+    document.querySelectorAll(".mode-target").forEach(sel=>{
+      const card=document.querySelector('.card-target[data-mode="'+sel.dataset.mode+'"]');
+      if(card) card.value = sel.value;
+    });
+  }
+  document.querySelectorAll(".mode-target").forEach(sel=>{
+    sel.addEventListener("change", e=>{
+      const m=e.target.dataset.mode; state.targets[m]=parseInt(e.target.value);
+      saveTargets(); syncCardTargets();
+    });
+  });
+  document.querySelectorAll(".card-target").forEach(sel=>{
+    sel.addEventListener("change", e=>{
+      const m=e.target.dataset.mode; state.targets[m]=parseInt(e.target.value);
+      // also update the matching in-panel select (shown when that tool is active)
+      const panel=document.querySelector('.mode-target[data-mode="'+m+'"]'); if(panel) panel.value=e.target.value;
+      saveTargets();
+    });
+  });
   // ---- screen / tool navigation (home dashboard + 4 workspaces) ----
   const TOOL_META = { grid:{mode:"grid",zh:"modeGrid",nm:"gridToolNm"}, lineart:{mode:"lineart",zh:"modeLineart",nm:"lineartToolNm"}, seal:{mode:"seal",zh:"modeSeal",nm:"sealToolNm"}, fleck:{tool:"fleck",zh:"fleckToolZh",nm:"fleckToolNm"} };
-  function goHome(){ state.screen="home"; state.tool=null; document.body.classList.remove("tool"); document.body.classList.add("home"); applyModeVisibility(); }
-  function setTool(t){     const meta=TOOL_META[t]; if(!meta) return;     state.screen="tool"; document.body.classList.remove("home"); document.body.classList.add("tool");     if(meta.mode) state.mode = meta.mode; else state.tool = "fleck";     [...$("modeSwitch").children].forEach(b=>b.classList.toggle("active", b.dataset.mode===meta.mode));     $("toolTitleZh").textContent = tr(meta.zh); $("toolTitleNm").textContent = tr(meta.nm);     applyModeVisibility();     if(t==="grid"){ render(); }     else if(t==="seal"){ drawSeal(); }     else if(t==="fleck"){ generateFlecks(); }     else { if(currentLineart){ showLineart(currentLineart); } else { clearPreview(); } }   }
+  function goHome(){ state.screen="home"; state.tool=null; document.body.classList.remove("tool"); document.body.classList.add("home"); applyModeVisibility(); syncCardTargets(); }
+  function setTool(t){     const meta=TOOL_META[t]; if(!meta) return;     state.screen="tool"; document.body.classList.remove("home"); document.body.classList.add("tool");     if(meta.mode) state.mode = meta.mode; else state.tool = "fleck";     [...$("modeSwitch").children].forEach(b=>b.classList.toggle("active", b.dataset.mode===meta.mode));     $("toolTitleZh").textContent = tr(meta.zh); $("toolTitleNm").textContent = tr(meta.nm);     applyModeVisibility(); syncCardTargets();     if(t==="grid"){ render(); }     else if(t==="seal"){ drawSeal(); }     else if(t==="fleck"){ generateFlecks(); }     else { if(currentLineart){ showLineart(currentLineart); } else { clearPreview(); } }   }
 // ---- 印章 (seal stamping) ----
   // Capture the current Expresii canvas (GET /capture -> {status, imageBase64}); the web client
   // WebStrokeClient-3.html shows this is a single synchronous fetch (no command queue).
@@ -1203,7 +1275,7 @@
     x.save(); x.translate(s.x*W, s.y*H); x.rotate(s.rot);
     x.drawImage(seal, -sealW/2, -sealW/2, sealW, sealW); x.restore();
     const base64=c.toDataURL("image/png").split(",")[1];
-    const dest=parseInt($("expTarget").value);
+    const dest=state.targets.seal;
     btn.disabled=true;
     try{
       hint.textContent=tr("sending");
@@ -1579,7 +1651,7 @@
     const cv=$("previewCanvas");
     if(!cv || !cv.width){ if(hint) hint.textContent=tr("fleckNone"); return; }
     const base64=cv.toDataURL("image/png").split(",")[1];
-    const dest=parseInt($("expTarget").value);
+    const dest=state.targets.fleck;
     btn.disabled=true;
     try{
       hint.textContent=tr("sending");
@@ -1587,7 +1659,7 @@
       fetch(expBase()+"/upload-image", {method:"POST", body:fd})
         .then(r=>r.json().then(j=>({ok:r.ok, j})))
         .then(({ok,j})=>{ btn.disabled=false;
-          if(ok && j && j.status==="done"){ hint.textContent=tr("sentDone",{dest:$("expTarget").selectedOptions[0].textContent}); }
+          if(ok && j && j.status==="done"){ hint.textContent=tr("sentDone",{dest:targetLabel(dest)}); }
           else { hint.textContent=(j&&j.error)||tr("sendFail"); }
         })
         .catch(err=>{ btn.disabled=false; hint.textContent=tr("sendFail")+": "+err.message; });
@@ -1870,17 +1942,9 @@
           $("stPaper").textContent = (sd.paperWidth&&sd.paperHeight) ? `${sd.paperWidth}×${sd.paperHeight}` : "—";
           $("stLayers").textContent = (sd.layerCount!==undefined) ? `${sd.layerCount}` : "—";
           $("stActive").textContent = (sd.layerIndex!==undefined) ? `L${sd.layerIndex}` : "—";
-          const sel=$("expTarget");
           const lc=parseInt(sd.layerCount)||0;
-          const want=2+lc; // -2 overlay + -1 underlay + lc settled layers
-          if(sel.options.length!==want){
-            sel.innerHTML="";
-            // Overlay (-2) FIRST and pre-selected: the only Expresii target that preserves
-            // alpha — a transparent PNG (grid/fleck) composites over existing paint.
-            const ov=document.createElement("option"); ov.value="-2"; ov.textContent=tr("overlay"); ov.selected=true; sel.appendChild(ov);
-            const u=document.createElement("option"); u.value="-1"; u.textContent=tr("underlay"); sel.appendChild(u);
-            for(let i=0;i<lc;i++){ const op=document.createElement("option"); op.value=String(i); op.textContent=tr("settledPaint")+" L"+i; sel.appendChild(op); }
-          }
+          expLayerCount = lc;
+          rebuildTargets();
           if(autoPaperSync && sd.paperWidth && sd.paperHeight) applyExpresiiPaper(sd.paperWidth, sd.paperHeight);
         }
       }catch(e){ /* state optional */ }
@@ -1919,7 +1983,7 @@
     btn.disabled=true; const old=hint.textContent;
     try{
       const base64=await pngFromPreview();
-      const dest=parseInt($("expTarget").value);
+      const dest=state.targets[state.mode];   // grid -> underlay, lineart -> overlay (per-mode)
       hint.textContent=tr("sending");
       // Multipart form (NOT application/json) per Expresii CORS rule — avoids browser
       // OPTIONS preflight. FormData lets the browser set the multipart boundary.
@@ -1966,6 +2030,9 @@
   // init
   lang = localStorage.getItem("tg_lang") || defaultLang();
   $("langSel").value = lang;
+  // restore per-mode Expresii targets, then build the selects (layers filled in once connected)
+  restoreTargets();
+  rebuildTargets();
   // allow ?cols=&rows= / ?grid=N / ?shot=0.6 deep-links (e.g. reproducible screenshots)
   try {
     const q = new URLSearchParams(location.search);
@@ -1976,6 +2043,7 @@
   } catch(e){}
   applyVisibility();
   applyModeVisibility();
+  syncCardTargets();
   setLang(lang);   // applies translations + renders (render() is called inside applyLang)
   const verEl = document.getElementById("ver"); if (verEl) verEl.textContent = "v" + VERSION;
 })();
