@@ -106,6 +106,8 @@
   /* ===== Home dashboard (4 tools) ===== */
   #home{display:none}
   body.home #home{display:flex;flex-direction:column;min-width:0;flex:1;padding:26px 30px;overflow-y:auto}
+  #home .home-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}
+  #home .home-top .home-h{margin-bottom:4px}
   #home h2.home-h{font-size:15px;letter-spacing:.04em;color:var(--muted);margin:0 0 4px;text-transform:uppercase}
   #home .home-sub{color:var(--muted);font-size:13px;margin:0 0 22px}
   .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
@@ -139,8 +141,27 @@
 </head>
 <body class="home">
   <div class="home" id="home">
-    <h2 class="home-h" data-trans="toolsTitle">Tools</h2>
-    <p class="home-sub" data-trans="toolsSub">Pick a tool. Each opens its own workspace.</p>
+    <div class="home-top">
+      <div>
+        <h2 class="home-h" data-trans="toolsTitle">Tools</h2>
+        <p class="home-sub" data-trans="toolsSub">Pick a tool. Each opens its own workspace.</p>
+      </div>
+      <div class="lang-sel home-only">
+        <span class="lang-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M3 12h18"></path>
+            <path d="M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9S9.5 5.5 12 3z"></path>
+          </svg>
+        </span>
+        <select id="langSel" aria-label="Language">
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+        </select>
+      </div>
+    </div>
     <div class="cards">
       <div class="card" id="cardGrid" tabindex="0" role="button" data-tool="grid">
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></span>
@@ -176,22 +197,7 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.5</span>
-      <div class="lang-sel">
-        <span class="lang-ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="9"></circle>
-            <path d="M3 12h18"></path>
-            <path d="M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9S9.5 5.5 12 3z"></path>
-          </svg>
-        </span>
-        <select id="langSel" aria-label="Language">
-          <option value="en">English</option>
-          <option value="zh">中文</option>
-          <option value="ja">日本語</option>
-          <option value="ko">한국어</option>
-        </select>
-      </div>
+      <span class="ver" id="ver">v1.6</span>
     </header>
 
     <button class="back-btn" id="backHome">&larr; <span data-trans="backHome">Back</span></button>
@@ -464,7 +470,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.5";
+  const VERSION = "1.6";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
