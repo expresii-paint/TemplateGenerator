@@ -101,9 +101,67 @@
   .exp-state .kv span{color:var(--muted)}
   .exp-state .kv b{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
   footer{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5}
+
+  /* ===== Home dashboard (4 tools) ===== */
+  .home{display:none}
+  body.home .home{display:flex;flex-direction:column;min-width:0;flex:1;padding:26px 30px;overflow-y:auto}
+  .home h2.home-h{font-size:15px;letter-spacing:.04em;color:var(--muted);margin:0 0 4px;text-transform:uppercase}
+  .home .home-sub{color:var(--muted);font-size:13px;margin:0 0 22px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+  .card{position:relative;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:18px;cursor:pointer;transition:.14s;display:flex;flex-direction:column;gap:10px;min-height:150px}
+  .card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .card .ico{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#0e1117;border:1px solid var(--line);color:var(--accent)}
+  .card .ico svg{width:24px;height:24px}
+  .card .zh{font-size:22px;font-weight:700;line-height:1.1}
+  .card .nm{font-size:13px;color:var(--text)}
+  .card .ds{font-size:12px;color:var(--muted);margin-top:auto;line-height:1.5}
+  /* ===== Workspace (tool view) ===== */
+  body.tool .sidebar .home-only{display:none}
+  body.tool .sidebar{width:340px;min-width:340px}
+  .back-btn{display:none}
+  body.tool .back-btn{display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;background:#0e1117;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer}
+  body.tool .back-btn:hover{border-color:var(--accent)}
+  .tool-title{display:none}
+  body.tool .tool-title{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  body.tool .tool-title .zh{font-size:18px;font-weight:700}
+  body.tool .tool-title .nm{font-size:13px;color:var(--muted)}
+  body.home .sidebar, body.home .stage{display:none}
 </style>
 </head>
 <body>
+<body class="home">
+  <div class="home" id="home">
+    <h2 class="home-h" data-trans="toolsTitle">Tools</h2>
+    <p class="home-sub" data-trans="toolsSub">Pick a tool. Each opens its own workspace.</p>
+    <div class="cards">
+      <div class="card" id="cardGrid" tabindex="0" role="button" data-tool="grid">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></span>
+        <span class="zh" data-trans="modeGrid">字格 Template</span>
+        <span class="nm" data-trans="gridToolNm">Grid / paper template</span>
+        <span class="ds" data-trans="gridToolDs">Cell grids (米/田/九宮/回), 扇面, letter paper — export PNG or send to Expresii.</span>
+      </div>
+      <div class="card" id="cardLineart" tabindex="0" role="button" data-tool="lineart">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16c3-8 5-12 8-12s3 6 6 12"/><path d="M3 20h18"/></svg></span>
+        <span class="zh" data-trans="modeLineart">線稿 converter</span>
+        <span class="nm" data-trans="lineartToolNm">Line drawing</span>
+        <span class="ds" data-trans="lineartToolDs">Trace clean outlines + veins from a photo/painting, offline. No server.</span>
+      </div>
+      <div class="card" id="cardSeal" tabindex="0" role="button" data-tool="seal">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 9h6v6H9z"/></svg></span>
+        <span class="zh" data-trans="modeSeal">印章 Stamp seal</span>
+        <span class="nm" data-trans="sealToolNm">Seal stamping</span>
+        <span class="ds" data-trans="sealToolDs">Capture from Expresii, place a seal, send as Overlay.</span>
+      </div>
+      <div class="card" id="cardFleck" tabindex="0" role="button" data-tool="fleck">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></svg></span>
+        <span class="zh" data-trans="fleckToolZh">箔 Flecks</span>
+        <span class="nm" data-trans="fleckToolNm">Gold / silver flecks</span>
+        <span class="ds" data-trans="fleckToolDs">Scatter decorative metallic flecks as a transparent field, send to Expresii.</span>
+      </div>
+    </div>
+  </div>
+
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
@@ -123,6 +181,9 @@
         </select>
       </div>
     </header>
+
+    <button class="back-btn" id="backHome">&larr; <span data-trans="backHome">Back</span></button>
+    <div class="tool-title" id="toolTitle"><span class="zh" id="toolTitleZh"></span><span class="nm" id="toolTitleNm"></span></div>
 
     <div class="grp">
       <h2 data-trans="mode">Mode</h2>
@@ -278,29 +339,7 @@
       <div class="chk" data-show="grid"><input type="checkbox" id="showBorder" checked><label for="showBorder" style="margin:0" data-trans="drawCellBorders">Draw cell borders</label></div>
     </div>
 
-    <div class="grp">
-      <h2 data-trans="flecks">Flecks</h2>
-      <div class="chk" data-show="grid"><input type="checkbox" id="flecksOn"><label for="flecksOn" style="margin:0" data-trans="flecksOn">Add gold/silver flecks</label></div>
-      <div class="row" id="fleckKindRow" data-show="grid" style="margin-top:8px">
-        <div style="flex:1"><label data-trans="fleckColor">Color</label>
-          <select id="fleckKind">
-            <option value="gold">Gold</option>
-            <option value="silver">Silver</option>
-            <option value="copper">Copper</option>
-            <option value="white">Pearl white</option>
-          </select>
-        </div>
-      </div>
-      <div id="fleckCountRow" data-show="grid" style="margin-top:8px">
-        <label data-trans="fleckDensity">Density (count)</label>
-        <input id="fleckCount" type="range" min="10" max="500" step="10" value="120">
-      </div>
-      <div id="fleckSizeRow" data-show="grid" style="margin-top:8px">
-        <label data-trans="fleckSize">Size (mm)</label>
-        <input id="fleckSize" type="range" min="0.3" max="3" step="0.1" value="0.9">
-      </div>
-      <div class="chk" id="fleckScatterRow" data-show="grid"><input type="checkbox" id="fleckScatter" checked><label for="fleckScatter" style="margin:0" data-trans="fleckScatter">Scatter randomly</label></div>
-      <div class="hint" data-show="grid" data-trans="fleckHint">Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.</div>
+    
     </div>
     </div><!-- /gridOnly -->
 
@@ -357,7 +396,37 @@
     </div>
   </aside>
 
-  <main class="stage">
+  <!-- 箔 (fleck) tool panel — standalone workspace -->
+    <div class="grp" id="fleckPanel" style="display:none">
+      <h2 data-trans="flecks">Flecks</h2>
+      <div class="chk"><input type="checkbox" id="flecksOn"><label for="flecksOn" style="margin:0" data-trans="flecksOn">Add gold/silver flecks</label></div>
+      <div class="row" id="fleckKindRow" style="margin-top:8px">
+        <div style="flex:1"><label data-trans="fleckColor">Color</label>
+          <select id="fleckKind">
+            <option value="gold">Gold</option>
+            <option value="silver">Silver</option>
+            <option value="copper">Copper</option>
+            <option value="white">Pearl white</option>
+          </select>
+        </div>
+      </div>
+      <div id="fleckCountRow" style="margin-top:8px">
+        <label data-trans="fleckDensity">Density (count)</label>
+        <input id="fleckCount" type="range" min="10" max="500" step="10" value="120">
+      </div>
+      <div id="fleckSizeRow" style="margin-top:8px">
+        <label data-trans="fleckSize">Size (mm)</label>
+        <input id="fleckSize" type="range" min="0.3" max="3" step="0.1" value="0.9">
+      </div>
+      <div class="chk" id="fleckScatterRow"><input type="checkbox" id="fleckScatter" checked><label for="fleckScatter" style="margin:0" data-trans="fleckScatter">Scatter randomly</label></div>
+      <div class="hint" data-trans="fleckHint">Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.</div>
+      <div class="btns" style="margin-top:10px">
+        <button class="btn green" id="fleckGen" data-trans="generateFlecks">Generate fleck field</button>
+        <button class="btn exp" id="fleckSend" data-trans="sendFlecks">Send to Expresii</button>
+      </div>
+      <div class="hint" id="fleckHint2" data-trans="fleckToolHint"></div>
+    </div>
+<main class="stage">
     <div class="stagebar">
       <span class="badge" id="dimBadge">—</span>
       <span class="info" id="summary">—</span>
@@ -424,6 +493,26 @@
       lineartErr:"Line drawing failed: {msg}. Is the image a valid PNG/JPG?",
       lineartNone:"no line drawing yet", lineartNoneSend:"no line drawing to send", laTrans:"transparent", laWhite:"white background",
       modeSeal:"Stamp a seal", captureFromExpresii:"Capture from Expresii", sealImage:"Seal image", useBuiltinSeal:"Use built-in red seal", sealScale:"Seal size", sealRotation:"Rotation", sendSeal:"Send seal to Expresii", sealHint:"Capture the current Expresii artwork, drop a seal (印章) on it, then move/resize and send it to Overlay or a settled layer. Works directly from this file — no server needed.", sealNoCapture:"capture the artwork first", sealNoImage:"load or pick a seal first", captureFail:"Capture failed: {msg}"
+    ,
+      toolsTitle:"Tools"      ,
+      backHome:"← Home"      ,
+      gridToolNm:"Template Generation"      ,
+      lineartToolNm:"Line drawing"      ,
+      sealToolNm:"Seal stamping"      ,
+      fleckToolZh:"Foil flecks"      ,
+      fleckToolNm:"Fleck generation"      ,
+      fleckHint:"Click Generate, then send the transparent fleck field to Expresii (Overlay by default)."      ,
+      fleckHint2:""      ,
+      fleckGenerate:"Generate"      ,
+      fleckReady:"Fleck field ready — send it to Expresii (Overlay)."      ,
+      fleckErr:"Fleck render failed."      ,
+      fleckNoPaper:"No paper size set."      ,
+      fleckNone:"Generate a fleck field first."      ,
+      fleckSent:"Fleck field sent."      ,
+      gridToolDs:"Generate practice grids (米字格, 田字格, …) sized to your paper."      ,
+      lineartToolDs:"Convert a photo into a clean line drawing (線稿)."      ,
+      sealToolDs:"Compose a seal and stamp it onto the Expresii canvas."      ,
+      fleckToolDs:"Scatter gold/silver foil flecks as a transparent overlay."
     },
     zh:{
       app_name:"文房助手", app_sub:"書法與箋紙助手", app_title:"文房助手",
@@ -468,6 +557,26 @@
       lineartErr:"線稿失敗：{msg}。圖片是否為有效的 PNG/JPG？",
       lineartNone:"尚無 線稿", lineartNoneSend:"尚無 線稿 可發送", laTrans:"透明", laWhite:"白底",
       modeSeal:"蓋印章", captureFromExpresii:"從 Expresii 擷取", sealImage:"印章圖片", useBuiltinSeal:"使用內建紅印", sealScale:"印章大小", sealRotation:"旋轉", sendSeal:"發送印章至 Expresii", sealHint:"擷取目前 Expresii 畫作，放上印章（印章），移動 / 縮放後發送到「覆蓋」層或沉積顏料層。可直接由此檔案執行，無須伺服器。", sealNoCapture:"請先擷取畫作", sealNoImage:"請先選擇印章", captureFail:"擷取失敗：{msg}"
+    ,
+      toolsTitle:"工具"      ,
+      backHome:"← 主页"      ,
+      gridToolNm:"字格模板"      ,
+      lineartToolNm:"線稿"      ,
+      sealToolNm:"印章"      ,
+      fleckToolZh:"金/銀箔"      ,
+      fleckToolNm:"箔生成"      ,
+      fleckHint:"點擊「生成」，再把透明箔場送往 Expresii（預設疊加層）。"      ,
+      fleckHint2:""      ,
+      fleckGenerate:"生成"      ,
+      fleckReady:"箔場已就緒 — 送往 Expresii（疊加層）。"      ,
+      fleckErr:"箔渲染失敗。"      ,
+      fleckNoPaper:"尚未設定紙張尺寸。"      ,
+      fleckNone:"請先生成箔場。"      ,
+      fleckSent:"箔場已送。"      ,
+      gridToolDs:"生成練習字格（米字格、田字格…），按紙張尺寸。"      ,
+      lineartToolDs:"將照片轉為乾淨線稿（線稿）。"      ,
+      sealToolDs:"製作印章並蓋到 Expresii 畫布。"      ,
+      fleckToolDs:"散布金／銀箔，作為透明疊加層。"
     },
     ja:{
       app_name:"文房助手", app_sub:"書道・箋紙の助手", app_title:"文房助手",
@@ -512,6 +621,26 @@
       lineartErr:"線画失敗：{msg}。画像は有効な PNG/JPG ですか？",
       lineartNone:"まだ線画がありません", lineartNoneSend:"送信できる線画がありません", laTrans:"透明", laWhite:"白背景",
       modeSeal:"印章を押す", captureFromExpresii:"Expresii から取り込む", sealImage:"印章画像", useBuiltinSeal:"内蔵の赤印を使う", sealScale:"印章サイズ", sealRotation:"回転", sendSeal:"印章を Expresii へ送信", sealHint:"現在の Expresii 作品を取り込み、印章（印章）を配置して移動・拡縮し、オーバーレイまたは定着レイヤーへ送信します。このファイルから直接動作し、サーバーは不要です。", sealNoCapture:"先に作品を取り込んでください", sealNoImage:"先に印章を選んでください", captureFail:"取り込み失敗：{msg}"
+    ,
+      toolsTitle:"ツール"      ,
+      backHome:"← ホーム"      ,
+      gridToolNm:"文字グリッド"      ,
+      lineartToolNm:"線画"      ,
+      sealToolNm:"印章"      ,
+      fleckToolZh:"金/銀箔"      ,
+      fleckToolNm:"箔生成"      ,
+      fleckHint:"「生成」をクリックし、透明な箔フィールドを Expresii へ送信（既定はオーバーレイ）。"      ,
+      fleckHint2:""      ,
+      fleckGenerate:"生成"      ,
+      fleckReady:"箔フィールド準備完了 — Expresii へ送信(オーバーレイ)。"      ,
+      fleckErr:"箔のレンダーに失敗。"      ,
+      fleckNoPaper:"用紙サイズが未設定です。"      ,
+      fleckNone:"まず箔フィールドを生成してください。"      ,
+      fleckSent:"箔フィールドを送信しました。"      ,
+      gridToolDs:"練習用グリッド（米字格・田字格…）を用紙サイズで生成。"      ,
+      lineartToolDs:"写真をクリーンな線画（線画）に変換。"      ,
+      sealToolDs:"印影を構成し Expresii キャンバスへ押印。"      ,
+      fleckToolDs:"金/銀箔を散らし、透明オーバーレイとして配置。"
     },
     ko:{
       app_name:"문방 조수", app_sub:"서예·편지지 보조 도구", app_title:"문방 조수",
@@ -556,6 +685,26 @@
       lineartErr:"선화 생성 실패: {msg}. 유효한 PNG/JPG인가요?",
       lineartNone:"아직 線稿가 없습니다", lineartNoneSend:"보낼 線稿가 없습니다", laTrans:"투명", laWhite:"흰 배경",
       modeSeal:"난 인장 찍기", captureFromExpresii:"Expresii에서 가져오기", sealImage:"인장 이미지", useBuiltinSeal:"내장 빨간 인장 사용", sealScale:"인장 크기", sealRotation:"회전", sendSeal:"인장을 Expresii로 보내기", sealHint:"현재 Expresii 작품을 가져와 인장(印章)을 올리고 이동·크기 조절한 뒤 오버레이나 정착 레이어로 보냅니다. 이 파일에서 바로 동작하며 서버가 필요 없습니다.", sealNoCapture:"먼저 작품을 가져오세요", sealNoImage:"먼저 인장을 선택하세요", captureFail:"가져오기 실패: {msg}"
+    ,
+      toolsTitle:"도구"      ,
+      backHome:"← 홈"      ,
+      gridToolNm:"글자 격자"      ,
+      lineartToolNm:"선화"      ,
+      sealToolNm:"인장"      ,
+      fleckToolZh:"금/은박"      ,
+      fleckToolNm:"박 생성"      ,
+      fleckHint:"생성 클릭 후 투명 박 필드를 Expresii 로 전송(기본 겹침 레이어)."      ,
+      fleckHint2:""      ,
+      fleckGenerate:"생성"      ,
+      fleckReady:"박 필드 준비됨 — Expresii 로 전송(겹침)."      ,
+      fleckErr:"박 렌더 실패."      ,
+      fleckNoPaper:"용지 크기가 설정되지 않았습니다."      ,
+      fleckNone:"먼저 박 필드를 생성하세요."      ,
+      fleckSent:"박 필드 전송됨."      ,
+      gridToolDs:"연습 격자(미자격, 전자격…)를 용지 크기에 맞춰 생성."      ,
+      lineartToolDs:"사진을 깔끔한 선화(선화)로 변환."      ,
+      sealToolDs:"도장을 만들어 Expresii 캔버스에 날인."      ,
+      fleckToolDs:"금/은박을 흩뿌려 투명 겹침 레이어로."
     }
   };
   let lang = "en";
@@ -624,6 +773,7 @@
 
   const $ = id => document.getElementById(id);
   const state = {
+    screen:"home", tool:null,  /* home | tool; tool in null|grid|lineart|seal|fleck */
     paperSource:"user", expPaper:null,            // 'user' = presets/custom; 'exp' = Expresii canvas px
     paper:"A4", ar:[1,1], orient:"portrait", dpi:11.81,
     type:"mi", layout:"cols", cols:9, rows:13, cellmm:20, marginmm:10, paperMarginmm:0,
@@ -690,7 +840,7 @@
   // ---- Mode switch (Grid template  <->  線稿 converter) ----
   $("modeSwitch").addEventListener("click", e=>{
     const b=e.target.closest("button"); if(!b)return;
-    setMode(b.dataset.mode);
+    setTool(b.dataset.mode);
   });
 
   // ---- 線稿 converter ----
@@ -887,6 +1037,16 @@
   // ---- seal (印章) wiring ----
   $("sealCapture").addEventListener("click", captureSealArt);
   $("sealSend").addEventListener("click", sendSeal);
+  // ---- Home dashboard + tool navigation ----
+  document.querySelectorAll(".card[data-tool]").forEach(c=>{
+    c.addEventListener("click", ()=>setTool(c.dataset.tool));
+    c.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); setTool(c.dataset.tool); } });
+  });
+  $("backHome").addEventListener("click", goHome);
+  $("fleckGen").addEventListener("click", generateFlecks);
+  $("fleckSend").addEventListener("click", sendFlecks);
+  // start on the home dashboard
+  goHome();
   $("sealFile").addEventListener("change", e=>{
     const f=e.target.files[0];
     if(!f){ state.seal.sealImg=null; $("sealBuiltin").checked=true; drawSeal(); return; }
@@ -912,28 +1072,22 @@
   function applyModeVisibility(){
     const gridMode = state.mode==="grid";
     const sealMode = state.mode==="seal";
-    const gp=$("gridPanel"), go=$("gridOnly"), lp=$("lineartPanel"), sp=$("sealPanel");
+    const gp=$("gridPanel"), go=$("gridOnly"), lp=$("lineartPanel"), sp=$("sealPanel"), fp=$("fleckPanel");
     if(gp) gp.style.display = gridMode ? "" : "none";
     if(go) go.style.display = gridMode ? "" : "none";
     if(lp) lp.style.display = (state.mode==="lineart") ? "" : "none";
-    if(sp) sp.style.display = sealMode ? "" : "none";
+    if(sp) sp.style.display = sealMode ? "" : "none";     if(fp) fp.style.display = (state.tool==="fleck") ? "" : "none";
     // stage shows the SVG preview for grid/lineart, the canvas for seal
     const svg=$("preview"), cv=$("previewCanvas");
-    if(svg) svg.style.display = sealMode ? "none" : "";
-    if(cv) cv.style.display = sealMode ? "block" : "none";
+    const useCanvas = sealMode || state.tool==="fleck";     if(svg) svg.style.display = useCanvas ? "none" : "";     if(cv) cv.style.display = useCanvas ? "block" : "none";
     // stagebar badge reflects mode
-    $("typeBadge").textContent = gridMode ? tr("grid_"+state.type) : (sealMode ? tr("modeSeal") : tr("modeLineart"));
+    $("typeBadge").textContent = gridMode ? tr("grid_"+state.type) : (sealMode ? tr("modeSeal") : (state.tool==="fleck" ? tr("fleckToolZh") : tr("modeLineart")));
   }
-  function setMode(m){
-    state.mode = m;
-    [...$("modeSwitch").children].forEach(b=>b.classList.toggle("active", b.dataset.mode===m));
-    applyModeVisibility();
-    // restore the appropriate canvas content
-    if(m==="grid"){ render(); }
-    else if(m==="seal"){ drawSeal(); }
-    else { if(currentLineart){ showLineart(currentLineart); } else { clearPreview(); } }
-  }
-  // ---- 印章 (seal stamping) ----
+  // ---- screen / tool navigation (home dashboard + 4 workspaces) ----
+  const TOOL_META = { grid:{mode:"grid",zh:"modeGrid",nm:"gridToolNm"}, lineart:{mode:"lineart",zh:"modeLineart",nm:"lineartToolNm"}, seal:{mode:"seal",zh:"modeSeal",nm:"sealToolNm"}, fleck:{tool:"fleck",zh:"fleckToolZh",nm:"fleckToolNm"} };
+  function goHome(){ state.screen="home"; state.tool=null; document.body.classList.remove("tool"); document.body.classList.add("home"); applyModeVisibility(); }
+  function setTool(t){     const meta=TOOL_META[t]; if(!meta) return;     state.screen="tool"; document.body.classList.remove("home"); document.body.classList.add("tool");     if(meta.mode) state.mode = meta.mode; else state.tool = "fleck";     [...$("modeSwitch").children].forEach(b=>b.classList.toggle("active", b.dataset.mode===meta.mode));     $("toolTitleZh").textContent = tr(meta.zh); $("toolTitleNm").textContent = tr(meta.nm);     applyModeVisibility();     if(t==="grid"){ render(); }     else if(t==="seal"){ drawSeal(); }     else if(t==="fleck"){ generateFlecks(); }     else { if(currentLineart){ showLineart(currentLineart); } else { clearPreview(); } }   }
+// ---- 印章 (seal stamping) ----
   // Capture the current Expresii canvas (GET /capture -> {status, imageBase64}); the web client
   // WebStrokeClient-3.html shows this is a single synchronous fetch (no command queue).
   async function captureSealArt(){
@@ -1368,6 +1522,49 @@
       g += `<path d="${d}Z"/>`;
     }
     return g + "</g>";
+  }
+  // ---- 箔 (fleck) standalone tool ----
+  // Render a transparent fleck field sized to the current paper and show it on #previewCanvas.
+  function generateFlecks(){
+    const hint=$("fleckHint2"); if(hint) hint.textContent="";
+    // paper size from current state (same derivation as buildSVG())
+    const L=computeLayout();
+    const expMode = state.paperSource==="exp" && !!state.expPaper;
+    const pxPerMM = expMode ? 1 : state.dpi;
+    const W = expMode ? state.expPaper.w : L.pw*pxPerMM;
+    const H = expMode ? state.expPaper.h : L.ph*pxPerMM;
+    if(!W||!H){ if(hint) hint.textContent=tr("fleckNoPaper"); return; }
+    // force flecks on and build the fleck <g> at full paper extent
+    const prevFlecks = state.flecksOn; state.flecksOn = true;
+    const g = buildFlecks(L, pxPerMM, W, H);
+    state.flecksOn = prevFlecks;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${g}</svg>`;
+    const cv=$("previewCanvas"); cv.width=W; cv.height=H; cv.style.background="transparent";
+    const x=cv.getContext("2d"); x.clearRect(0,0,W,H);
+    const img=new Image();
+    img.onload=()=>{ x.drawImage(img,0,0); if(hint) hint.textContent=tr("fleckReady"); };
+    img.onerror=()=>{ if(hint) hint.textContent=tr("fleckErr"); };
+    img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+  }
+  // Send the rendered fleck field to Expresii as a transparent overlay (-2) or settled layer.
+  function sendFlecks(){
+    const btn=$("fleckSend"), hint=$("fleckHint2");
+    const cv=$("previewCanvas");
+    if(!cv || !cv.width){ if(hint) hint.textContent=tr("fleckNone"); return; }
+    const base64=cv.toDataURL("image/png").split(",")[1];
+    const dest=parseInt($("expTarget").value);
+    btn.disabled=true;
+    try{
+      hint.textContent=tr("sending");
+      const fd=new FormData(); fd.append("image", base64); fd.append("destination", String(dest));
+      fetch(expBase()+"/upload-image", {method:"POST", body:fd})
+        .then(r=>r.json().then(j=>({ok:r.ok, j})))
+        .then(({ok,j})=>{ btn.disabled=false;
+          if(ok && j && j.status==="done"){ hint.textContent=tr("sentDone",{dest:$("expTarget").selectedOptions[0].textContent}); }
+          else { hint.textContent=(j&&j.error)||tr("sendFail"); }
+        })
+        .catch(err=>{ btn.disabled=false; hint.textContent=tr("sendFail")+": "+err.message; });
+    }catch(err){ btn.disabled=false; hint.textContent=tr("sendFail")+": "+err.message; }
   }
 
   function buildSVG(){
