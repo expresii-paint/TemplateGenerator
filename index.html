@@ -191,7 +191,7 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.8</span>
+      <span class="ver" id="ver">v1.9</span>
     </header>
 
     <button class="back-btn" id="backHome">&larr; <span data-trans="backHome">Back</span></button>
@@ -393,7 +393,6 @@
         <select class="mode-target" data-mode="lineart"></select>
         <select class="mode-target" data-mode="seal"></select>
         <select class="mode-target" data-mode="fleck"></select>
-        <div class="hint" data-trans="targetHint" style="margin-top:6px"></div>
       </div>
       <div class="btns" style="margin-top:8px">
         <button class="btn exp" id="sendExp" data-trans="sendToExpresii">Send to Expresii</button>
@@ -435,7 +434,6 @@
         <button class="btn exp" id="fleckSend" data-trans="sendFlecks">Send to Expresii</button>
       </div>
       <div class="hint" id="fleckHint2" data-trans="fleckToolHint"></div>
-      <div class="hint" data-trans="targetHint"></div>
     </div>
 <main class="stage">
     <div class="stagebar">
@@ -453,7 +451,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.8";
+  const VERSION = "1.9";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -487,7 +485,6 @@
       unreachable:"unreachable", connecting:"connecting…", enterUrl:"enter a URL", invalidUrl:"invalid URL",
       serverUnreachable:"Server unreachable at {url}",
       target:"Target", underlay:"Underlay", overlay:"Overlay", settledPaint:"Settled Paint",
-      targetHint:"Overlay keeps the transparent background. Underlay becomes opaque paper (transparency is lost).",
       sendToExpresii:"Send to Expresii",
       expHint:"Sends the current template as a PNG underlay to the Expresii Command Server. Works directly from this file — no server needed (Expresii sends CORS headers).",
       expPaper:"Paper", expLayers:"Layers", expActive:"Active",
@@ -553,7 +550,6 @@
       unreachable:"無法連接", connecting:"連接中…", enterUrl:"請輸入位址", invalidUrl:"位址無效",
       serverUnreachable:"伺服器不可達：{url}",
       target:"目標", underlay:"底層", overlay:"覆蓋", settledPaint:"沉積顏料",
-      targetHint:"「覆蓋」會保留透明背景；「底層」會變成不透明的紙張（透明效果消失）。",
       sendToExpresii:"發送到 Expresii",
       expHint:"將當前模板作為 PNG 底層發送到 Expresii 命令伺服器。可直接由此檔案連線，無須伺服器（Expresii 會送出 CORS 標頭）。",
       expPaper:"紙張", expLayers:"圖層", expActive:"當前",
