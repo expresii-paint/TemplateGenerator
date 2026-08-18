@@ -191,24 +191,14 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.7</span>
+      <span class="ver" id="ver">v1.8</span>
     </header>
 
     <button class="back-btn" id="backHome">&larr; <span data-trans="backHome">Back</span></button>
     <div class="tool-title" id="toolTitle"><span class="zh" id="toolTitleZh"></span><span class="nm" id="toolTitleNm"></span></div>
 
-    <div class="grp">
-      <h2 data-trans="mode">Mode</h2>
-      <div class="seg" id="modeSwitch">
-        <button data-mode="grid" class="active" data-trans="modeGrid">Grid template</button>
-        <button data-mode="lineart" data-trans="modeLineart">線稿 converter</button>
-        <button data-mode="seal" data-trans="modeSeal">印章 Stamp seal</button>
-      </div>
-    </div>
-
     <!-- 線稿 (line-drawing) converter panel — hidden unless mode === 'lineart' -->
     <div class="grp" id="lineartPanel" style="display:none">
-      <h2 data-trans="modeLineart">線稿 converter</h2>
       <label data-trans="uploadImage">Upload image</label>
       <input id="laFile" type="file" accept="image/*" />
       <img id="srcPreview" class="src-preview" alt="" style="display:none" />
@@ -233,7 +223,6 @@
 
     <!-- 印章 (seal stamping) panel — hidden unless mode === 'seal' -->
     <div class="grp" id="sealPanel" style="display:none">
-      <h2 data-trans="modeSeal">印章 Stamp seal</h2>
       <div class="btns">
         <button class="btn green" id="sealCapture" data-trans="captureFromExpresii">Capture from Expresii</button>
       </div>
@@ -464,7 +453,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.7";
+  const VERSION = "1.8";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -870,12 +859,6 @@
     applyVisibility();
     render();
   });
-  // ---- Mode switch (Grid template  <->  線稿 converter) ----
-  $("modeSwitch").addEventListener("click", e=>{
-    const b=e.target.closest("button"); if(!b)return;
-    setTool(b.dataset.mode);
-  });
-
   // ---- 線稿 converter ----
   function dataURLtoBase64(u){ return u.split(",")[1]; }
   function fmtElapsed(ms){
@@ -1160,7 +1143,7 @@
   // ---- screen / tool navigation (home dashboard + 4 workspaces) ----
   const TOOL_META = { grid:{mode:"grid",zh:"modeGrid",nm:"gridToolNm"}, lineart:{mode:"lineart",zh:"modeLineart",nm:"lineartToolNm"}, seal:{mode:"seal",zh:"modeSeal",nm:"sealToolNm"}, fleck:{tool:"fleck",zh:"fleckToolZh",nm:"fleckToolNm"} };
   function goHome(){ state.screen="home"; state.tool=null; document.body.classList.remove("tool"); document.body.classList.add("home"); applyModeVisibility(); }
-  function setTool(t){     const meta=TOOL_META[t]; if(!meta) return;     state.screen="tool"; document.body.classList.remove("home"); document.body.classList.add("tool");     if(meta.mode) state.mode = meta.mode; else state.tool = "fleck";     [...$("modeSwitch").children].forEach(b=>b.classList.toggle("active", b.dataset.mode===meta.mode));     $("toolTitleZh").textContent = tr(meta.zh); $("toolTitleNm").textContent = tr(meta.nm);     applyModeVisibility();     if(t==="grid"){ render(); }     else if(t==="seal"){ drawSeal(); }     else if(t==="fleck"){ generateFlecks(); }     else { if(currentLineart){ showLineart(currentLineart); } else { clearPreview(); } }   }
+  function setTool(t){     const meta=TOOL_META[t]; if(!meta) return;     state.screen="tool"; document.body.classList.remove("home"); document.body.classList.add("tool");     if(meta.mode) state.mode = meta.mode; else state.tool = "fleck";     $("toolTitleZh").textContent = tr(meta.zh); $("toolTitleNm").textContent = tr(meta.nm);     applyModeVisibility();     if(t==="grid"){ render(); }     else if(t==="seal"){ drawSeal(); }     else if(t==="fleck"){ generateFlecks(); }     else { if(currentLineart){ showLineart(currentLineart); } else { clearPreview(); } }   }
 // ---- 印章 (seal stamping) ----
   // Capture the current Expresii canvas (GET /capture -> {status, imageBase64}); the web client
   // WebStrokeClient-3.html shows this is a single synchronous fetch (no command queue).
