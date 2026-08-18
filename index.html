@@ -191,7 +191,7 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.9</span>
+      <span class="ver" id="ver">v1.10</span>
     </header>
 
     <button class="back-btn" id="backHome">&larr; <span data-trans="backHome">Back</span></button>
@@ -451,7 +451,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.9";
+  const VERSION = "1.10";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -1139,7 +1139,7 @@
   // ---- screen / tool navigation (home dashboard + 4 workspaces) ----
   const TOOL_META = { grid:{mode:"grid",zh:"modeGrid",nm:"gridToolNm"}, lineart:{mode:"lineart",zh:"modeLineart",nm:"lineartToolNm"}, seal:{mode:"seal",zh:"modeSeal",nm:"sealToolNm"}, fleck:{tool:"fleck",zh:"fleckToolZh",nm:"fleckToolNm"} };
   function goHome(){ state.screen="home"; state.tool=null; document.body.classList.remove("tool"); document.body.classList.add("home"); applyModeVisibility(); }
-  function setTool(t){     const meta=TOOL_META[t]; if(!meta) return;     state.screen="tool"; document.body.classList.remove("home"); document.body.classList.add("tool");     if(meta.mode) state.mode = meta.mode; else state.tool = "fleck";     $("toolTitleZh").textContent = tr(meta.zh); $("toolTitleNm").textContent = tr(meta.nm);     applyModeVisibility();     if(t==="grid"){ render(); }     else if(t==="seal"){ drawSeal(); }     else if(t==="fleck"){ generateFlecks(); }     else { if(currentLineart){ showLineart(currentLineart); } else { clearPreview(); } }   }
+  function setTool(t){     const meta=TOOL_META[t]; if(!meta) return;     state.screen="tool"; document.body.classList.remove("home"); document.body.classList.add("tool");     if(t==="fleck"){ state.tool="fleck"; state.mode=null; } else { state.mode=meta.mode; state.tool=null; }     $("toolTitleZh").textContent = tr(meta.zh); $("toolTitleNm").textContent = tr(meta.nm);     applyModeVisibility();     if(t==="grid"){ render(); }     else if(t==="seal"){ drawSeal(); }     else if(t==="fleck"){ generateFlecks(); }     else { if(currentLineart){ showLineart(currentLineart); } else { clearPreview(); } }   }
 // ---- 印章 (seal stamping) ----
   // Capture the current Expresii canvas (GET /capture -> {status, imageBase64}); the web client
   // WebStrokeClient-3.html shows this is a single synchronous fetch (no command queue).
