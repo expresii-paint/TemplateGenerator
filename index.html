@@ -165,7 +165,7 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.1</span>
+      <span class="ver" id="ver">v1.2</span>
       <div class="lang-sel">
         <span class="lang-ico" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -451,7 +451,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.1";
+  const VERSION = "1.2";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -485,6 +485,7 @@
       unreachable:"unreachable", connecting:"connecting…", enterUrl:"enter a URL", invalidUrl:"invalid URL",
       serverUnreachable:"Server unreachable at {url}",
       target:"Target", underlay:"Underlay", overlay:"Overlay", settledPaint:"Settled Paint",
+      targetHint:"Overlay keeps the transparent background. Underlay becomes opaque paper (transparency is lost).",
       sendToExpresii:"Send to Expresii",
       expHint:"Sends the current template as a PNG underlay to the Expresii Command Server. Works directly from this file — no server needed (Expresii sends CORS headers).",
       expPaper:"Paper", expLayers:"Layers", expActive:"Active",
@@ -550,6 +551,7 @@
       unreachable:"無法連接", connecting:"連接中…", enterUrl:"請輸入位址", invalidUrl:"位址無效",
       serverUnreachable:"伺服器不可達：{url}",
       target:"目標", underlay:"底層", overlay:"覆蓋", settledPaint:"沉積顏料",
+      targetHint:"「覆蓋」會保留透明背景；「底層」會變成不透明的紙張（透明效果消失）。",
       sendToExpresii:"發送到 Expresii",
       expHint:"將當前模板作為 PNG 底層發送到 Expresii 命令伺服器。可直接由此檔案連線，無須伺服器（Expresii 會送出 CORS 標頭）。",
       expPaper:"紙張", expLayers:"圖層", expActive:"當前",
@@ -1680,6 +1682,13 @@
     return new Blob([arr],{type:"image/png"});
   }
   $("dlSvg").addEventListener("click", ()=>{
+    if(state.tool==="fleck"){
+      // fleck field is raster-only (SVG -> canvas); download it as PNG
+      const cv=document.getElementById("previewCanvas");
+      if(!cv || !cv.width){ if($("fleckHint2")) $("fleckHint2").textContent=tr("fleckNone"); return; }
+      cv.toBlob(b=>download(`fleck_${state.fleckKind}.png`,b),"image/png");
+      return;
+    }
     if(state.mode==="lineart"){
       if(!currentLineart){ $("laHint").textContent=tr("lineartErr",{msg:tr("lineartNone")}); return; }
       // line art is raster-only; offer it as PNG with a .png extension
@@ -1690,6 +1699,13 @@
              new Blob([currentSVG],{type:"image/svg+xml"}));
   });
   $("dlPng").addEventListener("click", ()=>{
+    if(state.tool==="fleck"){
+      const cv=document.getElementById("previewCanvas");
+      if(!cv || !cv.width){ if($("fleckHint2")) $("fleckHint2").textContent=tr("fleckNone"); return; }
+      // NOTE: previewCanvas is already transparent (no bg fill) — exported PNG keeps alpha
+      cv.toBlob(b=>download(`fleck_${state.fleckKind}.png`,b),"image/png");
+      return;
+    }
     if(state.mode==="lineart"){
       if(!currentLineart){ $("laHint").textContent=tr("lineartErr",{msg:tr("lineartNone")}); return; }
       download(`lineart_${Date.now()}.png`, laExportBlob());
@@ -1710,6 +1726,17 @@
     img.src=svg64;
   });
   $("print").addEventListener("click", ()=>{
+    if(state.tool==="fleck"){
+      const cv=document.getElementById("previewCanvas");
+      if(!cv || !cv.width) return;
+      const w=window.open("","_blank");
+      w.document.write(`<html><head><title>Fleck</title>
+        <style>@page{margin:0}body{margin:0}img{width:100%;height:100%}</style></head>
+        <body><img src="${cv.toDataURL("image/png")}"></body></html>`);
+      w.document.close();
+      setTimeout(()=>w.print(),300);
+      return;
+    }
     const src = state.mode==="lineart" && currentLineart
       ? currentLineart
       : "data:image/svg+xml;base64,"+btoa(unescape(encodeURIComponent(currentSVG)));
