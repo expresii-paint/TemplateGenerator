@@ -336,6 +336,10 @@
       <input id="wGuide" data-show="grid" type="number" value="1" min="0.2" step="0.2">
       <div class="chk" data-show="grid"><input type="checkbox" id="dashed" checked><label for="dashed" style="margin:0" data-trans="dashedGuides">Dashed guides</label></div>
       <div class="chk" data-show="grid"><input type="checkbox" id="showBorder" checked><label for="showBorder" style="margin:0" data-trans="drawCellBorders">Draw cell borders</label></div>
+      <div class="slider" id="gridAlphaRow" data-show="grid" style="margin-top:8px">
+        <label for="gridAlpha" data-trans="gridAlpha">Opacity</label>
+        <input id="gridAlpha" type="range" min="0.1" max="1" step="0.05" value="1">
+      </div>
     </div>
 
     
@@ -466,7 +470,7 @@
       columns:"Columns", rows:"Rows", cellMm:"Cell (mm)", marginMm:"Margin (mm)", paperMarginMm:"Paper margin (mm)",
       fanSpec:"Fan spec", pmHint:"Paper margin = gap between paper edge and grid block. 0 = auto (½ cell).",
       style:"Style", border:"Border", borderWidth:"Border width (px)", guides:"Guides", guideWidth:"Guide width (px)",
-      dashedGuides:"Dashed guides", drawCellBorders:"Draw cell borders",
+      dashedGuides:"Dashed guides", drawCellBorders:"Draw cell borders", gridAlpha:"Opacity",
       flecks:"Flecks", flecksOn:"Add gold/silver flecks", fleckColor:"Color",
       fleckDensity:"Density (count)", fleckSize:"Size (mm)", fleckScatter:"Scatter randomly", fleckAlpha:"Opacity",
       fleckHint:"Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.",
@@ -531,7 +535,7 @@
       columns:"列數", rows:"行數", cellMm:"單元格（毫米）", marginMm:"邊距（毫米）", paperMarginMm:"紙張邊距（毫米）",
       fanSpec:"扇面規格", pmHint:"紙張邊距 = 紙張邊緣與字格塊的間距。0 = 自動（半格）。",
       style:"樣式", border:"邊框", borderWidth:"邊框寬度（像素）", guides:"輔助線", guideWidth:"輔助線寬度（像素）",
-      dashedGuides:"虛線輔助線", drawCellBorders:"繪製單元格邊框",
+      dashedGuides:"虛線輔助線", drawCellBorders:"繪製單元格邊框", gridAlpha:"透明度",
       flecks:"箔點", flecksOn:"添加金/銀 箔點", fleckColor:"顏色",
       fleckDensity:"密度（數量）", fleckSize:"大小（毫米）", fleckScatter:"隨機散佈", fleckAlpha:"透明度",
       fleckHint:"裝飾性金屬箔點（金/銀 箔）。SVG 中為矢量；線稿模式下隱藏。",
@@ -596,7 +600,7 @@
       columns:"列数", rows:"行数", cellMm:"セル（mm）", marginMm:"余白（mm）", paperMarginMm:"用紙余白（mm）",
       fanSpec:"扇面（扇子）仕様", pmHint:"用紙余白 = 用紙端と罫線ブロックの間隔。0 = 自動（半セル）。",
       style:"スタイル", border:"枠線", borderWidth:"枠線の太さ（px）", guides:"補助線", guideWidth:"補助線の太さ（px）",
-      dashedGuides:"補助線を破線に", drawCellBorders:"セルの枠を描く",
+      dashedGuides:"補助線を破線に", drawCellBorders:"セルの枠を描く", gridAlpha:"不透明度",
       flecks:"箔（ふくさ）", flecksOn:"金/銀箔を追加", fleckColor:"色",
       fleckDensity:"密度（数）", fleckSize:"大きさ（mm）", fleckScatter:"ランダムに散らす", fleckAlpha:"不透明度",
       fleckHint:"装飾用の金属箔（金/銀箔）。SVGではベクター。線画モードでは非表示。",
@@ -661,7 +665,7 @@
       columns:"열", rows:"행", cellMm:"셀（mm）", marginMm:"여백（mm）", paperMarginMm:"용지 여백（mm）",
       fanSpec:"부채（扇面） 사양", pmHint:"용지 여백 = 용지 가장자리와 격자 블록 사이 간격. 0 = 자동（셀의 절반）.",
       style:"스타일", border:"테두리", borderWidth:"테두리 두께（px）", guides:"보조선", guideWidth:"보조선 두께（px）",
-      dashedGuides:"보조선 점선", drawCellBorders:"셀 테두리 그리기",
+      dashedGuides:"보조선 점선", drawCellBorders:"셀 테두리 그리기", gridAlpha:"불투명도",
       flecks:"금속 점", flecksOn:"금/은색 점 추가", fleckColor:"색상",
       fleckDensity:"밀도（개수）", fleckSize:"크기（mm）", fleckScatter:"무작위 흩뿌리기", fleckAlpha:"불투명도",
       fleckHint:"장식용 금속 점（금/은箔）. SVG에서는 벡터이며, 선화 모드에서는 숨겨집니다.",
@@ -784,7 +788,7 @@
     paperSource:"user", expPaper:null,            // 'user' = presets/custom; 'exp' = Expresii canvas px
     paper:"A4", ar:[1,1], orient:"portrait", dpi:11.81,
     type:"mi", layout:"cols", cols:9, rows:13, cellmm:20, marginmm:10, paperMarginmm:0,
-    cBorder:"#222222", cGuide:"#e23b3b", wBorder:2, wGuide:1,
+    cBorder:"#222222", cGuide:"#e23b3b", wBorder:2, wGuide:1, gridAlpha:1,
     dashed:true, showBorder:true, fanSpec:"8",
     flecksOn:false, fleckKind:"gold", fleckCount:120, fleckSize:0.9, fleckScatter:true, fleckAlpha:0.6,
     mode:"grid",                                // 'grid' = grid template, 'lineart' = 線稿 converter, 'seal' = 印章 stamp
@@ -1279,6 +1283,7 @@
   ["wBorder","wGuide"].forEach(id=>$(id).addEventListener("input",e=>{ state[id]=Math.max(0.2,+e.target.value||1); render(); }));
   $("dashed").addEventListener("change",e=>{ state.dashed=e.target.checked; render(); });
   $("showBorder").addEventListener("change",e=>{ state.showBorder=e.target.checked; render(); });
+  $("gridAlpha").addEventListener("input",e=>{ state.gridAlpha=Math.min(1,Math.max(0.1,+e.target.value||1)); render(); });
   // flecks (金/銀 箔)
   $("flecksOn").addEventListener("change",e=>{ state.flecksOn=e.target.checked; applyVisibility(); render(); });
   $("fleckKind").addEventListener("change",e=>{ state.fleckKind=e.target.value; render(); });
@@ -1340,50 +1345,51 @@
     const x1=px, y1=py, x2=px+cell, y2=py+cell;
     const cx=px+cell/2, cy=py+cell/2;
     const G=state.cGuide, gw=state.wGuide, bw=state.wBorder, B=state.cBorder;
+    const a=state.gridAlpha, BA=hexA(B,a), GA=hexA(G,a);
     if(state.showBorder && state.type!=="vlines" && state.type!=="hlines" && state.type!=="zhishi"){
-      s.push(`<rect x="${x1.toFixed(2)}" y="${y1.toFixed(2)}" width="${cell.toFixed(2)}" height="${cell.toFixed(2)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`);
+      s.push(`<rect x="${x1.toFixed(2)}" y="${y1.toFixed(2)}" width="${cell.toFixed(2)}" height="${cell.toFixed(2)}" fill="none" stroke="${BA}" stroke-width="${bw}"/>`);
     }
     if(state.type==="tian"||state.type==="mi"){
-      s.push(`<line x1="${cx.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${cx.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
-      s.push(`<line x1="${x1.toFixed(2)}" y1="${cy.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${cy.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+      s.push(`<line x1="${cx.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${cx.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${GA}" stroke-width="${gw}" ${dash}/>`);
+      s.push(`<line x1="${x1.toFixed(2)}" y1="${cy.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${cy.toFixed(2)}" stroke="${GA}" stroke-width="${gw}" ${dash}/>`);
     }
     if(state.type==="mi"){
-      s.push(`<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
-      s.push(`<line x1="${x2.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x1.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+      s.push(`<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${GA}" stroke-width="${gw}" ${dash}/>`);
+      s.push(`<line x1="${x2.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x1.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${GA}" stroke-width="${gw}" ${dash}/>`);
     }
     if(state.type==="vlines"){
       // only the center vertical of each cell -> full-height vertical lines spanning the paper
-      s.push(`<line x1="${cx.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${cx.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+      s.push(`<line x1="${cx.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${cx.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${GA}" stroke-width="${gw}" ${dash}/>`);
     }
     if(state.type==="hlines"){
       // only the center horizontal of each cell -> full-width horizontal lines spanning the paper
-      s.push(`<line x1="${x1.toFixed(2)}" y1="${cy.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${cy.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+      s.push(`<line x1="${x1.toFixed(2)}" y1="${cy.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${cy.toFixed(2)}" stroke="${GA}" stroke-width="${gw}" ${dash}/>`);
     }
     if(state.type==="zhishi"){
       // 直式信紙: outer paper frame (Border color/width) + vertical column dividers (Guide color/width/dash)
       if(c===0 && r===0){
         // outer frame at paper bounds — uses the Border color spec
         const fx=px - c*cell, fy=py - r*cell, fw=L.cols*cell, fh=L.rows*cell;
-        s.push(`<rect x="${fx.toFixed(2)}" y="${fy.toFixed(2)}" width="${fw.toFixed(2)}" height="${fh.toFixed(2)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`);
+        s.push(`<rect x="${fx.toFixed(2)}" y="${fy.toFixed(2)}" width="${fw.toFixed(2)}" height="${fh.toFixed(2)}" fill="none" stroke="${BA}" stroke-width="${bw}"/>`);
       }
       // column dividers at right edge of each column (except last, which is outer frame).
       // Span the actual block (py .. py+rows*cell), NOT the paper, so they don't stick out the top.
       if(c < L.cols - 1 && r===0){
         const colDivX = px + cell;
-        s.push(`<line x1="${colDivX.toFixed(2)}" y1="${py.toFixed(2)}" x2="${colDivX.toFixed(2)}" y2="${(py+L.rows*cell).toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+        s.push(`<line x1="${colDivX.toFixed(2)}" y1="${py.toFixed(2)}" x2="${colDivX.toFixed(2)}" y2="${(py+L.rows*cell).toFixed(2)}" stroke="${GA}" stroke-width="${gw}" ${dash}/>`);
       }
     }
     if(state.type==="jiugong"){
       const t=cell/3;
       for(const i of [1,2]){
         const gx=px+i*t, gy=py+i*t;
-        s.push(`<line x1="${gx.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${gx.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
-        s.push(`<line x1="${x1.toFixed(2)}" y1="${gy.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${gy.toFixed(2)}" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+        s.push(`<line x1="${gx.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${gx.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${GA}" stroke-width="${gw}" ${dash}/>`);
+        s.push(`<line x1="${x1.toFixed(2)}" y1="${gy.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${gy.toFixed(2)}" stroke="${GA}" stroke-width="${gw}" ${dash}/>`);
       }
     }
     if(state.type==="hui"){
       const k=0.66, iw=cell*k, ix=px+(cell-iw)/2, iy=py+(cell-iw)/2;
-      s.push(`<rect x="${ix.toFixed(2)}" y="${iy.toFixed(2)}" width="${iw.toFixed(2)}" height="${iw.toFixed(2)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`);
+      s.push(`<rect x="${ix.toFixed(2)}" y="${iy.toFixed(2)}" width="${iw.toFixed(2)}" height="${iw.toFixed(2)}" fill="none" stroke="${GA}" stroke-width="${gw}" ${dash}/>`);
     }
     return s.join("");
   }
@@ -1391,6 +1397,7 @@
   // ---- 扇面 Fan: polar grid bounded by two concentric arcs + two radial edges ----
   function fanSVG(L, pxPerMM, W, H){
     const G = state.cGuide, gw = state.wGuide, bw = state.wBorder, B = state.cBorder;
+    const a = state.gridAlpha, BA = hexA(B, a), GA = hexA(G, a);
     const dash = state.dashed ? `stroke-dasharray="${(gwDash()).toFixed(1)} ${(gwDash()*0.8).toFixed(1)}"` : "";
     let cx, oyFan, alpha, Ro, Ri, rings, secs;
     const sp = (state.fanSpec!=="custom" && FAN_SPECS[state.fanSpec]) ? FAN_SPECS[state.fanSpec] : null;
@@ -1438,7 +1445,7 @@
     for(let i=0;i<=rings;i++){
       if(state.showBorder || i===0 || i===rings){
         const r = Ri + i*dr;
-        out += `<path d="${arc(r,-alpha,alpha)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
+        out += `<path d="${arc(r,-alpha,alpha)}" fill="none" stroke="${GA}" stroke-width="${gw}" ${dash}/>`;
       }
     }
     }
@@ -1455,24 +1462,24 @@
       for(let j=1;j<=folds;j++){
         const phi = -alpha + j*dphiB;
         const foldDash = (j % 2 === 1) ? dashConcave : dashConvex;   // odd = 凹折, even = 凸折
-        out += `<path d="${radial(Ri,Ro,phi)}" fill="none" stroke="${B}" stroke-width="${bw}" ${foldDash}/>`;
+        out += `<path d="${radial(Ri,Ro,phi)}" fill="none" stroke="${BA}" stroke-width="${bw}" ${foldDash}/>`;
       }
     } else {
       // 自定 Custom: radial column ribs at the user's column spacing (red grid)
       const dphiG = (2*alpha) / secs;
       for(let j=1;j<secs;j++){
         const phi = -alpha + j*dphiG;
-        out += `<path d="${radial(Ri,Ro,phi)}" fill="none" stroke="${G}" stroke-width="${gw}" ${dash}/>`;
+        out += `<path d="${radial(Ri,Ro,phi)}" fill="none" stroke="${GA}" stroke-width="${gw}" ${dash}/>`;
       }
     }
     // NOTE: for 扇面 we draw ONLY the fan skeleton (radial bones + concentric arcs above).
     // No per-cell 米字 grid is mapped — calligraphy follows the fan lines, not cell boxes.
     // The two 大骨 (outer edges) are the bold outline below; interior 小骨 are the 折線 above.
     // bold fan outline (border color) — these two arcs + two radial edges ARE the 大骨
-    out += `<path d="${arc(Ro,-alpha,alpha)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`;
-    out += `<path d="${arc(Ri,-alpha,alpha)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`;
-    out += `<path d="${radial(Ri,Ro,-alpha)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`;
-    out += `<path d="${radial(Ri,Ro, alpha)}" fill="none" stroke="${B}" stroke-width="${bw}"/>`;
+    out += `<path d="${arc(Ro,-alpha,alpha)}" fill="none" stroke="${BA}" stroke-width="${bw}"/>`;
+    out += `<path d="${arc(Ri,-alpha,alpha)}" fill="none" stroke="${BA}" stroke-width="${bw}"/>`;
+    out += `<path d="${radial(Ri,Ro,-alpha)}" fill="none" stroke="${BA}" stroke-width="${bw}"/>`;
+    out += `<path d="${radial(Ri,Ro, alpha)}" fill="none" stroke="${BA}" stroke-width="${bw}"/>`;
     return out;
   }
 
@@ -1586,7 +1593,9 @@
     const pxPerMM = expMode ? 1 : state.dpi;            // exp mode: pxPerMM=1 => W/H = canvas px
     const W = expMode ? state.expPaper.w : L.pw*pxPerMM;
     const H = expMode ? state.expPaper.h : L.ph*pxPerMM;
-    let body=`<rect x="0" y="0" width="${W.toFixed(1)}" height="${H.toFixed(1)}" fill="white"/>`;
+    // NOTE: NO opaque background rect — the template exports with an alpha (transparent) canvas,
+    // so it can sit as a faint guide layer over artwork. Lines use rgba() at state.gridAlpha.
+    let body=``;
     if(state.type==="fan"){
       body+=fanSVG(L,pxPerMM,W,H);
     } else {
@@ -1605,6 +1614,12 @@
     return {svg, W, H, L};
   }
   function gwDash(){ return Math.max(4, state.wGuide*6); }
+  // Convert "#rrggbb" + alpha (0..1) -> "rgba(r,g,b,a)" for translucent (alpha) strokes
+  function hexA(hex, a){
+    const h = hex.replace('#','');
+    const r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+    return `rgba(${r},${g},${b},${(+a).toFixed(3)})`;
+  }
 
   // ---- render to preview ----
   function render(){
@@ -1683,7 +1698,8 @@
       const cnv=document.createElement("canvas");
       cnv.width=W; cnv.height=H;
       const ctx=cnv.getContext("2d");
-      ctx.fillStyle="#fff"; ctx.fillRect(0,0,W,H);
+      // NOTE: no opaque fillRect — preserve the transparent (alpha) canvas so the
+      // exported PNG can overlay artwork as a faint guide layer.
       ctx.drawImage(img,0,0);
       cnv.toBlob(b=>download(`calligraphy_${state.type}_${state.paper}_${state.orient}.png`,b),"image/png");
     };
