@@ -191,7 +191,39 @@
       </div>
     </div>
 
-    <h2 class="home-section" data-trans="serverTitle">Expresii Server</h2>
+    <h2 class="home-section" data-trans="paperTitle">Paper</h2>
+    <div class="grp home-only" id="paperHome">
+      <label data-trans="paperSizeSource">Paper size source</label>
+      <div class="seg" id="paperSource">
+        <button data-source="exp" disabled data-trans-title="useExpTitle">Use Expresii paper</button>
+        <button data-source="user" class="active" data-trans="userSpec">User specification</button>
+      </div>
+      <div id="paperUserOpts">
+        <label style="margin-top:8px" data-trans="preset">Preset</label>
+        <select id="paperPreset">
+          <option value="A4">A4 (210 × 297 mm)</option>
+          <option value="A3">A3 (297 × 420 mm)</option>
+          <option value="A5">A5 (148 × 210 mm)</option>
+          <option value="Letter">Letter (8.5 × 11 in)</option>
+          <option value="Legal">Legal (8.5 × 14 in)</option>
+          <option value="Square">Square (1 : 1)</option>
+          <option value="custom" data-trans="customAspect">Custom aspect ratio…</option>
+        </select>
+        <div class="row custom" id="customAr" style="margin-top:8px">
+          <div><label data-trans="width">Width</label><input id="arW" type="number" value="1.4" step="0.1" min="0.1"></div>
+          <div><label data-trans="height">Height</label><input id="arH" type="number" value="1.0" step="0.1" min="0.1"></div>
+        </div>
+        <label style="margin-top:8px" data-trans="orientation">Orientation</label>
+        <div class="seg" id="orient">
+          <button data-o="portrait" class="active" data-trans="portrait">Portrait</button>
+          <button data-o="landscape" data-trans="landscape">Landscape</button>
+        </div>
+        <label style="margin-top:8px" data-trans="resolution">Resolution (px / mm)</label>
+        <input id="dpi" type="number" value="11.81" step="0.1" min="1">
+        <div class="hint" data-trans="resHint">11.81 px/mm ≈ 300 DPI. Sets the exported PNG pixel size.</div>
+      </div>
+      <div class="hint" id="expPaperNote" style="display:none;margin-top:8px" data-trans="expPaperNote">Using Expresii's canvas size — the template pixels match the canvas exactly; export at any DPI.</div>
+    </div>
     <div class="grp home-only" id="expServerHome">
       <div class="exp-url-wrap">
         <label for="expUrl" data-trans="serverUrl">Server URL</label>
@@ -220,7 +252,7 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.17</span>
+      <span class="ver" id="ver">v1.18</span>
     </header>
 
     <button class="back-btn" id="backHome">
@@ -272,39 +304,6 @@
       </div>
       <div class="hint">Tip: drag the seal on the canvas to move it; scroll over the canvas to resize; use the sliders for fine size/rotation.</div>
       <div class="hint" id="sealHint" data-trans="sealHint"></div>
-    </div>
-
-    <div class="grp" id="gridPanel">
-      <label data-trans="paperSizeSource">Paper size source</label>
-      <div class="seg" id="paperSource">
-        <button data-source="exp" disabled data-trans-title="useExpTitle">Use Expresii paper</button>
-        <button data-source="user" class="active" data-trans="userSpec">User specification</button>
-      </div>
-      <div id="paperUserOpts">
-        <label style="margin-top:8px" data-trans="preset">Preset</label>
-        <select id="paperPreset">
-          <option value="A4">A4 (210 × 297 mm)</option>
-          <option value="A3">A3 (297 × 420 mm)</option>
-          <option value="A5">A5 (148 × 210 mm)</option>
-          <option value="Letter">Letter (8.5 × 11 in)</option>
-          <option value="Legal">Legal (8.5 × 14 in)</option>
-          <option value="Square">Square (1 : 1)</option>
-          <option value="custom" data-trans="customAspect">Custom aspect ratio…</option>
-        </select>
-        <div class="row custom" id="customAr" style="margin-top:8px">
-          <div><label data-trans="width">Width</label><input id="arW" type="number" value="1.4" step="0.1" min="0.1"></div>
-          <div><label data-trans="height">Height</label><input id="arH" type="number" value="1.0" step="0.1" min="0.1"></div>
-        </div>
-        <label style="margin-top:8px" data-trans="orientation">Orientation</label>
-        <div class="seg" id="orient">
-          <button data-o="portrait" class="active" data-trans="portrait">Portrait</button>
-          <button data-o="landscape" data-trans="landscape">Landscape</button>
-        </div>
-        <label style="margin-top:8px" data-trans="resolution">Resolution (px / mm)</label>
-        <input id="dpi" type="number" value="11.81" step="0.1" min="1">
-        <div class="hint" data-trans="resHint">11.81 px/mm ≈ 300 DPI. Sets the exported PNG pixel size.</div>
-      </div>
-      <div class="hint" id="expPaperNote" style="display:none;margin-top:8px" data-trans="expPaperNote">Using Expresii's canvas size — the template pixels match the canvas exactly; export at any DPI.</div>
     </div>
 
     <div id="gridOnly">
@@ -436,7 +435,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.17";
+  const VERSION = "1.18";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -449,7 +448,7 @@
     en:{
       app_name:"Studio Helper", app_sub:"Calligraphy & paper companion", app_title:"Studio Helper",
       language:"Language",
-      paper:"Paper", paperSizeSource:"Paper size source", useExpresiiPaper:"Use Expresii paper", userSpec:"User specification",
+      paper:"Paper", paperTitle:"Paper", paperSizeSource:"Paper size source", useExpresiiPaper:"Use Expresii paper", userSpec:"User specification",
       useExpTitle:"Connect to Expresii to enable",
       preset:"Preset", customAspect:"Custom aspect ratio…", width:"Width", height:"Height",
       orientation:"Orientation", portrait:"Portrait", landscape:"Landscape",
@@ -516,7 +515,7 @@
     zh:{
       app_name:"文房助手", app_sub:"書法與箋紙助手", app_title:"文房助手",
       language:"語言",
-      paper:"紙張", paperSizeSource:"紙張尺寸來源", useExpresiiPaper:"使用 Expresii 畫布尺寸", userSpec:"用戶自定義",
+      paper:"紙張", paperTitle:"紙張", paperSizeSource:"紙張尺寸來源", useExpresiiPaper:"使用 Expresii 畫布尺寸", userSpec:"用戶自定義",
       useExpTitle:"連接到 Expresii 後啟用",
       preset:"預設", customAspect:"自定義長寬比…", width:"寬", height:"高",
       orientation:"方向", portrait:"縱向", landscape:"橫向",
@@ -583,7 +582,7 @@
     ja:{
       app_name:"文房助手", app_sub:"書道・箋紙の助手", app_title:"文房助手",
       language:"言語",
-      paper:"用紙", paperSizeSource:"用紙サイズの取得元", useExpresiiPaper:"Expresii のキャンバスサイズを使用", userSpec:"ユーザー指定",
+      paper:"用紙", paperTitle:"用紙", paperSizeSource:"用紙サイズの取得元", useExpresiiPaper:"Expresii のキャンバスサイズを使用", userSpec:"ユーザー指定",
       useExpTitle:"Expresii に接続して有効化",
       preset:"プリセット", customAspect:"カスタムアスペクト比…", width:"幅", height:"高さ",
       orientation:"向き", portrait:"縦", landscape:"横",
@@ -650,7 +649,7 @@
     ko:{
       app_name:"문방 조수", app_sub:"서예·편지지 보조 도구", app_title:"문방 조수",
       language:"언어",
-      paper:"용지", paperSizeSource:"용지 크기 출처", useExpresiiPaper:"Expresii 캔버스 크기 사용", userSpec:"사용자 지정",
+      paper:"용지", paperTitle:"용지", paperSizeSource:"용지 크기 출처", useExpresiiPaper:"Expresii 캔버스 크기 사용", userSpec:"사용자 지정",
       useExpTitle:"Expresii에 연결하여 활성화",
       preset:"프리셋", customAspect:"사용자 지정 비율…", width:"너비", height:"높이",
       orientation:"방향", portrait:"세로", landscape:"가로",
@@ -1077,7 +1076,7 @@
     const activeMode = state.tool==="fleck" ? "fleck" : state.mode;   // logical mode key
     const gridMode = state.mode==="grid";
     const sealMode = state.mode==="seal";
-    const gp=$("gridPanel"), go=$("gridOnly"), lp=$("lineartPanel"), sp=$("sealPanel"), fp=$("fleckPanel");
+    const gp=null, go=$("gridOnly"), lp=$("lineartPanel"), sp=$("sealPanel"), fp=$("fleckPanel");
     if(gp) gp.style.display = gridMode ? "" : "none";
     if(go) go.style.display = gridMode ? "" : "none";
     if(lp) lp.style.display = (state.mode==="lineart") ? "" : "none";
