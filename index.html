@@ -113,6 +113,11 @@
   #home .home-brand .home-tag{color:var(--muted);font-size:13px;margin:4px 0 0}
   #home .home-section{font-size:15px;letter-spacing:.04em;color:var(--muted);margin:6px 0 16px;text-transform:uppercase}
   .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+  /* Paper + Expresii Server panels flow into columns on wide screens; stack on narrow.
+     Constrained max width keeps buttons/comboboxes from stretching absurdly on big monitors. */
+  .home-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,420px));gap:18px;align-items:start}
+  .home-col{min-width:0}
+  #home{max-width:1100px;width:100%;margin:0 auto}
   .card{position:relative;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:18px;cursor:pointer;transition:.14s;display:flex;flex-direction:column;gap:10px;min-height:150px}
   .card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.35)}
   .card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -191,6 +196,8 @@
       </div>
     </div>
 
+    <div class="home-cols">
+      <div class="home-col">
     <h2 class="home-section" data-trans="paperTitle">Paper</h2>
     <div class="grp home-only" id="paperHome">
       <label data-trans="paperSizeSource">Paper size source</label>
@@ -223,12 +230,14 @@
         <div class="hint" data-trans="resHint">11.81 px/mm ≈ 300 DPI. Sets the exported PNG pixel size.</div>
       </div>
       <div class="hint" id="expPaperNote" style="display:none;margin-top:8px" data-trans="expPaperNote">Using Expresii's canvas size — the template pixels match the canvas exactly; export at any DPI.</div>
-    </div>
+      </div>
+      </div>
+      <div class="home-col">
     <div class="grp home-only" id="expServerHome">
       <div class="exp-url-wrap">
-        <label for="expUrl" data-trans="serverUrl">Server URL</label>
+        <label for="expUrl" data-trans="expresiiUrl">Expresii URL</label>
         <input id="expUrl" type="text" value="http://localhost:9000" spellcheck="false"
-               placeholder="http://host:9000" data-trans="serverUrl_ph">
+               placeholder="http://host:9000" data-trans="expresiiUrl_ph">
         <div class="row2">
           <button class="apply" id="expApply" data-trans="connect">Connect</button>
           <button class="apply dis" id="expDisconnect" style="display:none" data-trans="disconnect">Disconnect</button>
@@ -247,12 +256,14 @@
         <div class="kv"><span data-trans="expActive">Active</span><b id="stActive">—</b></div>
       </div>
     </div>
+      </div>
+    </div>
   </div>
 
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.18</span>
+      <span class="ver" id="ver">v1.19</span>
     </header>
 
     <button class="back-btn" id="backHome">
@@ -435,7 +446,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.18";
+  const VERSION = "1.19";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -465,7 +476,7 @@
       output:"Output", svgFile:"SVG File", pngFile:"PNG File", runOutput:"Run",
       outputToExpresii:"Send to Expresii", expNotConnected:"Connect to Expresii to enable sending",
       exportFooter:"Vector (SVG) scales to any printer. PNG is rasterized from the on-screen canvas. Print to PDF from your browser for a paper-perfect sheet.",
-      expresii:"Expresii", serverUrl:"Server URL", serverUrl_ph:"http://host:9000", connect:"Connect", disconnect:"Disconnect",
+      expresii:"Expresii", expresiiUrl:"Expresii URL", expresiiUrl_ph:"http://host:9000", connect:"Connect", disconnect:"Disconnect",
       autoPaperOff:"Auto paper size: OFF", checking:"checking…", connected:"connected", notConnected:"not connected",
       unreachable:"unreachable", connecting:"connecting…", enterUrl:"enter a URL", invalidUrl:"invalid URL",
       serverUnreachable:"Server unreachable at {url}",
@@ -532,7 +543,7 @@
       export:"導出", downloadSvg:"下載 SVG", downloadPng:"下載 PNG", printPdf:"列印 / PDF", reset:"重置",
       output:"輸出", svgFile:"SVG 檔", pngFile:"PNG 檔", runOutput:"執行", outputToExpresii:"發送到 Expresii", expNotConnected:"請先連線 Expresii 才能傳送",
       exportFooter:"矢量（SVG）可縮放到任意列印機。PNG 由螢幕畫布光柵化。用瀏覽器列印為 PDF 即可得到與紙張完全一致的稿紙。",
-      expresii:"Expresii", serverUrl:"伺服器位址", serverUrl_ph:"http://host:9000", connect:"連接", disconnect:"斷開",
+      expresii:"Expresii", expresiiUrl:"Expresii 位址", expresiiUrl_ph:"http://host:9000", connect:"連接", disconnect:"斷開",
       autoPaperOff:"自動紙張尺寸：關", checking:"檢測中…", connected:"已連接", notConnected:"未連接",
       unreachable:"無法連接", connecting:"連接中…", enterUrl:"請輸入位址", invalidUrl:"位址無效",
       serverUnreachable:"伺服器不可達：{url}",
@@ -599,7 +610,7 @@
       export:"書き出し", downloadSvg:"SVG をダウンロード", downloadPng:"PNG をダウンロード", printPdf:"印刷 / PDF", reset:"リセット",
       output:"出力", svgFile:"SVG ファイル", pngFile:"PNG ファイル", runOutput:"実行", outputToExpresii:"Expresii に送信", expNotConnected:"送信には Expresii への接続が必要です",
       exportFooter:"ベクター（SVG）はどのプリンターでも拡大縮小可能。PNG は画面キャンバスからラスタライズされます。ブラウザの印刷で PDF を出力すれば、用紙にぴったりの原稿になります。",
-      expresii:"Expresii", serverUrl:"サーバー URL", serverUrl_ph:"http://host:9000", connect:"接続", disconnect:"切断",
+      expresii:"Expresii", expresiiUrl:"Expresii URL", expresiiUrl_ph:"http://host:9000", connect:"接続", disconnect:"切断",
       autoPaperOff:"自動用紙サイズ：オフ", checking:"確認中…", connected:"接続済み", notConnected:"未接続",
       unreachable:"到達不可", connecting:"接続中…", enterUrl:"URL を入力", invalidUrl:"無効な URL",
       serverUnreachable:"サーバーに到達できません：{url}",
@@ -666,7 +677,7 @@
       export:"내보내기", downloadSvg:"SVG 다운로드", downloadPng:"PNG 다운로드", printPdf:"인쇄 / PDF", reset:"초기화",
       output:"출력", svgFile:"SVG 파일", pngFile:"PNG 파일", runOutput:"실행", outputToExpresii:"Expresii로 보내기", expNotConnected:"보내려면 Expresii에 연결하세요",
       exportFooter:"벡터（SVG）는 모든 프린터로 확대·축소됩니다. PNG는 화면 캔버스에서 래스터화됩니다. 브라우저 인쇄로 PDF를 만들면 용지에 딱 맞는 원고가 됩니다.",
-      expresii:"Expresii", serverUrl:"서버 URL", serverUrl_ph:"http://host:9000", connect:"연결", disconnect:"연결 해제",
+      expresii:"Expresii", expresiiUrl:"Expresii URL", expresiiUrl_ph:"http://host:9000", connect:"연결", disconnect:"연결 해제",
       autoPaperOff:"자동 용지 크기: 끄기", checking:"확인 중…", connected:"연결됨", notConnected:"연결 안 됨",
       unreachable:"연결 불가", connecting:"연결 중…", enterUrl:"URL을 입력하세요", invalidUrl:"잘못된 URL",
       serverUnreachable:"서버에 연결할 수 없음：{url}",
@@ -1989,7 +2000,7 @@
       btn.disabled=false;
     }
   }
-  // Server URL field: persist across reloads, re-check on Apply
+  // Expresii URL field: persist across reloads, re-check on Apply
   const EXP_KEY = "expresii_server_url";
   const savedUrl = localStorage.getItem(EXP_KEY);
   if (savedUrl) $("expUrl").value = savedUrl;
