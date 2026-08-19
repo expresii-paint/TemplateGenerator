@@ -118,7 +118,7 @@
   .home-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,420px));gap:18px;align-items:stretch}
   .home-col{min-width:0;display:flex}
   .src-card{flex:1;display:flex;flex-direction:column}
-  .home-section.paper-format-title{margin:30px 0 18px}
+  .home-section.paper-format-title{margin:48px 0 18px}
   /* Equal-height cards: let one card's inner blocks push to fill via margin-top:auto */
   .src-card .exp-url-wrap{margin-top:auto}
   .src-card[data-source="user"] #paperUserOpts > label:first-child{margin-top:4px}
@@ -286,7 +286,7 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.21</span>
+      <span class="ver" id="ver">v1.22</span>
     </header>
 
     <button class="back-btn" id="backHome">
@@ -469,7 +469,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.21";
+  const VERSION = "1.22";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
