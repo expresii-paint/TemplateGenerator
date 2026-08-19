@@ -115,8 +115,21 @@
   .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
   /* Paper + Expresii Server panels flow into columns on wide screens; stack on narrow.
      Constrained max width keeps buttons/comboboxes from stretching absurdly on big monitors. */
-  .home-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,420px));gap:18px;align-items:start}
-  .home-col{min-width:0}
+  .home-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,420px));gap:18px;align-items:stretch}
+  .home-col{min-width:0;display:flex}
+  .src-card{flex:1;display:flex;flex-direction:column}
+  .home-section.paper-format-title{margin:30px 0 18px}
+  /* Equal-height cards: let one card's inner blocks push to fill via margin-top:auto */
+  .src-card .exp-url-wrap{margin-top:auto}
+  .src-card[data-source="user"] #paperUserOpts > label:first-child{margin-top:4px}
+  /* Orientation: icon buttons */
+  .orient-ico button{display:flex;align-items:center;justify-content:center;padding:9px 0}
+  .orient-ico button svg{width:24px;height:24px}
+  /* Expresii URL: tidy vertical rhythm + aligned Connect row */
+  .exp-url-wrap label{margin-bottom:5px}
+  .exp-url-wrap .row2{margin-top:8px;align-items:center}
+  .exp-url-wrap .apply{flex:0 1 auto;padding:7px 16px}
+  .exp-url-wrap .dis{flex:0 1 auto;padding:7px 16px}
   #home{max-width:1100px;width:100%;margin:0 auto}
   /* Paper source "cards": two selectable panels (Use Expresii Paper / User specification) */
   .src-card{cursor:pointer;border:2px solid var(--line);border-radius:12px;padding:14px;background:var(--panel2);transition:.14s}
@@ -204,6 +217,7 @@
       </div>
     </div>
 
+    <h2 class="home-section paper-format-title" data-trans="paperFormat">Paper Format</h2>
     <div class="home-cols">
       <div class="home-col">
         <div class="src-card seg" data-source="exp" id="srcCardExp" role="button" tabindex="0">
@@ -251,9 +265,13 @@
               <div><label data-trans="height">Height</label><input id="arH" type="number" value="1.0" step="0.1" min="0.1"></div>
             </div>
             <label style="margin-top:8px" data-trans="orientation">Orientation</label>
-            <div class="seg" id="orient">
-              <button data-o="portrait" class="active" data-trans="portrait">Portrait</button>
-              <button data-o="landscape" data-trans="landscape">Landscape</button>
+            <div class="seg orient-ico" id="orient">
+              <button data-o="portrait" class="active" data-trans-title="portrait" aria-label="Portrait">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="4" width="8" height="16" rx="1.5"/></svg>
+              </button>
+              <button data-o="landscape" data-trans-title="landscape" aria-label="Landscape">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="8" rx="1.5"/></svg>
+              </button>
             </div>
             <label style="margin-top:8px" data-trans="resolution">Resolution (px / mm)</label>
             <input id="dpi" type="number" value="11.81" step="0.1" min="1">
@@ -268,7 +286,7 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.20</span>
+      <span class="ver" id="ver">v1.21</span>
     </header>
 
     <button class="back-btn" id="backHome">
@@ -451,7 +469,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.20";
+  const VERSION = "1.21";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -464,7 +482,7 @@
     en:{
       app_name:"Studio Helper", app_sub:"Calligraphy & paper companion", app_title:"Studio Helper",
       language:"Language",
-      paper:"Paper", paperTitle:"Paper", paperSizeSource:"Paper size source", useExpresiiPaper:"Use Expresii paper", userSpec:"User specification",
+      paper:"Paper", paperTitle:"Paper", paperFormat:"Paper Format", paperSizeSource:"Paper size source", useExpresiiPaper:"Use Expresii paper", userSpec:"User specification",
       useExpTitle:"Connect to Expresii to enable",
       preset:"Preset", customAspect:"Custom aspect ratio…", width:"Width", height:"Height",
       orientation:"Orientation", portrait:"Portrait", landscape:"Landscape",
@@ -531,7 +549,7 @@
     zh:{
       app_name:"文房助手", app_sub:"書法與箋紙助手", app_title:"文房助手",
       language:"語言",
-      paper:"紙張", paperTitle:"紙張", paperSizeSource:"紙張尺寸來源", useExpresiiPaper:"使用 Expresii 畫布尺寸", userSpec:"用戶自定義",
+      paper:"紙張", paperTitle:"紙張", paperFormat:"紙張格式", paperSizeSource:"紙張尺寸來源", useExpresiiPaper:"使用 Expresii 畫布尺寸", userSpec:"用戶自定義",
       useExpTitle:"連接到 Expresii 後啟用",
       preset:"預設", customAspect:"自定義長寬比…", width:"寬", height:"高",
       orientation:"方向", portrait:"縱向", landscape:"橫向",
@@ -598,7 +616,7 @@
     ja:{
       app_name:"文房助手", app_sub:"書道・箋紙の助手", app_title:"文房助手",
       language:"言語",
-      paper:"用紙", paperTitle:"用紙", paperSizeSource:"用紙サイズの取得元", useExpresiiPaper:"Expresii のキャンバスサイズを使用", userSpec:"ユーザー指定",
+      paper:"用紙", paperTitle:"用紙", paperFormat:"用紙フォーマット", paperSizeSource:"用紙サイズの取得元", useExpresiiPaper:"Expresii のキャンバスサイズを使用", userSpec:"ユーザー指定",
       useExpTitle:"Expresii に接続して有効化",
       preset:"プリセット", customAspect:"カスタムアスペクト比…", width:"幅", height:"高さ",
       orientation:"向き", portrait:"縦", landscape:"横",
@@ -665,7 +683,7 @@
     ko:{
       app_name:"문방 조수", app_sub:"서예·편지지 보조 도구", app_title:"문방 조수",
       language:"언어",
-      paper:"용지", paperTitle:"용지", paperSizeSource:"용지 크기 출처", useExpresiiPaper:"Expresii 캔버스 크기 사용", userSpec:"사용자 지정",
+      paper:"용지", paperTitle:"용지", paperFormat:"용지 형식", paperSizeSource:"용지 크기 출처", useExpresiiPaper:"Expresii 캔버스 크기 사용", userSpec:"사용자 지정",
       useExpTitle:"Expresii에 연결하여 활성화",
       preset:"프리셋", customAspect:"사용자 지정 비율…", width:"너비", height:"높이",
       orientation:"방향", portrait:"세로", landscape:"가로",
