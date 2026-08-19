@@ -218,7 +218,7 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.14</span>
+      <span class="ver" id="ver">v1.15</span>
     </header>
 
     <button class="back-btn" id="backHome">
@@ -382,10 +382,9 @@
     </div>
   </aside>
 
-  <!-- 箔 (fleck) tool panel — standalone workspace -->
+  <!-- 箔 (fleck) tool panel — standalone workspace (left column) -->
     <div class="grp" id="fleckPanel" style="display:none">
       <h2 data-trans="flecks">Flecks</h2>
-      <div class="chk"><input type="checkbox" id="flecksOn"><label for="flecksOn" style="margin:0" data-trans="flecksOn">Add gold/silver flecks</label></div>
       <div class="row" id="fleckKindRow" style="margin-top:8px">
         <div style="flex:1"><label data-trans="fleckColor">Color</label>
           <select id="fleckKind">
@@ -417,9 +416,6 @@
         </div>
       </div>
       <div class="hint" data-trans="fleckHint">Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.</div>
-      <div class="btns" style="margin-top:10px">
-        <button class="btn green" id="fleckGen" data-trans="generateFlecks">Generate fleck field</button>
-      </div>
       <div class="hint" id="fleckHint2" data-trans="fleckToolHint"></div>
     </div>
 <main class="stage">
@@ -438,7 +434,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.14";
+  const VERSION = "1.15";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -789,7 +785,7 @@
     type:"mi", layout:"cols", cols:9, rows:13, cellmm:20, marginmm:10, paperMarginmm:0,
     cBorder:"#222222", cGuide:"#e23b3b", wBorder:2, wGuide:2, gridAlpha:1,
     dashed:true, showBorder:true, fanSpec:"8",
-    flecksOn:false, fleckKind:"gold", fleckCount:120, fleckSize:0.9, fleckScatter:true, fleckAlpha:0.6, fleckSeed:0,
+    flecksOn:true, fleckKind:"gold", fleckCount:120, fleckSize:0.9, fleckScatter:true, fleckAlpha:0.6, fleckSeed:0,
     mode:"grid",                                // 'grid' = grid template, 'lineart' = 線稿 converter, 'seal' = 印章 stamp
     // Per-mode Expresii destination: grid -> underlay(-1), fleck/lineart/seal -> overlay(-2).
     // Restored from localStorage so you can keep sending grid->underlay, fleck->overlay, seal->L2, etc.
@@ -1050,7 +1046,7 @@
     c.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); setTool(c.dataset.tool); } });
   });
   $("backHome").addEventListener("click", goHome);
-  $("fleckGen").addEventListener("click", generateFlecks);
+  // fleck field auto-regenerates on control change; no Generate button
   // start on the home dashboard
   goHome();
   $("sealFile").addEventListener("change", e=>{
@@ -1355,11 +1351,6 @@
     // paper: hide the user-spec controls (preset / orientation / resolution) in Expresii mode
     $("paperUserOpts").style.display = state.paperSource==="user" ? "" : "none";
     $("expPaperNote").style.display   = state.paperSource==="exp" ? "" : "none";
-    // flecks: only show the detail rows when flecks are enabled
-    const fr = state.flecksOn;
-    ["fleckKindRow","fleckCountRow","fleckSizeRow","fleckScatterRow"].forEach(id=>{
-      const el=document.getElementById(id); if(el) el.style.display = fr ? "" : "none";
-    });
   }
   $("fanSpec").addEventListener("change", e=>{ state.fanSpec=e.target.value; applyFanSpec(); render(); });
 
@@ -1380,12 +1371,13 @@
   $("showBorder").addEventListener("change",e=>{ state.showBorder=e.target.checked; render(); });
   $("gridAlpha").addEventListener("input",e=>{ state.gridAlpha=Math.min(1,Math.max(0.1,+e.target.value||1)); render(); });
   // flecks (金/銀 箔)
-  $("flecksOn").addEventListener("change",e=>{ state.flecksOn=e.target.checked; applyVisibility(); render(); });
-  $("fleckKind").addEventListener("change",e=>{ state.fleckKind=e.target.value; render(); });
-  $("fleckCount").addEventListener("input",e=>{ state.fleckCount=Math.max(1,+e.target.value||1); render(); });
-  $("fleckSize").addEventListener("input",e=>{ state.fleckSize=Math.max(0.1,+e.target.value||0.9); render(); });
-  $("fleckScatter").addEventListener("change",e=>{ state.fleckScatter=e.target.checked; render(); });
-  $("fleckAlpha").addEventListener("input",e=>{ state.fleckAlpha=Math.min(1,Math.max(0.05,+e.target.value||0.6)); render(); });
+  // fleck controls auto-regenerate the field on any change (no Generate button needed)
+  function updateFleck(){ if(state.screen==="tool" && state.tool==="fleck") generateFlecks(); else render(); }
+  $("fleckKind").addEventListener("change",e=>{ state.fleckKind=e.target.value; updateFleck(); });
+  $("fleckCount").addEventListener("input",e=>{ state.fleckCount=Math.max(1,+e.target.value||1); updateFleck(); });
+  $("fleckSize").addEventListener("input",e=>{ state.fleckSize=Math.max(0.1,+e.target.value||0.9); updateFleck(); });
+  $("fleckScatter").addEventListener("change",e=>{ state.fleckScatter=e.target.checked; updateFleck(); });
+  $("fleckAlpha").addEventListener("input",e=>{ state.fleckAlpha=Math.min(1,Math.max(0.05,+e.target.value||0.6)); updateFleck(); });
   // fleck random seed: editable; Randomize picks a fresh random seed and regenerates the field
   $("fleckSeed").addEventListener("input",e=>{ state.fleckSeed=Math.max(0,Math.floor(+e.target.value||0)); if(state.screen==="tool" && state.tool==="fleck") generateFlecks(); });
   $("fleckRandom").addEventListener("click",()=>{ state.fleckSeed=Math.floor(Math.random()*1e9); $("fleckSeed").value=state.fleckSeed; if(state.screen==="tool" && state.tool==="fleck") generateFlecks(); });
