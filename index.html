@@ -218,7 +218,7 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.15</span>
+      <span class="ver" id="ver">v1.16</span>
     </header>
 
     <button class="back-btn" id="backHome">
@@ -419,7 +419,7 @@
       <div class="hint" id="fleckHint2" data-trans="fleckToolHint"></div>
     </div>
 <main class="stage">
-    <div class="stagebar">
+    <div class="stagebar" id="stagebar">
       <span class="badge" id="dimBadge">—</span>
       <span class="info" id="summary">—</span>
       <span style="margin-left:auto" class="badge" id="typeBadge">米字格</span>
@@ -434,7 +434,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.15";
+  const VERSION = "1.16";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -1091,6 +1091,9 @@
     // Non-template sub-pages must NOT show the grid description in the summary bar
     // (render() sets it for grid; clear it for lineart/seal/fleck so stale grid text never lingers).
     if(!gridMode){ $("summary").textContent="—"; $("dimBadge").textContent="—"; }
+    // The top strip above the preview only carries real info in the Grid template (dimensions + type).
+    // For Fleck / Stamp / Line-drawing sub-pages it would just show "— — <mode>", so hide it there.
+    const sb=$("stagebar"); if(sb) sb.style.display = gridMode ? "" : "none";
   }
   // ---- per-mode Expresii target selectors ----
   // Each mode (grid/lineart/seal/fleck) keeps its OWN destination so you can send, e.g.,
