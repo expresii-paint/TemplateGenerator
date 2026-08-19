@@ -218,7 +218,7 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.13</span>
+      <span class="ver" id="ver">v1.14</span>
     </header>
 
     <button class="back-btn" id="backHome">
@@ -409,6 +409,13 @@
         <label data-trans="fleckAlpha">Opacity</label>
         <input id="fleckAlpha" type="range" min="0.1" max="1" step="0.05" value="0.6">
       </div>
+      <div id="fleckSeedRow" style="margin-top:8px">
+        <label data-trans="fleckSeed">Random seed</label>
+        <div class="row">
+          <input id="fleckSeed" type="number" min="0" step="1" value="0">
+          <button class="btn ghost" id="fleckRandom" data-trans="fleckRandom" style="flex:0 0 auto;white-space:nowrap">Randomize</button>
+        </div>
+      </div>
       <div class="hint" data-trans="fleckHint">Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.</div>
       <div class="btns" style="margin-top:10px">
         <button class="btn green" id="fleckGen" data-trans="generateFlecks">Generate fleck field</button>
@@ -431,7 +438,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.13";
+  const VERSION = "1.14";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -456,7 +463,7 @@
       style:"Style", border:"Border", borderWidth:"Border width (px)", guides:"Guides", guideWidth:"Guide width (px)",
       dashedGuides:"Dashed guides", drawCellBorders:"Draw cell borders", gridAlpha:"Opacity",
       flecks:"Flecks", flecksOn:"Add gold/silver flecks", fleckColor:"Color",
-      fleckDensity:"Density (count)", fleckSize:"Size (mm)", fleckScatter:"Scatter randomly", fleckAlpha:"Opacity",
+      fleckDensity:"Density (count)", fleckSize:"Size (mm)", fleckScatter:"Scatter randomly", fleckAlpha:"Opacity", fleckSeed:"Random seed", fleckRandom:"Randomize",
       fleckHint:"Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.",
       output:"Output", svgFile:"SVG File", pngFile:"PNG File", runOutput:"Run",
       outputToExpresii:"Send to Expresii", expNotConnected:"Connect to Expresii to enable sending",
@@ -523,7 +530,7 @@
       style:"樣式", border:"邊框", borderWidth:"邊框寬度（像素）", guides:"輔助線", guideWidth:"輔助線寬度（像素）",
       dashedGuides:"虛線輔助線", drawCellBorders:"繪製單元格邊框", gridAlpha:"透明度",
       flecks:"箔點", flecksOn:"添加金/銀 箔點", fleckColor:"顏色",
-      fleckDensity:"密度（數量）", fleckSize:"大小（毫米）", fleckScatter:"隨機散佈", fleckAlpha:"透明度",
+      fleckDensity:"密度（數量）", fleckSize:"大小（毫米）", fleckScatter:"隨機散佈", fleckAlpha:"透明度", fleckSeed:"隨機種子", fleckRandom:"隨機化",
       fleckHint:"裝飾性金屬箔點（金/銀 箔）。SVG 中為矢量；線稿模式下隱藏。",
       export:"導出", downloadSvg:"下載 SVG", downloadPng:"下載 PNG", printPdf:"列印 / PDF", reset:"重置",
       output:"輸出", svgFile:"SVG 檔", pngFile:"PNG 檔", runOutput:"執行", outputToExpresii:"發送到 Expresii", expNotConnected:"請先連線 Expresii 才能傳送",
@@ -590,7 +597,7 @@
       style:"スタイル", border:"枠線", borderWidth:"枠線の太さ（px）", guides:"補助線", guideWidth:"補助線の太さ（px）",
       dashedGuides:"補助線を破線に", drawCellBorders:"セルの枠を描く", gridAlpha:"不透明度",
       flecks:"箔（ふくさ）", flecksOn:"金/銀箔を追加", fleckColor:"色",
-      fleckDensity:"密度（数）", fleckSize:"大きさ（mm）", fleckScatter:"ランダムに散らす", fleckAlpha:"不透明度",
+      fleckDensity:"密度（数）", fleckSize:"大きさ（mm）", fleckScatter:"ランダムに散らす", fleckAlpha:"不透明度", fleckSeed:"乱数シード", fleckRandom:"ランダム",
       fleckHint:"装飾用の金属箔（金/銀箔）。SVGではベクター。線画モードでは非表示。",
       export:"書き出し", downloadSvg:"SVG をダウンロード", downloadPng:"PNG をダウンロード", printPdf:"印刷 / PDF", reset:"リセット",
       output:"出力", svgFile:"SVG ファイル", pngFile:"PNG ファイル", runOutput:"実行", outputToExpresii:"Expresii に送信", expNotConnected:"送信には Expresii への接続が必要です",
@@ -657,7 +664,7 @@
       style:"스타일", border:"테두리", borderWidth:"테두리 두께（px）", guides:"보조선", guideWidth:"보조선 두께（px）",
       dashedGuides:"보조선 점선", drawCellBorders:"셀 테두리 그리기", gridAlpha:"불투명도",
       flecks:"금속 점", flecksOn:"금/은색 점 추가", fleckColor:"색상",
-      fleckDensity:"밀도（개수）", fleckSize:"크기（mm）", fleckScatter:"무작위 흩뿌리기", fleckAlpha:"불투명도",
+      fleckDensity:"밀도（개수）", fleckSize:"크기（mm）", fleckScatter:"무작위 흩뿌리기", fleckAlpha:"불투명도", fleckSeed:"난수 시드", fleckRandom:"무작위",
       fleckHint:"장식용 금속 점（금/은箔）. SVG에서는 벡터이며, 선화 모드에서는 숨겨집니다.",
       export:"내보내기", downloadSvg:"SVG 다운로드", downloadPng:"PNG 다운로드", printPdf:"인쇄 / PDF", reset:"초기화",
       output:"출력", svgFile:"SVG 파일", pngFile:"PNG 파일", runOutput:"실행", outputToExpresii:"Expresii로 보내기", expNotConnected:"보내려면 Expresii에 연결하세요",
@@ -782,7 +789,7 @@
     type:"mi", layout:"cols", cols:9, rows:13, cellmm:20, marginmm:10, paperMarginmm:0,
     cBorder:"#222222", cGuide:"#e23b3b", wBorder:2, wGuide:2, gridAlpha:1,
     dashed:true, showBorder:true, fanSpec:"8",
-    flecksOn:false, fleckKind:"gold", fleckCount:120, fleckSize:0.9, fleckScatter:true, fleckAlpha:0.6,
+    flecksOn:false, fleckKind:"gold", fleckCount:120, fleckSize:0.9, fleckScatter:true, fleckAlpha:0.6, fleckSeed:0,
     mode:"grid",                                // 'grid' = grid template, 'lineart' = 線稿 converter, 'seal' = 印章 stamp
     // Per-mode Expresii destination: grid -> underlay(-1), fleck/lineart/seal -> overlay(-2).
     // Restored from localStorage so you can keep sending grid->underlay, fleck->overlay, seal->L2, etc.
@@ -1085,6 +1092,9 @@
     document.body.classList.add("active-"+activeMode);
     // stagebar badge reflects mode
     $("typeBadge").textContent = gridMode ? tr("grid_"+state.type) : (sealMode ? tr("modeSeal") : (state.tool==="fleck" ? tr("fleckToolZh") : tr("modeLineart")));
+    // Non-template sub-pages must NOT show the grid description in the summary bar
+    // (render() sets it for grid; clear it for lineart/seal/fleck so stale grid text never lingers).
+    if(!gridMode){ $("summary").textContent="—"; $("dimBadge").textContent="—"; }
   }
   // ---- per-mode Expresii target selectors ----
   // Each mode (grid/lineart/seal/fleck) keeps its OWN destination so you can send, e.g.,
@@ -1376,6 +1386,9 @@
   $("fleckSize").addEventListener("input",e=>{ state.fleckSize=Math.max(0.1,+e.target.value||0.9); render(); });
   $("fleckScatter").addEventListener("change",e=>{ state.fleckScatter=e.target.checked; render(); });
   $("fleckAlpha").addEventListener("input",e=>{ state.fleckAlpha=Math.min(1,Math.max(0.05,+e.target.value||0.6)); render(); });
+  // fleck random seed: editable; Randomize picks a fresh random seed and regenerates the field
+  $("fleckSeed").addEventListener("input",e=>{ state.fleckSeed=Math.max(0,Math.floor(+e.target.value||0)); if(state.screen==="tool" && state.tool==="fleck") generateFlecks(); });
+  $("fleckRandom").addEventListener("click",()=>{ state.fleckSeed=Math.floor(Math.random()*1e9); $("fleckSeed").value=state.fleckSeed; if(state.screen==="tool" && state.tool==="fleck") generateFlecks(); });
 
   // ---- geometry helpers (mm) ----
   function paperMM(){
@@ -1608,7 +1621,7 @@
       const cellPx=L.cellmm*pxPerMM;
       x0=L.ox*pxPerMM; y0=L.oy*pxPerMM; ww=L.cols*cellPx; hh=L.rows*cellPx;
     } else { x0=0; y0=0; ww=W; hh=H; }
-    const rng = fleckRng(Math.round(n*131 + state.fleckSize*977 + (state.fleckScatter?7:3) + col.length));
+    const rng = fleckRng((state.fleckSeed|0) ^ Math.round(n*131 + state.fleckSize*977 + (state.fleckScatter?7:3) + col.length));
     let g = `<g id="flecks" fill="${colA}" filter="url(#fleckBump)">` + bump;
     for(let i=0;i<n;i++){
       const fx = x0 + (state.fleckScatter ? rng()*ww : (i+0.5)/n*ww);
