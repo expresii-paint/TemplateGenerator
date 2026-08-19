@@ -218,7 +218,7 @@
   <aside class="sidebar">
     <header>
       <h1 data-trans="app_name">Studio Helper</h1>
-      <span class="ver" id="ver">v1.12</span>
+      <span class="ver" id="ver">v1.13</span>
     </header>
 
     <button class="back-btn" id="backHome">
@@ -269,9 +269,6 @@
         <div><label data-trans="sealRotation">Rotation</label><input id="sealRot" type="range" min="-180" max="180" step="1" value="0"></div>
       </div>
       <div class="hint">Tip: drag the seal on the canvas to move it; scroll over the canvas to resize; use the sliders for fine size/rotation.</div>
-      <div class="btns" style="margin-top:8px">
-        <button class="btn exp" id="sealSend" data-trans="sendSeal">Send seal to Expresii</button>
-      </div>
       <div class="hint" id="sealHint" data-trans="sealHint"></div>
     </div>
 
@@ -375,35 +372,13 @@
     </div>
     </div><!-- /gridOnly -->
 
-    <div class="grp">
-      <h2 data-trans="export">Export</h2>
-      <div class="btns">
-        <button class="btn green" id="dlSvg" data-trans="downloadSvg">Download SVG</button>
-        <button class="btn ghost" id="dlPng" data-trans="downloadPng">Download PNG</button>
+    <div class="grp" id="outputPanel">
+      <h2 data-trans="output">Output</h2>
+      <div class="exp-row" style="align-items:stretch">
+        <select id="outAction" style="flex:1"></select>
+        <button class="btn exp" id="outRun" data-trans="runOutput">Run</button>
       </div>
-      <div class="btns" style="margin-top:8px">
-        <button class="btn ghost" id="print" data-trans="printPdf">Print / PDF</button>
-        <button class="btn ghost" id="reset" data-trans="reset">Reset</button>
-      </div>
-      <footer data-trans="exportFooter">
-        Vector (SVG) scales to any printer. PNG is rasterized from the on-screen canvas.
-        Print to PDF from your browser for a paper-perfect sheet.
-      </footer>
-    </div>
-
-    <div class="grp">
-      <h2 data-trans="expresii">Expresii</h2>
-      <div class="exp-row">
-        <label style="font-size:13px;color:var(--muted)" data-trans="target">Target</label>
-        <select class="mode-target" data-mode="grid"></select>
-        <select class="mode-target" data-mode="lineart"></select>
-        <select class="mode-target" data-mode="seal"></select>
-        <select class="mode-target" data-mode="fleck"></select>
-      </div>
-      <div class="btns" style="margin-top:8px">
-        <button class="btn exp" id="sendExp" data-trans="sendToExpresii">Send to Expresii</button>
-      </div>
-      <div class="hint" id="expHint" data-trans="expHint">Sends the current template as a PNG underlay to the Expresii Command Server. Works directly from this file — no server needed (Expresii sends CORS headers).</div>
+      <div class="hint" id="outHint"></div>
     </div>
   </aside>
 
@@ -437,7 +412,6 @@
       <div class="hint" data-trans="fleckHint">Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.</div>
       <div class="btns" style="margin-top:10px">
         <button class="btn green" id="fleckGen" data-trans="generateFlecks">Generate fleck field</button>
-        <button class="btn exp" id="fleckSend" data-trans="sendFlecks">Send to Expresii</button>
       </div>
       <div class="hint" id="fleckHint2" data-trans="fleckToolHint"></div>
     </div>
@@ -457,7 +431,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.12";
+  const VERSION = "1.13";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -484,7 +458,8 @@
       flecks:"Flecks", flecksOn:"Add gold/silver flecks", fleckColor:"Color",
       fleckDensity:"Density (count)", fleckSize:"Size (mm)", fleckScatter:"Scatter randomly", fleckAlpha:"Opacity",
       fleckHint:"Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.",
-      export:"Export", downloadSvg:"Download SVG", downloadPng:"Download PNG", printPdf:"Print / PDF", reset:"Reset",
+      output:"Output", svgFile:"SVG File", pngFile:"PNG File", runOutput:"Run",
+      outputToExpresii:"Send to Expresii", expNotConnected:"Connect to Expresii to enable sending",
       exportFooter:"Vector (SVG) scales to any printer. PNG is rasterized from the on-screen canvas. Print to PDF from your browser for a paper-perfect sheet.",
       expresii:"Expresii", serverUrl:"Server URL", serverUrl_ph:"http://host:9000", connect:"Connect", disconnect:"Disconnect",
       autoPaperOff:"Auto paper size: OFF", checking:"checking…", connected:"connected", notConnected:"not connected",
@@ -551,6 +526,7 @@
       fleckDensity:"密度（數量）", fleckSize:"大小（毫米）", fleckScatter:"隨機散佈", fleckAlpha:"透明度",
       fleckHint:"裝飾性金屬箔點（金/銀 箔）。SVG 中為矢量；線稿模式下隱藏。",
       export:"導出", downloadSvg:"下載 SVG", downloadPng:"下載 PNG", printPdf:"列印 / PDF", reset:"重置",
+      output:"輸出", svgFile:"SVG 檔", pngFile:"PNG 檔", runOutput:"執行", outputToExpresii:"發送到 Expresii", expNotConnected:"請先連線 Expresii 才能傳送",
       exportFooter:"矢量（SVG）可縮放到任意列印機。PNG 由螢幕畫布光柵化。用瀏覽器列印為 PDF 即可得到與紙張完全一致的稿紙。",
       expresii:"Expresii", serverUrl:"伺服器位址", serverUrl_ph:"http://host:9000", connect:"連接", disconnect:"斷開",
       autoPaperOff:"自動紙張尺寸：關", checking:"檢測中…", connected:"已連接", notConnected:"未連接",
@@ -617,6 +593,7 @@
       fleckDensity:"密度（数）", fleckSize:"大きさ（mm）", fleckScatter:"ランダムに散らす", fleckAlpha:"不透明度",
       fleckHint:"装飾用の金属箔（金/銀箔）。SVGではベクター。線画モードでは非表示。",
       export:"書き出し", downloadSvg:"SVG をダウンロード", downloadPng:"PNG をダウンロード", printPdf:"印刷 / PDF", reset:"リセット",
+      output:"出力", svgFile:"SVG ファイル", pngFile:"PNG ファイル", runOutput:"実行", outputToExpresii:"Expresii に送信", expNotConnected:"送信には Expresii への接続が必要です",
       exportFooter:"ベクター（SVG）はどのプリンターでも拡大縮小可能。PNG は画面キャンバスからラスタライズされます。ブラウザの印刷で PDF を出力すれば、用紙にぴったりの原稿になります。",
       expresii:"Expresii", serverUrl:"サーバー URL", serverUrl_ph:"http://host:9000", connect:"接続", disconnect:"切断",
       autoPaperOff:"自動用紙サイズ：オフ", checking:"確認中…", connected:"接続済み", notConnected:"未接続",
@@ -683,6 +660,7 @@
       fleckDensity:"밀도（개수）", fleckSize:"크기（mm）", fleckScatter:"무작위 흩뿌리기", fleckAlpha:"불투명도",
       fleckHint:"장식용 금속 점（금/은箔）. SVG에서는 벡터이며, 선화 모드에서는 숨겨집니다.",
       export:"내보내기", downloadSvg:"SVG 다운로드", downloadPng:"PNG 다운로드", printPdf:"인쇄 / PDF", reset:"초기화",
+      output:"출력", svgFile:"SVG 파일", pngFile:"PNG 파일", runOutput:"실행", outputToExpresii:"Expresii로 보내기", expNotConnected:"보내려면 Expresii에 연결하세요",
       exportFooter:"벡터（SVG）는 모든 프린터로 확대·축소됩니다. PNG는 화면 캔버스에서 래스터화됩니다. 브라우저 인쇄로 PDF를 만들면 용지에 딱 맞는 원고가 됩니다.",
       expresii:"Expresii", serverUrl:"서버 URL", serverUrl_ph:"http://host:9000", connect:"연결", disconnect:"연결 해제",
       autoPaperOff:"자동 용지 크기: 끄기", checking:"확인 중…", connected:"연결됨", notConnected:"연결 안 됨",
@@ -809,6 +787,7 @@
     // Per-mode Expresii destination: grid -> underlay(-1), fleck/lineart/seal -> overlay(-2).
     // Restored from localStorage so you can keep sending grid->underlay, fleck->overlay, seal->L2, etc.
     targets:{ grid:-1, lineart:-2, fleck:-2, seal:-2 },
+    outAction:{ grid:"svg", lineart:"svg", seal:"png", fleck:"png" },
     scale:2, keepText:true, transparent:false,
     seal:{ art:null, sealImg:null, x:0.7, y:0.8, size:0.12, rot:0 }   // seal compose state (x,y,size as fractions of artwork W; rot in rad)
   };
@@ -1058,7 +1037,6 @@
   });
   // ---- seal (印章) wiring ----
   $("sealCapture").addEventListener("click", captureSealArt);
-  $("sealSend").addEventListener("click", sendSeal);
   // ---- Home dashboard + tool navigation ----
   document.querySelectorAll(".card[data-tool]").forEach(c=>{
     c.addEventListener("click", ()=>setTool(c.dataset.tool));
@@ -1066,7 +1044,6 @@
   });
   $("backHome").addEventListener("click", goHome);
   $("fleckGen").addEventListener("click", generateFlecks);
-  $("fleckSend").addEventListener("click", sendFlecks);
   // start on the home dashboard
   goHome();
   $("sealFile").addEventListener("change", e=>{
@@ -1146,10 +1123,66 @@
       saveTargets();
     });
   });
+  // ---- unified Output panel (Export + Send to Expresii merged) ----
+  function saveOutAction(){ try{ localStorage.setItem("tg_out", JSON.stringify(state.outAction)); }catch(_){} }
+  function restoreOutAction(){
+    try{ const j=JSON.parse(localStorage.getItem("tg_out"));
+      if(j && typeof j==="object"){ for(const k of ["grid","lineart","seal","fleck"]) if(typeof j[k]==="string") state.outAction[k]=j[k]; }
+    }catch(_){}
+  }
+  // current workspace key: grid/lineart use state.mode, seal uses "seal" (mode==="seal"), fleck uses "fleck" (tool)
+  function currentKey(){ return state.tool==="fleck" ? "fleck" : state.mode; }
+  function outAllows(kind){ // which actions are available for this workspace
+    const k=currentKey();
+    if(k==="grid") return { svg:true, png:true };   // grid template has a real SVG (vector) export
+    return { svg:false, png:true };                  // lineart/seal/fleck are raster-only
+  }
+  function buildOutputOptions(){
+    const sel=$("outAction"); if(!sel) return;
+    const k=currentKey();
+    sel.innerHTML="";
+    const allow=outAllows(k);
+    if(allow.svg){ const o=document.createElement("option"); o.value="svg"; o.textContent=tr("svgFile"); sel.appendChild(o); }
+    if(allow.png){ const o=document.createElement("option"); o.value="png"; o.textContent=tr("pngFile"); sel.appendChild(o); }
+    // Send to Expresii group (Overlay / Underlay / Layer y)
+    const og=document.createElement("optgroup"); og.label=tr("outputToExpresii"); sel.appendChild(og);
+    const mk=(val,txt)=>{ const o=document.createElement("option"); o.value="exp:"+val; o.textContent=txt; if(!isExpConnected()) o.disabled=true; og.appendChild(o); };
+    mk("-2", tr("overlay"));
+    mk("-1", tr("underlay"));
+    for(let i=0;i<expLayerCount;i++) mk(String(i), tr("settledPaint")+" L"+i);
+    // restore remembered choice (fall back to first available)
+    let v = state.outAction[k] || "svg";
+    if(!allow.svg && v==="svg") v="png";
+    if(v.indexOf("exp:")===0 && !isExpConnected()) v = allow.svg ? "svg" : "png";
+    sel.value = v;
+  }
+  function updateOutputEnabled(){
+    const sel=$("outAction"); if(!sel) return;
+    const connected=isExpConnected();
+    [...sel.querySelectorAll("option")].forEach(o=>{ o.disabled = o.value.indexOf("exp:")===0 && !connected; });
+    // if the selected option became disabled (disconnected), fall back
+    if(!connected && sel.value.indexOf("exp:")===0){ sel.value = outAllows(currentKey()).svg ? "svg" : "png"; }
+  }
+  function outHint(){ return $("outHint"); }
+  async function runOutputAction(){
+    const sel=$("outAction"); const v=sel.value; const h=outHint();
+    const k=currentKey();
+    state.outAction[k]=v; saveOutAction();
+    if(v==="svg"){ doExportSvg(); return; }
+    if(v==="png"){ doExportPng(); return; }
+    if(v.indexOf("exp:")===0){
+      if(!isExpConnected()){ if(h) h.textContent=tr("expNotConnected"); return; }
+      const dest=parseInt(v.slice(4));
+      if(k==="fleck"){ await sendFlecks(dest, h); }
+      else if(k==="seal"){ await sendSeal(dest, h); }
+      else { await sendExpresii(dest, h); }   // grid + lineart
+    }
+  }
+  $("outRun").addEventListener("click", runOutputAction);
   // ---- screen / tool navigation (home dashboard + 4 workspaces) ----
   const TOOL_META = { grid:{mode:"grid",zh:"modeGrid",nm:"gridToolNm"}, lineart:{mode:"lineart",zh:"modeLineart",nm:"lineartToolNm"}, seal:{mode:"seal",zh:"modeSeal",nm:"sealToolNm"}, fleck:{tool:"fleck",zh:"fleckToolZh",nm:"fleckToolNm"} };
   function goHome(){ state.screen="home"; state.tool=null; document.body.classList.remove("tool"); document.body.classList.add("home"); applyModeVisibility(); }
-  function setTool(t){     const meta=TOOL_META[t]; if(!meta) return;     state.screen="tool"; document.body.classList.remove("home"); document.body.classList.add("tool");     if(t==="fleck"){ state.tool="fleck"; state.mode=null; } else { state.mode=meta.mode; state.tool=null; }     $("toolTitleZh").textContent = tr(meta.zh); $("toolTitleNm").textContent = tr(meta.nm);     applyModeVisibility();     if(t==="grid"){ render(); }     else if(t==="seal"){ drawSeal(); }     else if(t==="fleck"){ generateFlecks(); }     else { if(currentLineart){ showLineart(currentLineart); } else { clearPreview(); } }   }
+  function setTool(t){     const meta=TOOL_META[t]; if(!meta) return;     state.screen="tool"; document.body.classList.remove("home"); document.body.classList.add("tool");     if(t==="fleck"){ state.tool="fleck"; state.mode=null; } else { state.mode=meta.mode; state.tool=null; }     $("toolTitleZh").textContent = tr(meta.zh); $("toolTitleNm").textContent = tr(meta.nm);     applyModeVisibility(); buildOutputOptions();     if(t==="grid"){ render(); }     else if(t==="seal"){ drawSeal(); }     else if(t==="fleck"){ generateFlecks(); }     else { if(currentLineart){ showLineart(currentLineart); } else { clearPreview(); } }   }
 // ---- 印章 (seal stamping) ----
   // Capture the current Expresii canvas (GET /capture -> {status, imageBase64}); the web client
   // WebStrokeClient-3.html shows this is a single synchronous fetch (no command queue).
@@ -1237,9 +1270,10 @@
     }, {passive:false});
   }
   // Send only the seal (transparent) at full artwork resolution to Expresii Overlay/settled layer.
-  async function sendSeal(){
-    const btn=$("sealSend"), hint=$("sealHint");
-    if(!state.seal.art){ hint.textContent=tr("sealNoCapture"); return; }
+  async function sendSeal(dest, hint){
+    hint = hint || $("sealHint");
+    const btn=$("outRun");
+    if(!state.seal.art){ if(hint) hint.textContent=tr("sealNoCapture"); return; }
     const seal=resolveSealImg();
     const W=state.seal.art.naturalWidth, H=state.seal.art.naturalHeight;
     const c=document.createElement("canvas"); c.width=W; c.height=H;
@@ -1248,19 +1282,18 @@
     x.save(); x.translate(s.x*W, s.y*H); x.rotate(s.rot);
     x.drawImage(seal, -sealW/2, -sealW/2, sealW, sealW); x.restore();
     const base64=c.toDataURL("image/png").split(",")[1];
-    const dest=state.targets.seal;
     btn.disabled=true;
     try{
-      hint.textContent=tr("sending");
+      if(hint) hint.textContent=tr("sending");
       const fd=new FormData(); fd.append("image", base64); fd.append("destination", dest);
       const res=await fetch(expBase()+"/upload-image",{ method:"POST", body:fd });
       if(!res.ok) throw new Error("HTTP "+res.status);
       const d=await res.json();
       if(d.status==="done"){
         const label = dest===-1 ? tr("underlay") : dest===-2 ? tr("overlay") : "L"+dest;
-        hint.textContent=tr("sentDone",{dest:label}); loadExpInfo();
+        if(hint) hint.textContent=tr("sentDone",{dest:label}); loadExpInfo();
       } else throw new Error(d.error||"upload failed");
-    }catch(e){ hint.textContent=tr("sendFail",{msg:e.message}); }
+    }catch(e){ if(hint) hint.textContent=tr("sendFail",{msg:e.message}); }
     finally{ btn.disabled=false; }
   }
   // Show a line-art data URL in the preview pane.
@@ -1619,24 +1652,24 @@
     img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
   }
   // Send the rendered fleck field to Expresii as a transparent overlay (-2) or settled layer.
-  function sendFlecks(){
-    const btn=$("fleckSend"), hint=$("fleckHint2");
+  function sendFlecks(dest, hint){
+    hint = hint || $("fleckHint2");
     const cv=$("previewCanvas");
     if(!cv || !cv.width){ if(hint) hint.textContent=tr("fleckNone"); return; }
     const base64=cv.toDataURL("image/png").split(",")[1];
-    const dest=state.targets.fleck;
+    const btn=$("outRun");
     btn.disabled=true;
     try{
-      hint.textContent=tr("sending");
+      if(hint) hint.textContent=tr("sending");
       const fd=new FormData(); fd.append("image", base64); fd.append("destination", String(dest));
       fetch(expBase()+"/upload-image", {method:"POST", body:fd})
         .then(r=>r.json().then(j=>({ok:r.ok, j})))
         .then(({ok,j})=>{ btn.disabled=false;
-          if(ok && j && j.status==="done"){ hint.textContent=tr("sentDone",{dest:targetLabel(dest)}); }
-          else { hint.textContent=(j&&j.error)||tr("sendFail"); }
+          if(ok && j && j.status==="done"){ if(hint) hint.textContent=tr("sentDone",{dest:targetLabel(dest)}); }
+          else { if(hint) hint.textContent=(j&&j.error)||tr("sendFail"); }
         })
-        .catch(err=>{ btn.disabled=false; hint.textContent=tr("sendFail")+": "+err.message; });
-    }catch(err){ btn.disabled=false; hint.textContent=tr("sendFail")+": "+err.message; }
+        .catch(err=>{ btn.disabled=false; if(hint) hint.textContent=tr("sendFail")+": "+err.message; });
+    }catch(err){ btn.disabled=false; if(hint) hint.textContent=tr("sendFail")+": "+err.message; }
   }
 
   function buildSVG(){
@@ -1727,74 +1760,43 @@
     for(let i=0;i<len;i++) arr[i]=bin.charCodeAt(i);
     return new Blob([arr],{type:"image/png"});
   }
-  $("dlSvg").addEventListener("click", ()=>{
-    if(state.tool==="fleck"){
-      // fleck field is raster-only (SVG -> canvas); download it as PNG
-      const cv=document.getElementById("previewCanvas");
-      if(!cv || !cv.width){ if($("fleckHint2")) $("fleckHint2").textContent=tr("fleckNone"); return; }
-      cv.toBlob(b=>download(`fleck_${state.fleckKind}.png`,b),"image/png");
-      return;
-    }
-    if(state.mode==="lineart"){
-      if(!currentLineart){ $("laHint").textContent=tr("lineartErr",{msg:tr("lineartNone")}); return; }
-      // line art is raster-only; offer it as PNG with a .png extension
-      download(`lineart_${Date.now()}.png`, laExportBlob());
-      return;
-    }
+  function doExportSvg(){
+    if(state.mode!=="grid"){ if(outHint()) outHint().textContent=tr("expNotConnected"); return; }
+    if(!currentSVG){ if(outHint()) outHint().textContent=tr("lineartNone"); return; }
     download(`calligraphy_${state.type}_${state.paper}_${state.orient}.svg`,
              new Blob([currentSVG],{type:"image/svg+xml"}));
-  });
-  $("dlPng").addEventListener("click", ()=>{
+  }
+  function doExportPng(){
     if(state.tool==="fleck"){
       const cv=document.getElementById("previewCanvas");
       if(!cv || !cv.width){ if($("fleckHint2")) $("fleckHint2").textContent=tr("fleckNone"); return; }
-      // NOTE: previewCanvas is already transparent (no bg fill) — exported PNG keeps alpha
       cv.toBlob(b=>download(`fleck_${state.fleckKind}.png`,b),"image/png");
       return;
     }
     if(state.mode==="lineart"){
-      if(!currentLineart){ $("laHint").textContent=tr("lineartErr",{msg:tr("lineartNone")}); return; }
+      if(!currentLineart){ if($("laHint")) $("laHint").textContent=tr("lineartErr",{msg:tr("lineartNone")}); return; }
       download(`lineart_${Date.now()}.png`, laExportBlob());
       return;
     }
+    if(state.mode==="seal"){
+      const cv=document.getElementById("previewCanvas");
+      if(!cv || !cv.width){ if(outHint()) outHint().textContent=tr("sealNoCapture"); return; }
+      cv.toBlob(b=>download(`seal_${Date.now()}.png`,b),"image/png");
+      return;
+    }
+    // grid template -> rasterize the SVG to PNG (transparent, so it can overlay as a guide layer)
+    if(!currentSVG){ if(outHint()) outHint().textContent=tr("lineartNone"); return; }
     const {W,H}=currentMeta;
     const img=new Image();
     const svg64="data:image/svg+xml;base64,"+btoa(unescape(encodeURIComponent(currentSVG)));
     img.onload=()=>{
-      const cnv=document.createElement("canvas");
-      cnv.width=W; cnv.height=H;
+      const cnv=document.createElement("canvas"); cnv.width=W; cnv.height=H;
       const ctx=cnv.getContext("2d");
-      // NOTE: no opaque fillRect — preserve the transparent (alpha) canvas so the
-      // exported PNG can overlay artwork as a faint guide layer.
       ctx.drawImage(img,0,0);
       cnv.toBlob(b=>download(`calligraphy_${state.type}_${state.paper}_${state.orient}.png`,b),"image/png");
     };
     img.src=svg64;
-  });
-  $("print").addEventListener("click", ()=>{
-    if(state.tool==="fleck"){
-      const cv=document.getElementById("previewCanvas");
-      if(!cv || !cv.width) return;
-      const w=window.open("","_blank");
-      w.document.write(`<html><head><title>Fleck</title>
-        <style>@page{margin:0}body{margin:0}img{width:100%;height:100%}</style></head>
-        <body><img src="${cv.toDataURL("image/png")}"></body></html>`);
-      w.document.close();
-      setTimeout(()=>w.print(),300);
-      return;
-    }
-    const src = state.mode==="lineart" && currentLineart
-      ? currentLineart
-      : "data:image/svg+xml;base64,"+btoa(unescape(encodeURIComponent(currentSVG)));
-    const w=window.open("","_blank");
-    w.document.write(`<html><head><title>Template</title>
-      <style>@page{margin:0}body{margin:0}img{width:100%;height:100%}</style></head>
-      <body><img src="${src}"></body></html>`);
-    w.document.close();
-    setTimeout(()=>w.print(),300);
-  });
-
-  $("reset").addEventListener("click", ()=>location.reload());
+  }
 
   // ---- Expresii Command Server integration ----
   // Protocol learned from WebStrokeClient: GET /info -> {version,cpu,gpu,ram};
@@ -1918,6 +1920,7 @@
           const lc=parseInt(sd.layerCount)||0;
           expLayerCount = lc;
           rebuildTargets();
+          buildOutputOptions();
           if(autoPaperSync && sd.paperWidth && sd.paperHeight) applyExpresiiPaper(sd.paperWidth, sd.paperHeight);
         }
       }catch(e){ /* state optional */ }
@@ -1931,6 +1934,7 @@
       $("expApply").style.display="";
       $("expDisconnect").style.display="none";
       $("expSyncNote").textContent=tr("autoPaperOff");
+      updateOutputEnabled();
     }
   }
   function pngFromPreview(){
@@ -1951,15 +1955,14 @@
       img.src=svg64;
     });
   }
-  $("sendExp").addEventListener("click", async ()=>{
-    const btn=$("sendExp"), hint=$("expHint");
-    btn.disabled=true; const old=hint.textContent;
+  // Unified send for grid + lineart (PNG underlay/overlay to Expresii).
+  async function sendExpresii(dest, hint){
+    hint = hint || $("outHint");
+    const btn=$("outRun");
+    btn.disabled=true;
     try{
       const base64=await pngFromPreview();
-      const dest=state.targets[state.mode];   // grid -> underlay, lineart -> overlay (per-mode)
-      hint.textContent=tr("sending");
-      // Multipart form (NOT application/json) per Expresii CORS rule — avoids browser
-      // OPTIONS preflight. FormData lets the browser set the multipart boundary.
+      if(hint) hint.textContent=tr("sending");
       const fd=new FormData();
       fd.append("image", base64);
       fd.append("destination", dest);
@@ -1968,15 +1971,15 @@
       const d=await res.json();
       if(d.status==="done"){
         const label = dest===-1 ? tr("underlay") : dest===-2 ? tr("overlay") : "L"+dest;
-        hint.textContent=tr("sentDone",{dest: label}); loadExpInfo();
+        if(hint) hint.textContent=tr("sentDone",{dest: label}); loadExpInfo();
       }
       else throw new Error(d.error||"upload failed");
     }catch(e){
-      hint.textContent=tr("sendFail",{msg:e.message});
+      if(hint) hint.textContent=tr("sendFail",{msg:e.message});
     }finally{
       btn.disabled=false;
     }
-  });
+  }
   // Server URL field: persist across reloads, re-check on Apply
   const EXP_KEY = "expresii_server_url";
   const savedUrl = localStorage.getItem(EXP_KEY);
@@ -2006,6 +2009,8 @@
   // restore per-mode Expresii targets, then build the selects (layers filled in once connected)
   restoreTargets();
   rebuildTargets();
+  restoreOutAction();   // remembered Output dropdown choice per sub-page
+  buildOutputOptions();
   // allow ?cols=&rows= / ?grid=N / ?shot=0.6 deep-links (e.g. reproducible screenshots)
   try {
     const q = new URLSearchParams(location.search);
