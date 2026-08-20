@@ -189,7 +189,7 @@
           <option value="ko">한국어</option>
         </select>
       </div>
-      <span class="ver home-only" id="ver">v1.23</span>
+      <span class="ver home-only" id="ver">v1.24</span>
     </div>
     <h2 class="home-section" data-trans="toolsTitle">Tools</h2>
     <div class="cards">
@@ -416,10 +416,7 @@
       </div>
       <div class="hint" id="outHint"></div>
     </div>
-  </aside>
-
-  <!-- 箔 (fleck) tool panel — standalone workspace (left column) -->
-    <div class="grp" id="fleckPanel" style="display:none">
+      <div class="grp" id="fleckPanel" style="display:none">
       <h2 data-trans="flecks">Flecks</h2>
       <div class="row" id="fleckKindRow" style="margin-top:8px">
         <div style="flex:1"><label data-trans="fleckColor">Color</label>
@@ -454,6 +451,9 @@
       <div class="hint" data-trans="fleckHint">Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.</div>
       <div class="hint" id="fleckHint2" data-trans="fleckToolHint"></div>
     </div>
+</aside>
+
+  <!-- 箔 (fleck) tool panel — standalone workspace (left column) -->
 <main class="stage">
     <div class="stagebar" id="stagebar">
       <span class="badge" id="dimBadge">—</span>
@@ -470,7 +470,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.23";
+  const VERSION = "1.24";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
