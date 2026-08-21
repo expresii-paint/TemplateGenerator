@@ -46,11 +46,11 @@ server, no build step:
 
 ```
 # Option A — simplest: double-click index.html, or open it from your file manager
-file:///.../TemplateGenerator/index.html
+file:///.../StudioHelper/index.html
 
 # Option B — serve it (optional; only if you prefer an http:// origin)
-git clone https://github.com/expresii-paint/TemplateGenerator.git
-cd TemplateGenerator
+git clone https://github.com/expresii-paint/StudioHelper.git
+cd StudioHelper
 python -m http.server 8753
 # open http://127.0.0.1:8753/index.html
 ```

@@ -174,7 +174,7 @@
       <div class="home-brand">
         <div class="home-title-row">
           <h1 class="home-app" data-trans="app_name">Studio Helper</h1>
-          <span class="ver home-only" id="ver">v1.30</span>
+          <span class="ver home-only" id="ver">v1.31</span>
         </div>
         <p class="home-tag" data-trans="app_sub">Calligraphy &amp; paper companion</p>
       </div>
@@ -478,7 +478,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.30";
+  const VERSION = "1.31";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -1778,28 +1778,34 @@
     }
     return bgRect + g + "</g>";
   }
-  // ---- 箔 (fleck) standalone tool ----
   // Render a transparent fleck field sized to the current paper and show it on #previewCanvas.
-  function generateFlecks(){
-    const hint=$("fleckHint2"); if(hint) hint.textContent="";
-    // paper size from current state (same derivation as buildSVG())
+  // When "Background color as Expresii base color" is checked, forExport=true OMITS the bg rect
+  // so the exported/sent image stays transparent (the color is sent to Expresii via 'basecolor').
+  // The on-screen preview always shows the bg (forExport=false) for visibility.
+  function drawFleckCanvas(cv, forExport){
     const L=computeLayout();
     const expMode = state.paperSource==="exp" && !!state.expPaper;
     const pxPerMM = expMode ? 1 : state.dpi;
     const W = expMode ? state.expPaper.w : L.pw*pxPerMM;
     const H = expMode ? state.expPaper.h : L.ph*pxPerMM;
-    if(!W||!H){ if(hint) hint.textContent=tr("fleckNoPaper"); return; }
-    // force flecks on and build the fleck <g> at full paper extent
+    if(!W||!H) return null;
     const prevFlecks = state.flecksOn; state.flecksOn = true;
-    const g = buildFlecks(L, pxPerMM, W, H);
+    const g = buildFlecks(L, pxPerMM, W, H, forExport);
     state.flecksOn = prevFlecks;
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${g}</svg>`;
-    const cv=$("previewCanvas"); cv.width=W; cv.height=H; cv.style.background="transparent";
+    cv.width=W; cv.height=H; cv.style.background="transparent";
     const x=cv.getContext("2d"); x.clearRect(0,0,W,H);
     const img=new Image();
-    img.onload=()=>{ x.drawImage(img,0,0); if(hint) hint.textContent=tr("fleckReady"); };
-    img.onerror=()=>{ if(hint) hint.textContent=tr("fleckErr"); };
+    img.onload=()=>{ x.drawImage(img,0,0); };
+    img.onerror=()=>{};
     img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+    return cv;
+  }
+  function generateFlecks(){
+    const hint=$("fleckHint2"); if(hint) hint.textContent="";
+    const cv=$("previewCanvas");
+    if(!cv || !drawFleckCanvas(cv, false)){ if(hint) hint.textContent=tr("fleckNoPaper"); return; }
+    if(hint) hint.textContent=tr("fleckReady");
   }
   // Send a single Expresii command (e.g. "basecolor r g b") via /confirm-ajax.
   // Resolves with the server JSON ({status:"queued", requestId}).
@@ -1810,18 +1816,23 @@
   // Send the rendered fleck field to Expresii as a transparent overlay (-2) or settled layer.
   async function sendFlecks(dest, hint){
     hint = hint || $("fleckHint2");
-    const cv=$("previewCanvas");
-    if(!cv || !cv.width){ if(hint) hint.textContent=tr("fleckNone"); return; }
+    // Set Expresii paper background color ONLY when "Background color as Expresii base color" is checked.
+    // When unchecked, the color is baked into the fleck image instead (handled at render time).
+    if(state.fleckBgOn && state.fleckBg && state.fleckBgAsBase){
+      const c = hexToRgb(state.fleckBg);
+      await sendExpCommand(`basecolor ${c.r} ${c.g} ${c.b}`);
+    }
+    // Render a FRESH fleck canvas for export. forExport = fleckBgAsBase:
+    //   - checked  -> bg omitted -> image is transparent (color goes to Expresii via basecolor)  [Case 1]
+    //   - unchecked-> bg included -> image carries the chosen background color                  [Case 2]
+    // (The on-screen preview canvas keeps showing the bg for visibility, regardless of this flag.)
+    const cv=document.createElement("canvas");
+    if(!drawFleckCanvas(cv, state.fleckBgAsBase)){ if(hint) hint.textContent=tr("fleckNoPaper"); return; }
+    if(!cv.width){ if(hint) hint.textContent=tr("fleckNone"); return; }
     const btn=$("outRun");
     btn.disabled=true;
     try{
       if(hint) hint.textContent=tr("sending");
-      // Set Expresii paper background color ONLY when "Background color as Expresii base color" is checked.
-      // When unchecked, the color is baked into the fleck image instead (handled at render time).
-      if(state.fleckBgOn && state.fleckBg && state.fleckBgAsBase){
-        const c = hexToRgb(state.fleckBg);
-        await sendExpCommand(`basecolor ${c.r} ${c.g} ${c.b}`);
-      }
       const base64=cv.toDataURL("image/png").split(",")[1];
       const fd=new FormData(); fd.append("image", base64); fd.append("destination", String(dest));
       const res=await fetch(expBase()+"/upload-image",{method:"POST",body:fd});
@@ -1928,8 +1939,12 @@
   }
   function doExportPng(){
     if(state.tool==="fleck"){
-      const cv=document.getElementById("previewCanvas");
-      if(!cv || !cv.width){ if($("fleckHint2")) $("fleckHint2").textContent=tr("fleckNone"); return; }
+      // Render a FRESH canvas for export. forExport = fleckBgAsBase:
+      //   - checked  -> bg omitted -> PNG is transparent (color sent to Expresii via basecolor) [Case 1]
+      //   - unchecked-> bg included -> PNG carries the chosen background color                 [Case 2]
+      const cv=document.createElement("canvas");
+      if(!drawFleckCanvas(cv, state.fleckBgAsBase)){ if($("fleckHint2")) $("fleckHint2").textContent=tr("fleckNoPaper"); return; }
+      if(!cv.width){ if($("fleckHint2")) $("fleckHint2").textContent=tr("fleckNone"); return; }
       cv.toBlob(b=>download(`fleck_${state.fleckKind}.png`,b),"image/png");
       return;
     }
