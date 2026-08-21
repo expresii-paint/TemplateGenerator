@@ -189,7 +189,7 @@
           <option value="ko">한국어</option>
         </select>
       </div>
-      <span class="ver home-only" id="ver">v1.25</span>
+      <span class="ver home-only" id="ver">v1.26</span>
     </div>
     <h2 class="home-section" data-trans="toolsTitle">Tools</h2>
     <div class="cards">
@@ -448,6 +448,10 @@
           <button class="btn ghost" id="fleckRandom" data-trans="fleckRandom" style="flex:0 0 auto;white-space:nowrap">Randomize</button>
         </div>
       </div>
+      <div class="chk" id="fleckBgRow" style="margin-top:8px"><input type="checkbox" id="fleckBgOn"><label for="fleckBgOn" style="margin:0" data-trans="fleckBgOn">Background color</label></div>
+      <div class="row" id="fleckBgColorRow" style="margin-top:6px">
+        <div style="flex:1"><label data-trans="fleckBgColor">Color</label><input id="fleckBg" type="color" value="#ffffff"></div>
+      </div>
       <div class="hint" data-trans="fleckHint">Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.</div>
       <div class="hint" id="fleckHint2" data-trans="fleckToolHint"></div>
     </div>
@@ -470,7 +474,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.25";
+  const VERSION = "1.26";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -495,7 +499,7 @@
       style:"Style", border:"Border", borderWidth:"Border width (px)", guides:"Guides", guideWidth:"Guide width (px)",
       dashedGuides:"Dashed guides", drawCellBorders:"Draw cell borders", gridAlpha:"Opacity",
       flecks:"Flecks", flecksOn:"Add gold/silver flecks", fleckColor:"Color",
-      fleckDensity:"Density (count)", fleckSize:"Size (mm)", fleckScatter:"Scatter randomly", fleckAlpha:"Opacity", fleckSeed:"Random seed", fleckRandom:"Randomize",
+      fleckDensity:"Density (count)", fleckSize:"Size (mm)", fleckScatter:"Scatter randomly", fleckAlpha:"Opacity", fleckSeed:"Random seed", fleckRandom:"Randomize", fleckBgOn:"Background color", fleckBgColor:"Color",
       fleckHint:"Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.",
       output:"Output", svgFile:"SVG File", pngFile:"PNG File", runOutput:"Run", saveLabel:"Save", sendLabel:"Send",
       outputToExpresii:"Send to Expresii", expNotConnected:"Connect to Expresii to enable sending",
@@ -562,7 +566,7 @@
       style:"樣式", border:"邊框", borderWidth:"邊框寬度（像素）", guides:"輔助線", guideWidth:"輔助線寬度（像素）",
       dashedGuides:"虛線輔助線", drawCellBorders:"繪製單元格邊框", gridAlpha:"透明度",
       flecks:"箔點", flecksOn:"添加金/銀 箔點", fleckColor:"顏色",
-      fleckDensity:"密度（數量）", fleckSize:"大小（毫米）", fleckScatter:"隨機散佈", fleckAlpha:"透明度", fleckSeed:"隨機種子", fleckRandom:"隨機化",
+      fleckDensity:"密度（數量）", fleckSize:"大小（毫米）", fleckScatter:"隨機散佈", fleckAlpha:"透明度", fleckSeed:"隨機種子", fleckRandom:"隨機化", fleckBgOn:"背景顏色", fleckBgColor:"顏色",
       fleckHint:"裝飾性金屬箔點（金/銀 箔）。SVG 中為矢量；線稿模式下隱藏。",
       export:"導出", downloadSvg:"下載 SVG", downloadPng:"下載 PNG", printPdf:"列印 / PDF", reset:"重置",
       output:"輸出", svgFile:"SVG 檔", pngFile:"PNG 檔", runOutput:"執行", saveLabel:"保存", sendLabel:"發送", outputToExpresii:"發送到 Expresii", expNotConnected:"請先連線 Expresii 才能傳送",
@@ -629,7 +633,7 @@
       style:"スタイル", border:"枠線", borderWidth:"枠線の太さ（px）", guides:"補助線", guideWidth:"補助線の太さ（px）",
       dashedGuides:"補助線を破線に", drawCellBorders:"セルの枠を描く", gridAlpha:"不透明度",
       flecks:"箔（ふくさ）", flecksOn:"金/銀箔を追加", fleckColor:"色",
-      fleckDensity:"密度（数）", fleckSize:"大きさ（mm）", fleckScatter:"ランダムに散らす", fleckAlpha:"不透明度", fleckSeed:"乱数シード", fleckRandom:"ランダム",
+      fleckDensity:"密度（数）", fleckSize:"大きさ（mm）", fleckScatter:"ランダムに散らす", fleckAlpha:"不透明度", fleckSeed:"乱数シード", fleckRandom:"ランダム", fleckBgOn:"背景色", fleckBgColor:"色",
       fleckHint:"装飾用の金属箔（金/銀箔）。SVGではベクター。線画モードでは非表示。",
       export:"書き出し", downloadSvg:"SVG をダウンロード", downloadPng:"PNG をダウンロード", printPdf:"印刷 / PDF", reset:"リセット",
       output:"出力", svgFile:"SVG ファイル", pngFile:"PNG ファイル", runOutput:"実行", saveLabel:"保存", sendLabel:"送信", outputToExpresii:"Expresii に送信", expNotConnected:"送信には Expresii への接続が必要です",
@@ -696,7 +700,7 @@
       style:"스타일", border:"테두리", borderWidth:"테두리 두께（px）", guides:"보조선", guideWidth:"보조선 두께（px）",
       dashedGuides:"보조선 점선", drawCellBorders:"셀 테두리 그리기", gridAlpha:"불투명도",
       flecks:"금속 점", flecksOn:"금/은색 점 추가", fleckColor:"색상",
-      fleckDensity:"밀도（개수）", fleckSize:"크기（mm）", fleckScatter:"무작위 흩뿌리기", fleckAlpha:"불투명도", fleckSeed:"난수 시드", fleckRandom:"무작위",
+      fleckDensity:"밀도（개수）", fleckSize:"크기（mm）", fleckScatter:"무작위 흩뿌리기", fleckAlpha:"불투명도", fleckSeed:"난수 시드", fleckRandom:"무작위", fleckBgOn:"배경 색", fleckBgColor:"색",
       fleckHint:"장식용 금속 점（금/은箔）. SVG에서는 벡터이며, 선화 모드에서는 숨겨집니다.",
       export:"내보내기", downloadSvg:"SVG 다운로드", downloadPng:"PNG 다운로드", printPdf:"인쇄 / PDF", reset:"초기화",
       output:"출력", svgFile:"SVG 파일", pngFile:"PNG 파일", runOutput:"실행", saveLabel:"저장", sendLabel:"보내기", outputToExpresii:"Expresii로 보내기", expNotConnected:"보내려면 Expresii에 연결하세요",
@@ -822,6 +826,7 @@
     cBorder:"#222222", cGuide:"#e23b3b", wBorder:2, wGuide:2, gridAlpha:1,
     dashed:true, showBorder:true, fanSpec:"8",
     flecksOn:true, fleckKind:"gold", fleckCount:120, fleckSize:0.9, fleckScatter:true, fleckAlpha:0.6, fleckSeed:0,
+    fleckBgOn:false, fleckBg:"#ffffff",
     mode:"grid",                                // 'grid' = grid template, 'lineart' = 線稿 converter, 'seal' = 印章 stamp
     // Per-mode Expresii destination: grid -> underlay(-1), fleck/lineart/seal -> overlay(-2).
     // Restored from localStorage so you can keep sending grid->underlay, fleck->overlay, seal->L2, etc.
@@ -1433,6 +1438,11 @@
   // fleck random seed: editable; Randomize picks a fresh random seed and regenerates the field
   $("fleckSeed").addEventListener("input",e=>{ state.fleckSeed=Math.max(0,Math.floor(+e.target.value||0)); if(state.screen==="tool" && state.tool==="fleck") generateFlecks(); });
   $("fleckRandom").addEventListener("click",()=>{ state.fleckSeed=Math.floor(Math.random()*1e9); $("fleckSeed").value=state.fleckSeed; if(state.screen==="tool" && state.tool==="fleck") generateFlecks(); });
+  // fleck background color (transparent when off)
+  $("fleckBgOn").addEventListener("change",e=>{ state.fleckBgOn=e.target.checked; $("fleckBgColorRow").style.display=state.fleckBgOn?"":"none"; updateFleck(); });
+  $("fleckBg").addEventListener("input",e=>{ state.fleckBg=e.target.value; if(state.fleckBgOn) updateFleck(); });
+  // initial visibility of the bg-color row (hidden until the checkbox is ticked)
+  if($("fleckBgColorRow")) $("fleckBgColorRow").style.display = state.fleckBgOn ? "" : "none";
 
   // ---- geometry helpers (mm) ----
   function paperMM(){
@@ -1629,6 +1639,14 @@
   // Seeded RNG so the same settings always produce the same flecks (reproducible export).
   function fleckRng(seed){ let s=seed>>>0||1; return ()=>{ s^=s<<13; s^=s>>>17; s^=s<<5; return ((s>>>0)/4294967296); }; }
   const FLECK_COLORS = { gold:"#d9a441", silver:"#c9ccd1", copper:"#b06b3a", white:"#f2f2f2" };
+  // "#rrggbb" -> {r,g,b} (0-255); tolerates "#rgb" and bare hex
+  function hexToRgb(h){
+    if(!h) return {r:0,g:0,b:0};
+    h = h.replace("#","");
+    if(h.length===3) h = h.split("").map(c=>c+c).join("");
+    const n = parseInt(h.slice(0,6),16);
+    return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+  }
   function buildFlecks(L, pxPerMM, W, H){
     if(!state.flecksOn) return "";
     const col = FLECK_COLORS[state.fleckKind] || FLECK_COLORS.gold;
@@ -1663,6 +1681,12 @@
     let x0, y0, ww, hh;
     x0=0; y0=0; ww=W; hh=H;
     const rng = fleckRng((state.fleckSeed|0) ^ Math.round(n*131 + state.fleckSize*977 + (state.fleckScatter?7:3) + col.length));
+    // optional background color (transparent when off) — a paper-sized opaque rect behind the flecks
+    let bgRect = "";
+    if(state.fleckBgOn && state.fleckBg){
+      const c = hexToRgb(state.fleckBg);
+      bgRect = `<rect x="0" y="0" width="${W}" height="${H}" fill="rgb(${c.r},${c.g},${c.b})"/>`;
+    }
     let g = `<g id="flecks" fill="${colA}" filter="url(#fleckBump)">` + bump;
     for(let i=0;i<n;i++){
       const fx = x0 + (state.fleckScatter ? rng()*ww : (i+0.5)/n*ww);
@@ -1680,7 +1704,7 @@
       }
       g += `<path d="${d}Z"/>`;
     }
-    return g + "</g>";
+    return bgRect + g + "</g>";
   }
   // ---- 箔 (fleck) standalone tool ----
   // Render a transparent fleck field sized to the current paper and show it on #previewCanvas.
@@ -1705,24 +1729,33 @@
     img.onerror=()=>{ if(hint) hint.textContent=tr("fleckErr"); };
     img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
   }
+  // Send a single Expresii command (e.g. "basecolor r g b") via /confirm-ajax.
+  // Resolves with the server JSON ({status:"queued", requestId}).
+  function sendExpCommand(msg){
+    const fd=new FormData(); fd.append("message", msg);
+    return fetch(expBase()+"/confirm-ajax",{method:"POST",body:fd}).then(r=>r.json());
+  }
   // Send the rendered fleck field to Expresii as a transparent overlay (-2) or settled layer.
-  function sendFlecks(dest, hint){
+  async function sendFlecks(dest, hint){
     hint = hint || $("fleckHint2");
     const cv=$("previewCanvas");
     if(!cv || !cv.width){ if(hint) hint.textContent=tr("fleckNone"); return; }
-    const base64=cv.toDataURL("image/png").split(",")[1];
     const btn=$("outRun");
     btn.disabled=true;
     try{
       if(hint) hint.textContent=tr("sending");
+      // set Expresii paper background color, if the flecks have one (transparent otherwise)
+      if(state.fleckBgOn && state.fleckBg){
+        const c = hexToRgb(state.fleckBg);
+        await sendExpCommand(`basecolor ${c.r} ${c.g} ${c.b}`);
+      }
+      const base64=cv.toDataURL("image/png").split(",")[1];
       const fd=new FormData(); fd.append("image", base64); fd.append("destination", String(dest));
-      fetch(expBase()+"/upload-image", {method:"POST", body:fd})
-        .then(r=>r.json().then(j=>({ok:r.ok, j})))
-        .then(({ok,j})=>{ btn.disabled=false;
-          if(ok && j && j.status==="done"){ if(hint) hint.textContent=tr("sentDone",{dest:targetLabel(dest)}); }
-          else { if(hint) hint.textContent=(j&&j.error)||tr("sendFail"); }
-        })
-        .catch(err=>{ btn.disabled=false; if(hint) hint.textContent=tr("sendFail")+": "+err.message; });
+      const res=await fetch(expBase()+"/upload-image",{method:"POST",body:fd});
+      const j=await res.json();
+      btn.disabled=false;
+      if(res.ok && j && j.status==="done"){ if(hint) hint.textContent=tr("sentDone",{dest:targetLabel(dest)}); }
+      else { if(hint) hint.textContent=(j&&j.error)||tr("sendFail"); }
     }catch(err){ btn.disabled=false; if(hint) hint.textContent=tr("sendFail")+": "+err.message; }
   }
 
