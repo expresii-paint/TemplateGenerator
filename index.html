@@ -174,7 +174,7 @@
       <div class="home-brand">
         <div class="home-title-row">
           <h1 class="home-app" data-trans="app_name">Studio Helper</h1>
-          <span class="ver home-only" id="ver">v1.29</span>
+          <span class="ver home-only" id="ver">v1.30</span>
         </div>
         <p class="home-tag" data-trans="app_sub">Calligraphy &amp; paper companion</p>
       </div>
@@ -478,7 +478,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.29";
+  const VERSION = "1.30";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -840,6 +840,63 @@
     seal:{ art:null, sealImg:null, x:0.7, y:0.8, size:0.12, rot:0 }   // seal compose state (x,y,size as fractions of artwork W; rot in rad)
   };
 
+  // ---- persistent settings ----
+  // Persist the user-configurable part of `state` to localStorage so all settings survive a reload.
+  // Volatile/runtime-derived fields (screen, tool, expPaper, paperSource, mode, and the
+  // per-mode targets/outAction which have their own restore paths) are intentionally excluded.
+  const STATE_KEY = "tg_state";
+  const PERSIST = ["paper","ar","orient","dpi","type","layout","cols","rows","cellmm","marginmm",
+    "paperMarginmm","cBorder","cGuide","wBorder","wGuide","gridAlpha","dashed","showBorder","fanSpec",
+    "flecksOn","fleckKind","fleckCount","fleckSize","fleckScatter","fleckAlpha","fleckSeed",
+    "fleckBgOn","fleckBg","fleckBgAsBase","scale","keepText","transparent","seal"];
+  function saveState(){
+    try{
+      const copy = {};
+      for(const k of PERSIST) copy[k] = state[k];
+      localStorage.setItem(STATE_KEY, JSON.stringify(copy));
+    }catch(_){}
+  }
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STATE_KEY); if(!raw) return;
+      const j = JSON.parse(raw);
+      for(const k in j){ if(state.hasOwnProperty(k)) state[k] = j[k]; }
+    }catch(_){}
+  }
+  loadState();   // restore saved settings before any UI is built from state
+
+  // Sync every control's displayed value from the (possibly restored) state. The HTML carries
+  // static defaults; this makes the controls reflect what was actually loaded from localStorage.
+  function syncInputsFromState(){
+    const setVal=(id,v)=>{ const el=document.getElementById(id); if(el) el.value=v; };
+    const setChk=(id,v)=>{ const el=document.getElementById(id); if(el) el.checked=!!v; };
+    const setSegActive=(sel,attr,val)=>{
+      document.querySelectorAll(`${sel} [data-${attr}]`).forEach(b=>b.classList.toggle("active", b.getAttribute(`data-${attr}`)===String(val)));
+    };
+    setVal("paperPreset", state.paper);
+    if(state.paper==="custom"){ document.getElementById("customAr") && document.getElementById("customAr").classList.add("show"); }
+    setVal("arW", state.ar[0]); setVal("arH", state.ar[1]);
+    setSegActive("#orient", "o", state.orient);
+    setVal("dpi", state.dpi);
+    setSegActive("#gridType", "t", state.type);
+    setSegActive("#layoutMode", "m", state.layout);
+    setVal("cols", state.cols); setVal("rows", state.rows);
+    setVal("cellmm", state.cellmm); setVal("marginmm", state.marginmm); setVal("paperMarginmm", state.paperMarginmm);
+    setVal("cBorder", state.cBorder); setVal("cGuide", state.cGuide);
+    setVal("wBorder", state.wBorder); setVal("wGuide", state.wGuide); setVal("gridAlpha", state.gridAlpha);
+    setChk("dashed", state.dashed); setChk("showBorder", state.showBorder);
+    setVal("fanSpec", state.fanSpec);
+    setVal("fleckKind", state.fleckKind); setVal("fleckCount", state.fleckCount); setVal("fleckSize", state.fleckSize);
+    setChk("fleckScatter", state.fleckScatter); setVal("fleckAlpha", state.fleckAlpha); setVal("fleckSeed", state.fleckSeed);
+    setChk("fleckBgOn", state.fleckBgOn); setVal("fleckBg", state.fleckBg); setChk("fleckBgAsBase", state.fleckBgAsBase);
+    setVal("laScale", state.scale); setChk("laKeepText", state.keepText); setChk("laTransparent", state.transparent);
+    // show/hide dependent rows
+    const bgRow=document.getElementById("fleckBgColorRow"), bgBase=document.getElementById("fleckBgAsBaseRow");
+    if(bgRow) bgRow.style.display=state.fleckBgOn?"":"none";
+    if(bgBase) bgBase.style.display=state.fleckBgOn?"":"none";
+  }
+  syncInputsFromState();
+
   // Real folding-fan specs from the reference template (展开宽度 / 寸 = rib length / 扇面高度).
   // chord = opened width (outer rim straight span); rib = sector outer radius (寸 × 10mm); thick = radial depth.
   const FAN_SPECS = {
@@ -876,6 +933,7 @@
     $("srcCardUser").classList.toggle("active", src==="user");
     applyVisibility();
     render();
+    saveState();
   }
   document.querySelectorAll(".src-card[data-source]").forEach(card=>{
     card.addEventListener("click", ()=> selectPaperSource(card.dataset.source));
@@ -2127,6 +2185,13 @@
   applyVisibility();
   applyModeVisibility();
   setLang(lang);   // applies translations + renders (render() is called inside applyLang)
+  // Persist ALL settings on any control change. Element listeners update `state` first, then the
+  // event bubbles here and we debounce-save the whole configurable state to localStorage.
+  let _saveT=null;
+  function scheduleSave(){ if(_saveT) clearTimeout(_saveT); _saveT=setTimeout(saveState, 250); }
+  document.addEventListener("change", scheduleSave);
+  document.addEventListener("input", scheduleSave);
+  saveState();   // persist the restored/default state once at startup
   const verEl = document.getElementById("ver"); if (verEl) verEl.textContent = "v" + VERSION;
 })();
 </script>
