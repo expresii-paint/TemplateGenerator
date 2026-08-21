@@ -189,7 +189,7 @@
           <option value="ko">한국어</option>
         </select>
       </div>
-      <span class="ver home-only" id="ver">v1.27</span>
+      <span class="ver home-only" id="ver">v1.28</span>
     </div>
     <h2 class="home-section" data-trans="toolsTitle">Tools</h2>
     <div class="cards">
@@ -475,7 +475,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.27";
+  const VERSION = "1.28";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -1656,7 +1656,7 @@
     const n = parseInt(h.slice(0,6),16);
     return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
   }
-  function buildFlecks(L, pxPerMM, W, H){
+  function buildFlecks(L, pxPerMM, W, H, forExport){
     if(!state.flecksOn) return "";
     const col = FLECK_COLORS[state.fleckKind] || FLECK_COLORS.gold;
     // alpha: emit flecks as translucent (per-fleck alpha) so the exported PNG reads as an
@@ -1690,10 +1690,11 @@
     let x0, y0, ww, hh;
     x0=0; y0=0; ww=W; hh=H;
     const rng = fleckRng((state.fleckSeed|0) ^ Math.round(n*131 + state.fleckSize*977 + (state.fleckScatter?7:3) + col.length));
-    // Background: bake into the fleck image ONLY when "as Expresii base color" is OFF.
-    // When ON, the flecks stay transparent and the color is sent to Expresii via 'basecolor'.
+    // Background: when the color is set, show it in the PREVIEW regardless of the base-color
+    // toggle. For EXPORT/SEND, omit it from the image only when "as Expresii base color" is on
+    // (the color goes to Expresii via 'basecolor' instead, keeping the flecks transparent).
     let bgRect = "";
-    if(state.fleckBgOn && state.fleckBg && !state.fleckBgAsBase){
+    if(state.fleckBgOn && state.fleckBg && !(forExport && state.fleckBgAsBase)){
       const c = hexToRgb(state.fleckBg);
       bgRect = `<rect x="0" y="0" width="${W}" height="${H}" fill="rgb(${c.r},${c.g},${c.b})"/>`;
     }
@@ -1792,7 +1793,7 @@
         }
       }
     }
-    body += buildFlecks(L, pxPerMM, W, H);
+    body += buildFlecks(L, pxPerMM, W, H, true);
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W.toFixed(1)}" height="${H.toFixed(1)}" viewBox="0 0 ${W.toFixed(1)} ${H.toFixed(1)}">${body}</svg>`;
     return {svg, W, H, L};
   }
