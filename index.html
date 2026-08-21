@@ -174,7 +174,7 @@
       <div class="home-brand">
         <div class="home-title-row">
           <h1 class="home-app" data-trans="app_name">Studio Helper</h1>
-          <span class="ver home-only" id="ver">v1.34</span>
+          <span class="ver home-only" id="ver">v1.35</span>
         </div>
         <p class="home-tag" data-trans="app_sub">Calligraphy &amp; paper companion</p>
       </div>
@@ -478,7 +478,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.34";
+  const VERSION = "1.35";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -506,6 +506,7 @@
       fleckDensity:"Density (count)", fleckSize:"Size (mm)", fleckScatter:"Scatter randomly", fleckAlpha:"Opacity", fleckSeed:"Random seed", fleckRandom:"Randomize", fleckBgOn:"Background color", fleckBgColor:"Color", fleckBgAsBase:"Background color as Expresii base color",
       fleckHint:"Decorative metallic flecks (金/銀 箔). Vector in SVG; hidden in 線稿 mode.",
       basecolorFail:"Basecolor command failed: {e}",
+      basecolorNeedsOverlay:" (note: with 'background as base color', use Overlay so the basecolor shows — Underlay hides it)",
       output:"Output", svgFile:"SVG File", pngFile:"PNG File", runOutput:"Run", saveLabel:"Save", sendLabel:"Send",
       outputToExpresii:"Send to Expresii", expNotConnected:"Connect to Expresii to enable sending",
       exportFooter:"Vector (SVG) scales to any printer. PNG is rasterized from the on-screen canvas. Print to PDF from your browser for a paper-perfect sheet.",
@@ -574,6 +575,7 @@
       fleckDensity:"密度（數量）", fleckSize:"大小（毫米）", fleckScatter:"隨機散佈", fleckAlpha:"透明度", fleckSeed:"隨機種子", fleckRandom:"隨機化", fleckBgOn:"背景顏色", fleckBgColor:"顏色", fleckBgAsBase:"背景顏色作為 Expresii 底色",
       fleckHint:"裝飾金屬光點（金/銀箔）。SVG 向量；線稿模式隱藏。",
       basecolorFail:"底色指令失敗：{e}",
+      basecolorNeedsOverlay:"（注意：開啟「背景顏色作為 Expresii 底色」時，請用疊加層，底色才會顯示——底層會把它遮住）",
       export:"導出", downloadSvg:"下載 SVG", downloadPng:"下載 PNG", printPdf:"列印 / PDF", reset:"重置",
       output:"輸出", svgFile:"SVG 檔", pngFile:"PNG 檔", runOutput:"執行", saveLabel:"保存", sendLabel:"發送", outputToExpresii:"發送到 Expresii", expNotConnected:"請先連線 Expresii 才能傳送",
       exportFooter:"矢量（SVG）可縮放到任意列印機。PNG 由螢幕畫布光柵化。用瀏覽器列印為 PDF 即可得到與紙張完全一致的稿紙。",
@@ -642,6 +644,7 @@
       fleckDensity:"密度（数）", fleckSize:"大きさ（mm）", fleckScatter:"ランダムに散らす", fleckAlpha:"不透明度", fleckSeed:"乱数シード", fleckRandom:"ランダム", fleckBgOn:"背景色", fleckBgColor:"色", fleckBgAsBase:"背景色を Expresii のベースカラーに",
       fleckHint:"装飾的な金属箔（金/銀）。SVG はベクタ；線画モードで非表示。",
       basecolorFail:"ベースカラーコマンド失敗：{e}",
+      basecolorNeedsOverlay:"（注意：「背景色を Expresii のベースカラーに」を使う場合は疊加層を選ぶとベースカラーが表示されます——底層では隠れます）",
       export:"書き出し", downloadSvg:"SVG をダウンロード", downloadPng:"PNG をダウンロード", printPdf:"印刷 / PDF", reset:"リセット",
       output:"出力", svgFile:"SVG ファイル", pngFile:"PNG ファイル", runOutput:"実行", saveLabel:"保存", sendLabel:"送信", outputToExpresii:"Expresii に送信", expNotConnected:"送信には Expresii への接続が必要です",
       exportFooter:"ベクター（SVG）はどのプリンターでも拡大縮小可能。PNG は画面キャンバスからラスタライズされます。ブラウザの印刷で PDF を出力すれば、用紙にぴったりの原稿になります。",
@@ -710,6 +713,7 @@
       fleckDensity:"밀도（개수）", fleckSize:"크기（mm）", fleckScatter:"무작위 흩뿌리기", fleckAlpha:"불투명도", fleckSeed:"난수 시드", fleckRandom:"무작위", fleckBgOn:"배경 색", fleckBgColor:"색", fleckBgAsBase:"배경 색을 Expresii 베이스 컬러로",
       fleckHint:"장식용 금속 점（금/은箔）. SVG에서는 벡터이며, 선화 모드에서는 숨겨집니다.",
       basecolorFail:"베이스 컬러 명령 실패: {e}",
+      basecolorNeedsOverlay:" (참고: '배경 색을 Expresii 베이스 컬러로' 사용 시 베이스 컬러가 보이려면 겹침层을 선택하세요 — 바탕层은 숨깁니다)",
       export:"내보내기", downloadSvg:"SVG 다운로드", downloadPng:"PNG 다운로드", printPdf:"인쇄 / PDF", reset:"초기화",
       output:"출력", svgFile:"SVG 파일", pngFile:"PNG 파일", runOutput:"실행", saveLabel:"저장", sendLabel:"보내기", outputToExpresii:"Expresii로 보내기", expNotConnected:"보내려면 Expresii에 연결하세요",
       exportFooter:"벡터（SVG）는 모든 프린터로 확대·축소됩니다. PNG는 화면 캔버스에서 래스터화됩니다. 브라우저 인쇄로 PDF를 만들면 용지에 딱 맞는 원고가 됩니다.",
@@ -1840,9 +1844,11 @@
     //   - checked  -> bg omitted -> image is transparent (color goes to Expresii via basecolor)  [Case 1]
     //   - unchecked-> bg included -> image carries the chosen background color                  [Case 2]
     // (The on-screen preview canvas keeps showing the bg for visibility, regardless of this flag.)
-    // Case 1 sends a TRANSPARENT png, so it must go to Overlay (-2). Underlay (-1) would render the
-    // transparent png as opaque paper and hide the basecolor — so force Overlay when bg-as-base is on.
-    const realDest = (state.fleckBgOn && state.fleckBgAsBase) ? -2 : dest;
+    // IMPORTANT: send to EXACTLY the destination the user picked (realDest = dest). Do NOT silently
+    // override it. (Background-as-base + Underlay (-1) is incompatible — a transparent PNG on
+    // Underlay becomes opaque paper and hides the basecolor — so we only WARN, never force.)
+    const realDest = dest;
+    const baseWarn = (state.fleckBgOn && state.fleckBgAsBase && dest === -1) ? tr("basecolorNeedsOverlay") : "";
     const cv=document.createElement("canvas");
     try { await drawFleckCanvas(cv, state.fleckBgAsBase); }
     catch(e){ if(hint) hint.textContent=tr("fleckNoPaper"); return; }
@@ -1856,7 +1862,7 @@
       const res=await fetch(expBase()+"/upload-image",{method:"POST",body:fd});
       const j=await res.json();
       btn.disabled=false;
-      if(res.ok && j && j.status==="done"){ if(hint) hint.textContent=tr("sentDone",{dest:targetLabel(dest)}); }
+      if(res.ok && j && j.status==="done"){ if(hint) hint.textContent=tr("sentDone",{dest:targetLabel(dest)}) + baseWarn; }
       else { if(hint) hint.textContent=(j&&j.error)||tr("sendFail"); }
     }catch(err){ btn.disabled=false; if(hint) hint.textContent=tr("sendFail")+": "+err.message; }
   }
