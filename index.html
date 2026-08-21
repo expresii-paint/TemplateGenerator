@@ -174,7 +174,7 @@
       <div class="home-brand">
         <div class="home-title-row">
           <h1 class="home-app" data-trans="app_name">Studio Helper</h1>
-          <span class="ver home-only" id="ver">v1.32</span>
+          <span class="ver home-only" id="ver">v1.33</span>
         </div>
         <p class="home-tag" data-trans="app_sub">Calligraphy &amp; paper companion</p>
       </div>
@@ -478,7 +478,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.32";
+  const VERSION = "1.33";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
@@ -1720,10 +1720,14 @@
   function buildFlecks(L, pxPerMM, W, H, forExport){
     if(!state.flecksOn) return "";
     const col = FLECK_COLORS[state.fleckKind] || FLECK_COLORS.gold;
-    // alpha: emit flecks as translucent (per-fleck alpha) so the exported PNG reads as an
-    // overlay — the background stays fully transparent and the flecks themselves carry the
-    // opacity, independent of the canvas alpha. Default 0.6 so they read as a gilded haze.
-    const a = Math.round(Math.min(1,Math.max(0.05,state.fleckAlpha!=null?state.fleckAlpha:0.6))*255);
+    // Fleck fill: when this image is a TRUE transparent overlay (Case 1: sent to Expresii with
+    // "as base color" checked, forExport && fleckBgAsBase), honour fleckAlpha so the flecks read as
+    // a translucent gilded haze over existing art. In every other case (preview, or a PNG/Expresii
+    // image with the background baked in) draw the flecks OPAQUE — otherwise the per-fleck alpha
+    // blends the gold with the background and washes it out to a pale straw.
+    const a = (forExport && state.fleckBgAsBase)
+      ? Math.round(Math.min(1,Math.max(0.05,state.fleckAlpha!=null?state.fleckAlpha:0.6))*255)
+      : 255;
     const colA = col + a.toString(16).padStart(2,"0");
     // Fleck radius scales with the CELL pixel size (not just mm*pxPerMM), so it stays a
     // visible fraction of a cell in BOTH normal mode (pxPerMM=dpi) and Expresii mode
