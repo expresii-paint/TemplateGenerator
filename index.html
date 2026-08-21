@@ -110,6 +110,7 @@
   body.home #home{display:flex;flex-direction:column;min-width:0;flex:1;padding:26px 30px;overflow-y:auto}
   #home .home-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}
   #home .home-top .ver{font-size:11px;font-weight:600;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap;align-self:flex-start}
+  #home .home-brand .home-title-row{display:flex;align-items:baseline;gap:12px}
   #home .home-brand .home-app{font-size:28px;font-weight:700;margin:0;letter-spacing:.01em}
   #home .home-brand .home-tag{color:var(--muted);font-size:13px;margin:4px 0 0}
   #home .home-section{font-size:15px;letter-spacing:.04em;color:var(--muted);margin:6px 0 16px;text-transform:uppercase}
@@ -171,7 +172,10 @@
   <div class="home" id="home">
     <div class="home-top">
       <div class="home-brand">
-        <h1 class="home-app" data-trans="app_name">Studio Helper</h1>
+        <div class="home-title-row">
+          <h1 class="home-app" data-trans="app_name">Studio Helper</h1>
+          <span class="ver home-only" id="ver">v1.29</span>
+        </div>
         <p class="home-tag" data-trans="app_sub">Calligraphy &amp; paper companion</p>
       </div>
       <div class="lang-sel home-only">
@@ -189,7 +193,6 @@
           <option value="ko">한국어</option>
         </select>
       </div>
-      <span class="ver home-only" id="ver">v1.28</span>
     </div>
     <h2 class="home-section" data-trans="toolsTitle">Tools</h2>
     <div class="cards">
@@ -475,7 +478,7 @@
 (function(){
   "use strict";
   // App version — bump the last number on every user-facing change so you can tell if a file is new.
-  const VERSION = "1.28";
+  const VERSION = "1.29";
   const MM_PER_IN = 25.4;
   const PAPERS = {
     A4:[210,297], A3:[297,420], A5:[148,210],
